@@ -14,9 +14,6 @@ namespace Oddmatics.Rzxe.Game
         public abstract string Name { get; }
 
 
-        protected List<UxComponent> UxComponents { get; set; }
-
-
         public bool Equals(GameState other)
         {
             return this.Name == other.Name;
