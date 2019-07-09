@@ -16,23 +16,13 @@ namespace Oddmatics.Rzxe.Game
         private List<GameState> StateStack { get; set; }
 
 
-        protected void PushState(GameState state)
+        
+        public virtual void Begin()
         {
-            if (StateStack.Contains(state))
-            {
-                throw new InvalidOperationException(
-                    "Can't push state as it is already present."
-                    );
-            }
-
-            StateStack.Add(state);
-
-            //
-            // TODO: Handle adding input events based on InputFocalMode
-            //
+            StateStack = new List<GameState>();
         }
 
-        protected void PopState()
+        public void PopState()
         {
             if (StateStack.Count == 0)
             {
@@ -48,10 +38,20 @@ namespace Oddmatics.Rzxe.Game
             //
         }
 
-
-        public virtual void Begin()
+        public void PushState(GameState state)
         {
-            StateStack = new List<GameState>();
+            if (StateStack.Contains(state))
+            {
+                throw new InvalidOperationException(
+                    "Can't push state as it is already present."
+                    );
+            }
+
+            StateStack.Add(state);
+
+            //
+            // TODO: Handle adding input events based on InputFocalMode
+            //
         }
 
         public virtual void RenderFrame(IGraphicsController graphics)
