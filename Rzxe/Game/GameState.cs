@@ -24,5 +24,7 @@ namespace Oddmatics.Rzxe.Game
 
 
         public abstract void RenderFrame(IGraphicsController graphics);
+
+        public abstract void Update(TimeSpan deltaTime, InputEvents inputs);
     }
 }
