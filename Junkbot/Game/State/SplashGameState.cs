@@ -23,6 +23,15 @@ namespace Junkbot.Game.State
         }
 
 
+        private UxShell Shell { get; set; }
+
+
+        public SplashGameState()
+        {
+            Shell = new UxShell();
+        }
+
+
         public override void RenderFrame(IGraphicsController graphics)
         {
             var sb = graphics.CreateSpriteBatch("menu-atlas");
@@ -38,6 +47,14 @@ namespace Junkbot.Game.State
                 );
 
             sb.Finish();
+        }
+
+        public override void Update(TimeSpan deltaTime, InputEvents inputs)
+        {
+            if (inputs != null)
+            {
+                Shell.HandleInputs(inputs);
+            }
         }
     }
 }
