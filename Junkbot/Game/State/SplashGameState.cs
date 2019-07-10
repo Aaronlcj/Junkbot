@@ -1,4 +1,5 @@
 ﻿using Oddmatics.Rzxe.Game;
+using Oddmatics.Rzxe.Game.Interface;
 using Oddmatics.Rzxe.Input;
 using Oddmatics.Rzxe.Windowing.Graphics;
 using System;
