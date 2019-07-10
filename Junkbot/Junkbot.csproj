@@ -54,8 +54,6 @@
     <Compile Include="Game\Input\InputEvents.cs" />
     <Compile Include="Game\JunkbotGame.cs" />
     <Compile Include="Game\State\SplashGameState.cs" />
-    <Compile Include="Game\UI\Controls\Control.cs" />
-    <Compile Include="Game\UI\JunkbotInterface.cs" />
     <Compile Include="Game\World\Actors\Animation\ActorAnimation.cs" />
     <Compile Include="Game\World\Actors\Animation\ActorAnimationFrame.cs" />
     <Compile Include="Game\World\Actors\Animation\AnimationServer.cs" />
