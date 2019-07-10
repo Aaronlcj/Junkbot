@@ -1,4 +1,6 @@
 ﻿using Oddmatics.Rzxe.Input;
+using Oddmatics.Rzxe.Logic;
+using Oddmatics.Rzxe.Util.Collections;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -6,16 +8,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Oddmatics.Rzxe.Game
+namespace Oddmatics.Rzxe.Game.Interface
 {
     public class UxShell
     {
-        protected Dictionary<int, List<UxComponent>> Components { get; set; }
+        protected SortedList2<UxComponent> Components { get; set; }
 
 
         public UxShell()
         {
-            Components = new Dictionary<int, List<UxComponent>>();
+            Components = new SortedList2<UxComponent>(new ZIndexComparer());
         }
 
 
@@ -38,10 +40,15 @@ namespace Oddmatics.Rzxe.Game
 
         private UxComponent MouseHitTest(PointF mousePos)
         {
-            //
-            // TODO: Run through UxComponents bounds, starting at the highest Z index
-            //       until finding one that contains mousePos
-            //
+            IEnumerable<UxComponent> components = Components.Reverse();
+
+            foreach (UxComponent component in components)
+            {
+                if (Collision.PointInRect(mousePos, component.Bounds))
+                {
+                    return component;
+                }
+            }
 
             return null;
         }
