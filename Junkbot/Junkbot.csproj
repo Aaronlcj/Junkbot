@@ -51,7 +51,6 @@
     <Compile Include="Helpers\PointHelper.cs" />
     <Compile Include="Helpers\RectangleHelper.cs" />
     <Compile Include="Helpers\SizeHelper.cs" />
-    <Compile Include="Game\Input\InputEvents.cs" />
     <Compile Include="Game\JunkbotGame.cs" />
     <Compile Include="Game\State\SplashGameState.cs" />
     <Compile Include="Game\World\Actors\Animation\ActorAnimation.cs" />
