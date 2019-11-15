@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Pencil.Gaming.MathUtils;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -9,7 +10,6 @@ namespace Oddmatics.Rzxe.Windowing.Graphics
     public interface IGraphicsController
     {
         Size TargetResolution { get; }
-
 
         void ClearViewport(Color color);
 

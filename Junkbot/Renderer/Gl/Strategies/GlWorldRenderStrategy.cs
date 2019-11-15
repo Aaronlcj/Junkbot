@@ -33,7 +33,7 @@ namespace Junkbot.Renderer.Gl.Strategies
         /// <summary>
         /// The size of the scene.
         /// </summary>
-        private Size SceneSize;
+        //private Size SceneSize;
 
         /// <summary>
         /// The ID of the OpenGL Shader Program to use.

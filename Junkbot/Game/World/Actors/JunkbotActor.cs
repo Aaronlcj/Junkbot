@@ -70,7 +70,10 @@ namespace Junkbot.Game.World.Actors
             {
                 Animation.SpecialFrameEntered -= Animation_SpecialFrameEntered;
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
 
             switch (direction)
             {

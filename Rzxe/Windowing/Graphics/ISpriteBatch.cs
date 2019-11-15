@@ -10,6 +10,8 @@ namespace Oddmatics.Rzxe.Windowing.Graphics
     {
         void Draw(string spriteName, Rectangle rect);
 
+        Pencil.Gaming.MathUtils.Rectanglei GetSpriteUV(string spriteName);
+
         void Finish();
     }
 }

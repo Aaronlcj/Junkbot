@@ -26,7 +26,7 @@ namespace Junkbot.Game.World.Actors.Animation
         private byte TickCount;
 
 
-        public event EventHandler FinishedPlayback;
+        //public event EventHandler FinishedPlayback;
 
         public event EventHandler SpecialFrameEntered;
 

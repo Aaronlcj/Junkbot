@@ -42,18 +42,114 @@ namespace Junkbot.Game.State
             var sb = graphics.CreateSpriteBatch("actors-atlas");
             var bck = graphics.CreateSpriteBatch("background-atlas");
             var dec = graphics.CreateSpriteBatch("decals-atlas");
-
+            var bar = graphics.CreateSpriteBatch("sidebar-atlas");
+            
             graphics.ClearViewport(Color.CornflowerBlue);
             if (Scene.LevelData.Backdrop != null)
             {
                 bck.Draw(
-                         Scene.LevelData.Backdrop,
-                         new Rectangle(
-                             Point.Empty, graphics.TargetResolution
-                             )
-                         );
+                          Scene.LevelData.Backdrop,
+                          new Rectangle(
+                              new Point(-6, 0), new Size(536, 420)
+                              )
+                          );
                 bck.Finish();
             }
+            if (Scene.LevelData.Decals != null)
+            {
+                foreach (JunkbotDecalData decal in Scene.LevelData.Decals)
+                {
+                    Pencil.Gaming.MathUtils.Rectanglei decalMap = dec.GetSpriteUV(decal.Decal);
+                    int locY = decal.Location.Y; 
+                    switch (decal.Decal)
+                    {
+                        case "door":
+                            locY = 182;
+                            break;
+                        case "window":
+                            locY -= 14;
+                            break;
+                        case "fusebox_pipes_l":
+                            locY -= 22;
+                            break;
+                        case "terminal_chart":
+                            locY -=28; 
+                            break;
+                        case "sign_keepout":
+                            locY -= 14;
+                            break;
+                    }
+                    dec.Draw(
+                        decal.Decal,
+                        new Rectangle(
+                            new Point(decal.Location.X - 26, locY), new Size(decalMap.Width, decalMap.Height)
+                            )
+                        );
+                }
+                dec.Finish();
+            }
+            /*if (decal.Decal == "door")
+            {*/
+
+
+            /*dec.Draw(
+                       decal.Decal,
+                       new Rectangle(
+                           new Point(458, 182), new Size(decalMap.Width, decalMap.Height)
+                           )
+                       );
+
+        }
+        if (decal.Decal == "window")
+        {
+            Pencil.Gaming.MathUtils.Rectanglei decalMap = dec.GetSpriteUV(decal.Decal);
+
+            dec.Draw(
+                       decal.Decal,
+                       new Rectangle(
+                           new Point(decal.Location.X - 15, decal.Location.Y - 14), new Size(decalMap.Width, decalMap.Height)
+                           )
+                       );
+        }
+        if (decal.Decal == "fusebox_pipes_l")
+        {
+            Pencil.Gaming.MathUtils.Rectanglei decalMap = dec.GetSpriteUV(decal.Decal);
+
+            dec.Draw(
+                       decal.Decal,
+                       new Rectangle(
+                           new Point(5 , decal.Location.Y - 22), new Size(decalMap.Width, decalMap.Height)
+                           )
+                       );
+
+        }
+        if (decal.Decal == "terminal_chart")
+        {
+            Pencil.Gaming.MathUtils.Rectanglei decalMap = dec.GetSpriteUV(decal.Decal);
+
+            dec.Draw(
+                       decal.Decal,
+                       new Rectangle(
+                           new Point(57, decal.Location.Y - 28), new Size(decalMap.Width, decalMap.Height)
+                           )
+                       );
+
+        }
+        if (decal.Decal == "sign_keepout")
+        {
+            Pencil.Gaming.MathUtils.Rectanglei decalMap = dec.GetSpriteUV(decal.Decal);
+
+            dec.Draw(
+                       decal.Decal,
+                       new Rectangle(
+                           new Point(decal.Location.X - 15, decal.Location.Y - 14), new Size(decalMap.Width, decalMap.Height)
+                           )
+                       );
+
+        }*/
+
+
+
             /*foreach (IActor brick in test.GetPlayfield)
             {
                 if (brick != null)
@@ -132,20 +228,7 @@ namespace Junkbot.Game.State
             }
 
 
-           /* if (Scene.LevelData.Decals != null)
-            {
-                foreach (JunkbotDecalData decal in Scene.LevelData.Decals)
-                {
-
-
-                    dec.Draw(
-                             decal.Decal,
-                             new Rectangle(
-                                 dec.GetSpriteMap[decal.Decal], graphics.TargetResolution
-                                 )
-                             );
-                }
-            }*/
+           
             if (Scene.MobileActors != null)
             {
                 foreach (IActor actor in Scene.MobileActors)
@@ -210,12 +293,12 @@ namespace Junkbot.Game.State
                         }
                         else
                         {
-                            locX = bin.Location.X + 2;
+                            locX = bin.Location.X + 4;
                         }
 
                         if (bin.Location.Y != 0)
                         {
-                            locY = (bin.Location.Y * 18) + 10;
+                            locY = (bin.Location.Y ) * 18 + 9;
                         }
                         else
                         {
@@ -276,6 +359,11 @@ namespace Junkbot.Game.State
 
                 }
             }
+            bar.Draw(
+                "sidebar",
+                new Rectangle(
+                    new Point(530, 0), new Size(120, 420)));
+            bar.Finish();
             /* public override void RenderFrame(IGraphicsController graphics)
              {
                  var sb = graphics.CreateSpriteBatch("menu-atlas");

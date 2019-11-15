@@ -71,6 +71,18 @@ namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
             VboUvContents = new List<float>();
         }
 
+        public Rectanglei GetSpriteUV(string spriteName)
+        {
+            Dictionary<string, Rectanglei> spriteMap = SpriteAtlas.GetSpriteMap;
+            if (!spriteMap.ContainsKey(spriteName))
+            {
+                Console.WriteLine("test");
+            }
+
+            return spriteMap[spriteName];
+
+
+        }
 
         public void Draw(string spriteName, System.Drawing.Rectangle rect)
         {
