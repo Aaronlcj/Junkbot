@@ -22,12 +22,15 @@ namespace Junkbot.Game.State
         }
         public static string[] lvl;
         public Scene Scene;
+        public JunkbotSidebar Sidebar;
+
         public static AnimationStore Store = new AnimationStore();
 
         public DemoGameState(string level)
         {
             lvl = File.ReadAllLines(Environment.CurrentDirectory + $@"\Content\Levels\{level}.txt");
             Scene = Scene.FromLevel(lvl, Store);
+            Sidebar = new JunkbotSidebar(Scene.LevelData);
         }
         public override string Name
         {
@@ -39,140 +42,61 @@ namespace Junkbot.Game.State
         {
             Scene test = Scene;
 
-            var sb = graphics.CreateSpriteBatch("actors-atlas");
-            var bck = graphics.CreateSpriteBatch("background-atlas");
-            var dec = graphics.CreateSpriteBatch("decals-atlas");
-            var bar = graphics.CreateSpriteBatch("sidebar-atlas");
+            var actors = graphics.CreateSpriteBatch("actors-atlas");
+            var background = graphics.CreateSpriteBatch("background-atlas");
+            var decals = graphics.CreateSpriteBatch("decals-atlas");
+            var sidebar = graphics.CreateSpriteBatch("sidebar-atlas");
+            var buttons = graphics.CreateSpriteBatch("sidebar-buttons-atlas");
             
             graphics.ClearViewport(Color.CornflowerBlue);
             if (Scene.LevelData.Backdrop != null)
             {
-                bck.Draw(
+                background.Draw(
                           Scene.LevelData.Backdrop,
                           new Rectangle(
                               new Point(-6, 0), new Size(536, 420)
                               )
                           );
-                bck.Finish();
+                background.Finish();
             }
             if (Scene.LevelData.Decals != null)
             {
                 foreach (JunkbotDecalData decal in Scene.LevelData.Decals)
                 {
-                    Pencil.Gaming.MathUtils.Rectanglei decalMap = dec.GetSpriteUV(decal.Decal);
-                    int locY = decal.Location.Y; 
+                    Pencil.Gaming.MathUtils.Rectanglei decalMap = decals.GetSpriteUV(decal.Decal);
+                    int locY = 0; 
                     switch (decal.Decal)
                     {
-                        case "door":
+                       /* case "door":
                             locY = 182;
                             break;
                         case "window":
                             locY -= 14;
-                            break;
+                            break;*/
                         case "fusebox_pipes_l":
-                            locY -= 22;
+                            locY += 10;
                             break;
-                        case "terminal_chart":
+                       /* case "terminal_chart":
                             locY -=28; 
                             break;
                         case "sign_keepout":
                             locY -= 14;
-                            break;
+                            break;*/
                     }
-                    dec.Draw(
+
+                    decals.Draw(
                         decal.Decal,
                         new Rectangle(
-                            new Point(decal.Location.X - 26, locY), new Size(decalMap.Width, decalMap.Height)
+                            new Point(decal.Location.X - (decalMap.Width / 2), decal.Location.Y - (decalMap.Height / 2) - locY), new Size(decalMap.Width, decalMap.Height)
                             )
                         );
-                }
-                dec.Finish();
-            }
-            /*if (decal.Decal == "door")
-            {*/
-
-
-            /*dec.Draw(
-                       decal.Decal,
-                       new Rectangle(
-                           new Point(458, 182), new Size(decalMap.Width, decalMap.Height)
-                           )
-                       );
-
-        }
-        if (decal.Decal == "window")
-        {
-            Pencil.Gaming.MathUtils.Rectanglei decalMap = dec.GetSpriteUV(decal.Decal);
-
-            dec.Draw(
-                       decal.Decal,
-                       new Rectangle(
-                           new Point(decal.Location.X - 15, decal.Location.Y - 14), new Size(decalMap.Width, decalMap.Height)
-                           )
-                       );
-        }
-        if (decal.Decal == "fusebox_pipes_l")
-        {
-            Pencil.Gaming.MathUtils.Rectanglei decalMap = dec.GetSpriteUV(decal.Decal);
-
-            dec.Draw(
-                       decal.Decal,
-                       new Rectangle(
-                           new Point(5 , decal.Location.Y - 22), new Size(decalMap.Width, decalMap.Height)
-                           )
-                       );
-
-        }
-        if (decal.Decal == "terminal_chart")
-        {
-            Pencil.Gaming.MathUtils.Rectanglei decalMap = dec.GetSpriteUV(decal.Decal);
-
-            dec.Draw(
-                       decal.Decal,
-                       new Rectangle(
-                           new Point(57, decal.Location.Y - 28), new Size(decalMap.Width, decalMap.Height)
-                           )
-                       );
-
-        }
-        if (decal.Decal == "sign_keepout")
-        {
-            Pencil.Gaming.MathUtils.Rectanglei decalMap = dec.GetSpriteUV(decal.Decal);
-
-            dec.Draw(
-                       decal.Decal,
-                       new Rectangle(
-                           new Point(decal.Location.X - 15, decal.Location.Y - 14), new Size(decalMap.Width, decalMap.Height)
-                           )
-                       );
-
-        }*/
-
-
-
-            /*foreach (IActor brick in test.GetPlayfield)
-            {
-                if (brick != null)
-                {
-                    ActorAnimationFrame currentFrame = brick.Animation.GetCurrentFrame();
-                    Point pointLoc = Point.Add(currentFrame.Offset, test.CellSize);
-                    Point drawLoc = new Point(pointLoc.X, pointLoc.Y);
-                    if (brick.BoundingBoxes.Count <= 1)
+                    /*if (decal.Decal == "fusebox_pipes_l")
                     {
-                        Rectangle boundingbox = brick.BoundingBoxes[0];
-
-                        sb.Draw(
-                        currentFrame.SpriteName,
-                        new Rectangle(
-                            brick.Location,
-                        new Size(boundingbox.Width, boundingbox.Height)
-                           )
-                       );
-                    }
+                        break;
+                    }*/
                 }
-            }*/
-            /*            IActor item = Scene.GetPlayfield[0, 10];
-                        IActor b2 = Scene.GetPlayfield[8, 9];*/
+                decals.Finish();
+            }
 
             foreach (IActor item in Scene.ImmobileBricks)
             {
@@ -217,7 +141,7 @@ namespace Junkbot.Game.State
                         if (item == Scene.GetPlayfield[8,9])
                         {
                         }
-                        sb.Draw(
+                        actors.Draw(
                          currentFrame.SpriteName,
                          new Rectangle(
                              new Point(locX, locY), new Size(sizX, sizY)
@@ -266,13 +190,13 @@ namespace Junkbot.Game.State
                         }
                         int sizX = ((climb_bot.GridSize.Width - 1) * 15) + 5;
                         int sizY = (climb_bot.GridSize.Height * 18) + 2;
-                        sb.Draw(
+                        actors.Draw(
                                  "climbbot_walk_r_1",
                                  new Rectangle(
-                                     new Point(locX, locY), new Size(sizX, sizY)
+                                     new Point(locX + 6, locY), new Size(sizX, sizY)
                                      )
                                  );
-                        sb.Finish();
+                        actors.Finish();
                     }
                     if (type.Name == "BinActor")
                     {
@@ -306,13 +230,13 @@ namespace Junkbot.Game.State
                         }
                         int sizX = 31;
                         int sizY = 47;
-                        sb.Draw(
+                        actors.Draw(
                                  "bin",
                                  new Rectangle(
                                      new Point(locX, locY), new Size(sizX, sizY)
                                      )
                                  );
-                        sb.Finish();
+                        actors.Finish();
                     }
                     if (type.Name == "JunkbotActor")
                     {
@@ -347,23 +271,22 @@ namespace Junkbot.Game.State
                         }
                         int sizX = ((junkbot.GridSize.Width - 1) * 15) + 26;
                         int sizY = ((junkbot.GridSize.Height - 1) * 18) + 32;
-                        sb.Draw(
+                        actors.Draw(
                                  "minifig_walk_l_1",
                                  new Rectangle(
                                      new Point(locX, locY), new Size(sizX, sizY)
                                      )
                                  );
-                        sb.Finish();
+                        actors.Finish();
                     }
                    
 
                 }
             }
-            bar.Draw(
-                "sidebar",
-                new Rectangle(
-                    new Point(530, 0), new Size(120, 420)));
-            bar.Finish();
+            Sidebar.Render(graphics);
+
+
+
             /* public override void RenderFrame(IGraphicsController graphics)
              {
                  var sb = graphics.CreateSpriteBatch("menu-atlas");

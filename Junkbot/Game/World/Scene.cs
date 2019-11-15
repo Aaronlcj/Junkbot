@@ -39,6 +39,7 @@ namespace Junkbot.Game
 
         public JunkbotLevelData LevelData { get; private set; }
 
+
         private AnimationStore AnimationStore;
 
         private IActor[,] PlayField;
