@@ -68,6 +68,13 @@ namespace Junkbot.Game.World.Actors
         }
         private BrickSize _Size;
 
+        private void SetBoundingBox(BrickSize size)
+        {
+            _Size = size;
+            _BoundingBoxes = new List<Rectangle>(new Rectangle[] {
+                    new Rectangle(0, 0, (int)size, 1)
+                }).AsReadOnly();
+        }
 
         public event LocationChangedEventHandler LocationChanged;
 
@@ -80,7 +87,7 @@ namespace Junkbot.Game.World.Actors
             _GridSize = new Size((int)size, 1);
             Location = location;
             _Size = size;
-
+            SetBoundingBox(size);
             UpdateBrickAnim();
         }
 

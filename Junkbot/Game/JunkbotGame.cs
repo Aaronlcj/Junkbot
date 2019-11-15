@@ -4,6 +4,7 @@ using Junkbot.Game.World.Actors.Animation;
 using Oddmatics.Rzxe.Game;
 using System;
 using System.Drawing;
+using System.IO;
 
 namespace Junkbot.Game
 {
@@ -31,7 +32,8 @@ namespace Junkbot.Game
 
             // Start with the splash screen
             //
-            PushState(new SplashGameState());
+            string level = "A New Kind of Gearbot";
+            PushState(new DemoGameState(level));
         }
     }
 }

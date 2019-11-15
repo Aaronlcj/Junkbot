@@ -33,11 +33,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Pencil.Gaming, Version=1.0.5895.28250, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Pencil.GLFW3.1.0.7\lib\net451\Pencil.Gaming.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.InteropServices" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -46,8 +51,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Content\Atlas\decals-atlas.json" />
     <Compile Include="Game\GameStateChangedEventArgs.cs" />
     <Compile Include="Game\JunkbotEngineParameters.cs" />
+    <Compile Include="Game\State\DemoGameState.cs" />
+    <Compile Include="Game\World\Actors\BotActor.cs" />
+    <Compile Include="Game\World\Actors\BinActor.cs" />
     <Compile Include="Helpers\ListHelper.cs" />
     <Compile Include="Helpers\PointHelper.cs" />
     <Compile Include="Helpers\RectangleHelper.cs" />
@@ -97,6 +106,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Animations\legoparts.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Atlas\background-atlas.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Atlas\actors-atlas.json">
@@ -174,15 +186,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+    <None Include="PencilTemp\natives32\GLFW_LINUX_BROKEN.so" />
+    <None Include="PencilTemp\natives32\liblua.dylib" />
+    <None Include="PencilTemp\natives32\liblua.so" />
+    <None Include="PencilTemp\natives32\libopenal.so" />
+    <None Include="PencilTemp\natives64\libglfw.so" />
+    <None Include="PencilTemp\natives64\liblua.so" />
+    <None Include="PencilTemp\natives64\libopenal.so" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rzxe\Rzxe.csproj">
       <Project>{827DBEC3-A270-4273-B69D-194A466BD35B}</Project>
       <Name>Rzxe</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\thirdparty\Pencil.Gaming\Pencil.Gaming\Pencil.Gaming.csproj">
-      <Project>{ddb6db6d-e5de-4bdb-8ac8-26df800e9ff0}</Project>
-      <Name>Pencil.Gaming</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -794,6 +809,14 @@
     <Content Include="Content\RippedSprites\Undercover Exclusive\transEfx_1.png" />
     <Content Include="Content\RippedSprites\Undercover Exclusive\transEfx_2.png" />
     <Content Include="Content\RippedSprites\Undercover Exclusive\transEfx_3.png" />
+    <Content Include="PencilTemp\natives32\glfw.dll" />
+    <Content Include="PencilTemp\natives32\lua.dll" />
+    <Content Include="PencilTemp\natives32\openal32.dll" />
+    <Content Include="PencilTemp\natives32\wrap_oal.dll" />
+    <Content Include="PencilTemp\natives64\glfw.dll" />
+    <Content Include="PencilTemp\natives64\lua.dll" />
+    <Content Include="PencilTemp\natives64\openal32.dll" />
+    <Content Include="PencilTemp\natives64\wrap_oal.dll" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -803,5 +826,9 @@ SET ERRORLEVEL=0
 mkdir $(TargetDir)natives32\
 SET ERRORLEVEL=0
 copy /Y $(SolutionDir)thirdparty\Pencil.Gaming\Pencil.Gaming\natives32-glfw3\ $(TargetDir)natives32\</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+xcopy /s /y "$(SolutionDir)packages\Pencil.Gaming.GLFW3.1.0.4955\NativeBinaries\x86\*.*" "$(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
 </Project>

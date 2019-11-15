@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Oddmatics.Rzxe.Game;
@@ -72,7 +73,7 @@ namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
             ResourceCache = new GLResourceCache(RenderedGameEngine.Parameters);
 
             // Set up GLFW parameters and create the window
-            //
+
             Glfw.Init();
 
             Glfw.SetErrorCallback(OnError);

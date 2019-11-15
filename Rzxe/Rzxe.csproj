@@ -35,11 +35,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Pencil.Gaming, Version=1.0.5895.28250, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Pencil.GLFW3.1.0.7\lib\net451\Pencil.Gaming.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.InteropServices" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -66,13 +71,28 @@
     <Compile Include="Windowing\IWindowManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\thirdparty\Pencil.Gaming\Pencil.Gaming\Pencil.Gaming.csproj">
-      <Project>{ddb6db6d-e5de-4bdb-8ac8-26df800e9ff0}</Project>
-      <Name>Pencil.Gaming</Name>
-    </ProjectReference>
+    <None Include="packages.config" />
+    <None Include="PencilTemp\natives32\GLFW_LINUX_BROKEN.so" />
+    <None Include="PencilTemp\natives32\liblua.dylib" />
+    <None Include="PencilTemp\natives32\liblua.so" />
+    <None Include="PencilTemp\natives32\libopenal.so" />
+    <None Include="PencilTemp\natives64\libglfw.so" />
+    <None Include="PencilTemp\natives64\liblua.so" />
+    <None Include="PencilTemp\natives64\libopenal.so" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <Content Include="PencilTemp\natives32\glfw.dll" />
+    <Content Include="PencilTemp\natives32\lua.dll" />
+    <Content Include="PencilTemp\natives32\openal32.dll" />
+    <Content Include="PencilTemp\natives32\wrap_oal.dll" />
+    <Content Include="PencilTemp\natives64\glfw.dll" />
+    <Content Include="PencilTemp\natives64\lua.dll" />
+    <Content Include="PencilTemp\natives64\openal32.dll" />
+    <Content Include="PencilTemp\natives64\wrap_oal.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+xcopy /s /y "$(SolutionDir)packages\Pencil.Gaming.GLFW3.1.0.4955\NativeBinaries\x86\*.*" "$(TargetDir)"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

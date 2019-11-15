@@ -21,8 +21,7 @@ namespace Junkbot.Game.State
         {
             get { return "SplashScreen"; }
         }
-
-
+        
         public override void RenderFrame(IGraphicsController graphics)
         {
             var sb = graphics.CreateSpriteBatch("menu-atlas");
@@ -36,7 +35,13 @@ namespace Junkbot.Game.State
                     graphics.TargetResolution
                     )
                 );
-
+            sb.Draw(
+                "play_default",
+                new Rectangle(
+                    new Point(186, 146),
+                    new Size(116, 45)
+                    )
+                );
             sb.Finish();
         }
     }

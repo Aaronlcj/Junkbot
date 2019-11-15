@@ -19,7 +19,7 @@ namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
 
         public Vector2 Size { get; private set; }
 
-
+        public Dictionary<string, Rectanglei> GetSpriteMap {  get { return SpriteMap;  } }
         private Dictionary<string, Rectanglei> SpriteMap { get; set; }
 
         private bool Disposing { get; set; }
@@ -53,7 +53,14 @@ namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
 
         public Rectanglei GetSpriteUV(string spriteName)
         {
-            return SpriteMap[spriteName];
+            if (!SpriteMap.ContainsKey(spriteName))
+            {
+                Console.WriteLine("test");
+            }
+            
+                return SpriteMap[spriteName];
+            
+
         }
 
 

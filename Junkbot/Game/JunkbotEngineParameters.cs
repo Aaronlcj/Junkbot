@@ -14,6 +14,7 @@ namespace Junkbot.Game
         {
             get { return new Size(650, 420); }
         }
+        //536
 
         public string GameContentRoot
         {

@@ -16,7 +16,7 @@ namespace Junkbot.Game.World.Level
 
         // [background]
         public string Backdrop;
-        public string[] Decals;
+        public IList<JunkbotDecalData> Decals;
 
         // [playfield]
         public Size Size;

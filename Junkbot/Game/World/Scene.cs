@@ -14,6 +14,14 @@ namespace Junkbot.Game
     internal class Scene
     {
         public Size CellSize { get; private set; }
+        public IList<JunkbotDecalData> Decals
+        {
+            get { return _Decals.AsReadOnly(); }
+        }
+
+        private List<JunkbotDecalData> _Decals;
+       
+
 
         public IList<IActor> MobileActors
         {
@@ -29,20 +37,30 @@ namespace Junkbot.Game
 
         public Size Size { get; private set; }
 
+        public JunkbotLevelData LevelData { get; private set; }
 
         private AnimationStore AnimationStore;
 
         private IActor[,] PlayField;
+
+        public IActor[,] GetPlayfield
+        {
+            get { return PlayField; }
+        }
 
 
         public Scene(JunkbotLevelData levelData, AnimationStore store)
         {
             _MobileActors = new List<IActor>();
             _ImmobileBricks = new List<BrickActor>();
+            _Decals = new List<JunkbotDecalData>();
             AnimationStore = store;
             PlayField = new IActor[levelData.Size.Width, levelData.Size.Height];
             CellSize = levelData.Spacing;
             Size = levelData.Size;
+            LevelData = levelData;
+
+
 
             foreach (JunkbotPartData part in levelData.Parts)
             {
@@ -79,6 +97,13 @@ namespace Junkbot.Game
                     case "minifig":
                         actor = new JunkbotActor(store, this, location, (part.AnimationName == "WALK_L" ? FacingDirection.Left : FacingDirection.Right));
                         break;
+                    case "haz_climber":
+                        actor = new BotActor(store, this, location, (part.AnimationName == "WALK_R" ? FacingDirection.Left : FacingDirection.Right));
+                        break;
+
+                    case "flag":
+                        actor = new BinActor(store, location);
+                        break;
 
                     default:
                         Console.WriteLine("Unknown actor: " + levelData.Types[part.TypeIndex]);
@@ -93,7 +118,6 @@ namespace Junkbot.Game
                 if (actor is BrickActor)
                 {
                     var brick = (BrickActor)actor;
-
                     _ImmobileBricks.InsertSorted((BrickActor)actor);
                 }
                 else
@@ -146,7 +170,7 @@ namespace Junkbot.Game
             {
                 // Bomb out if the cell is not free (naughty actor!)
                 //
-                if (PlayField[cell.X, cell.Y] != null)
+                if (PlayField[cell.X, cell.Y] != null )
                     throw new Exception("Scene.AssignGridCells: Attempted to assign an occupied cell!! X:" + cell.X.ToString() + ", Y:" + cell.Y.ToString());
 
                 PlayField[cell.X, cell.Y] = actor;
@@ -197,7 +221,7 @@ namespace Junkbot.Game
         {
             var levelData = new JunkbotLevelData();
             var parts = new List<JunkbotPartData>();
-
+            var decals = new List<JunkbotDecalData>();
             foreach (string line in lvlFile)
             {
                 // Try retrieving the data
@@ -209,7 +233,7 @@ namespace Junkbot.Game
 
                 // Retrieve key and value
                 //
-                string key = definition[0].ToLower();
+                string key = definition[0].ToLower().Trim();
                 string value = definition[1];
 
                 switch (key)
@@ -319,14 +343,14 @@ namespace Junkbot.Game
                                 Console.WriteLine("Invalid decal data encountered");
                                 continue;
                             }
-                            var decals = new JunkbotDecalData(); //a new struct for storing decal data: its sprite and position.
-                            decals.Location = new Point(
+                            var decal = new JunkbotDecalData(); //a new struct for storing decal data: its sprite and position.
+                            decal.Location = new Point(
                                 Convert.ToInt32(decalData[0]),
                                 Convert.ToInt32(decalData[1])
                                 );
-                            decals.Decal = decalData[2]; //If I'm not mistaken, this will pass the relevant information from the level to the decal entry.
-                                                         //Now, all that remains is to get stuff sorted out.
-
+                            decal.Decal = decalData[2]; //If I'm not mistaken, this will pass the relevant information from the level to the decal entry.
+                                                        //Now, all that remains is to get stuff sorted out.
+                            decals.Add(decal);
                         }
                         break;
                     case "backdrop":
@@ -336,7 +360,7 @@ namespace Junkbot.Game
             }
 
             levelData.Parts = parts.AsReadOnly();
-
+            levelData.Decals = decals.AsReadOnly();
             return new Scene(levelData, store);
         }
     }
