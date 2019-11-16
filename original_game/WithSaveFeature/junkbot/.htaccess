@@ -1,0 +1,3 @@
+#Deliver .php files whenever the URL says .asp
+RewriteEngine On
+RewriteRule (.*)\.asp$ $1.php
