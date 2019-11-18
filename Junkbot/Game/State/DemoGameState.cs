@@ -41,6 +41,7 @@ namespace Junkbot.Game.State
         public override void RenderFrame(IGraphicsController graphics)
         {
             Scene test = Scene;
+            Scene.UpdateActors();
 
             var actors = graphics.CreateSpriteBatch("actors-atlas");
             var background = graphics.CreateSpriteBatch("background-atlas");
@@ -188,14 +189,26 @@ namespace Junkbot.Game.State
                         {
                             locY = climb_bot.Location.Y;
                         }
-                        int sizX = ((climb_bot.GridSize.Width - 1) * 15) + 5;
+                        int sizX = ((climb_bot.GridSize.Width) * 15) + 5;
                         int sizY = (climb_bot.GridSize.Height * 18) + 2;
-                        actors.Draw(
-                                 "climbbot_walk_r_1",
-                                 new Rectangle(
-                                     new Point(locX + 6, locY), new Size(sizX, sizY)
-                                     )
-                                 );
+                        if (climb_bot.Animation.IsPlaying())
+                        {
+                            actors.Draw(
+                                climb_bot.Animation.GetCurrentFrame().SpriteName,
+                                new Rectangle(
+                                    new Point(locX + 6, locY), new Size(sizX, sizY)
+                                    )
+                                );
+                        }
+                        else
+                        {
+                            actors.Draw(
+                                     "climbbot_walk_l_1",
+                                     new Rectangle(
+                                         new Point(locX + 6, locY), new Size(sizX, sizY)
+                                         )
+                                     );
+                        }
                         actors.Finish();
                     }
                     if (type.Name == "BinActor")
@@ -271,15 +284,32 @@ namespace Junkbot.Game.State
                         }
                         int sizX = ((junkbot.GridSize.Width - 1) * 15) + 26;
                         int sizY = ((junkbot.GridSize.Height - 1) * 18) + 32;
-                        actors.Draw(
-                                 "minifig_walk_l_1",
-                                 new Rectangle(
-                                     new Point(locX, locY), new Size(sizX, sizY)
-                                     )
-                                 );
+                        if (junkbot.Animation.IsPlaying())
+                        {
+                            if (junkbot.Location.X == 35)
+                            {
+                                Console.WriteLine("33 lul");
+                            }
+                            actors.Draw(
+                                junkbot.Animation.GetCurrentFrame().SpriteName,
+                                new Rectangle(
+                                    new Point((junkbot.Location.X * 15), locY), new Size(sizX, sizY)
+                                    )
+                                );
+                        }
+                        else
+                        {
+                            actors.Draw(
+                                     "minifig_walk_l_1",
+                                     new Rectangle(
+                                         new Point(locX, locY), new Size(sizX, sizY)
+                                         )
+                                     );
+                        }
                         actors.Finish();
+
                     }
-                   
+
 
                 }
             }

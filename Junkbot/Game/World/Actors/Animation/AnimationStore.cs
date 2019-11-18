@@ -23,7 +23,9 @@ namespace Junkbot.Game.World.Actors.Animation
             var anims = new string[]
             {
                 Environment.CurrentDirectory + @"\Content\Animations\junkbot.json",
-                Environment.CurrentDirectory + @"\Content\Animations\legoparts.json"
+                Environment.CurrentDirectory + @"\Content\Animations\legoparts.json",
+                Environment.CurrentDirectory + @"\Content\Animations\climbbot.json"
+
             };
 
             foreach (string animPath in anims)

@@ -70,7 +70,7 @@ namespace Junkbot.Game.World.Actors.Animation
                 if (CurrentFrameIndex + 1 >= Frameset.Count)
                     CurrentFrameIndex = 0;
                 else
-                    ++CurrentFrameIndex;
+                    CurrentFrameIndex += 1;
 
                 TickCount = 0;
 

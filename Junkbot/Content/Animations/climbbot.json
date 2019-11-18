@@ -1,0 +1,218 @@
+﻿[
+  {
+    "name": "climbbot-walk-left",
+    "frames": [
+      {
+        "sprite": "climbbot_walk_l_1",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "sprite": "climbbot_walk_l_2",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "sprite": "climbbot_walk_l_3",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "sprite": "climbbot_walk_l_4",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "sprite": "climbbot_walk_l_5",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "emit_event": true,
+        "sprite": "climbbot_walk_l_6",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    ]
+  },
+  {
+    "name": "climbbot-walk-right",
+    "frames": [
+      {
+        "sprite": "climbbot_walk_r_1",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "sprite": "climbbot_walk_r_2",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "sprite": "climbbot_walk_r_3",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "sprite": "climbbot_walk_r_4",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": -0
+        }
+      },
+      {
+        "sprite": "climbbot_walk_r_5",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "emit_event": true,
+        "sprite": "climbbot_walk_r_6",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    ]
+  },
+  {
+    "name": "climbbot-walk-up",
+    "frames": [
+      {
+        "sprite": "climbbot_walk_u_1",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "sprite": "climbbot_walk_u_2",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "sprite": "climbbot_walk_u_3",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "sprite": "climbbot_walk_u_4",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "sprite": "climbbot_walk_u_5",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "emit_event": true,
+        "sprite": "climbbot_walk_u_6",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    ]
+  },
+  {
+    "name": "climbbot-walk-down",
+    "frames": [
+      {
+        "sprite": "climbbot_walk_d_1",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "sprite": "climbbot_walk_d_2",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "sprite": "climbbot_walk_d_3",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "sprite": "climbbot_walk_d_4",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "sprite": "climbbot_walk_d_5",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "emit_event": true,
+        "sprite": "climbbot_walk_d_6",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    ]
+  }
+]

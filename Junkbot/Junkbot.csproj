@@ -51,6 +51,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Content\Animations\climbbot.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Atlas\decals-atlas.json" />
     <Compile Include="Game\GameStateChangedEventArgs.cs" />
     <Compile Include="Game\JunkbotEngineParameters.cs" />
@@ -822,14 +825,11 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>rmdir /s /q $(TargetDir)natives32\
-SET ERRORLEVEL=0
-mkdir $(TargetDir)natives32\
-SET ERRORLEVEL=0
-copy /Y $(SolutionDir)thirdparty\Pencil.Gaming\Pencil.Gaming\natives32-glfw3\ $(TargetDir)natives32\</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>
-xcopy /s /y "$(SolutionDir)packages\Pencil.Gaming.GLFW3.1.0.4955\NativeBinaries\x86\*.*" "$(TargetDir)"</PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

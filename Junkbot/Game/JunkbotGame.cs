@@ -32,8 +32,8 @@ namespace Junkbot.Game
 
             // Start with the splash screen
             //
-            string level = "A New Kind of Gearbot";
-            PushState(new DemoGameState(level));
+            string level = "loading_level";
+            PushState(new SplashGameState(level));
         }
     }
 }

@@ -25,6 +25,10 @@ namespace Junkbot.Game.World.Actors.Animation
             AnimationStore = store;
         }
 
+        public bool IsPlaying()
+        {
+            return ActiveAnimation.IsPlaying;
+        }
 
         public ActorAnimationFrame GetCurrentFrame()
         {
