@@ -18,7 +18,7 @@ namespace Junkbot.Game.World.Actors
         public Size GridSize { get { return _GridSize; } }
         private static readonly Size _GridSize = new Size(1, 2);
         public String Type { get; set; } = "BinActor";
-
+        public bool Rendered { get; set; }
         public Point Location
         {
             get { return _Location; }
@@ -40,6 +40,7 @@ namespace Junkbot.Game.World.Actors
             Animation = new AnimationServer(store);
             _BoundingBoxes = new List<Rectangle>().AsReadOnly();
             Location = location;
+            Rendered = false;
         }
 
 

@@ -18,12 +18,12 @@ namespace Junkbot.Game.World.Actors
 
         Point Location { get; set; }
 
+        bool Rendered { get; set; }
+
         string Type { get; set; }
 
         event LocationChangedEventHandler LocationChanged;
 
-/*        Rectangle GetCheckBounds();
-*/
         void Update();
     }
 }

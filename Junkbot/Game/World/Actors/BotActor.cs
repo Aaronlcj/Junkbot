@@ -20,6 +20,7 @@ namespace Junkbot.Game.World.Actors
         }).AsReadOnly();
         public String Type { get; set; } = "BotActor";
 
+        public bool Rendered { get; set; }
         public Point Location
         {
             get { return _Location; }
@@ -51,6 +52,7 @@ namespace Junkbot.Game.World.Actors
             Location = location;
             SetWalkingDirection(initialDirection);
             Scene = scene;
+            Rendered = false;
         }
 
 

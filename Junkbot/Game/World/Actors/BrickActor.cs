@@ -16,6 +16,7 @@ namespace Junkbot.Game.World.Actors
         }).AsReadOnly();
 
         public String Type { get; set; } = "BrickActor";
+        public bool Rendered { get; set; }
 
         public AnimationServer Animation { get; private set; }
 
@@ -88,6 +89,7 @@ namespace Junkbot.Game.World.Actors
             _GridSize = new Size((int)size, 1);
             Location = location;
             _Size = size;
+            Rendered = false;
             SetBoundingBox(size);
             UpdateBrickAnim();
         }
