@@ -112,9 +112,8 @@ namespace Junkbot.Game.World.Actors
         {
             if (Scene != null)
             {
-                /* collision checks:
+                //quick maffs:
 
-              */
                 int dx = FacingDirection == FacingDirection.Left ? -1 : 1;
                 int tar = FacingDirection == FacingDirection.Left ? -1 : 2;
 

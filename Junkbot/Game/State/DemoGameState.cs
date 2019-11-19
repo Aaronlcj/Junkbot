@@ -14,13 +14,13 @@ namespace Junkbot.Game.State
     /// <summary>
     /// Represents the main menu game state.
     /// </summary>
-    internal class DemoGameState : GameState
+/*    internal class DemoGameState : GameState
     {
         public override InputFocalMode FocalMode
         {
             get { return InputFocalMode.Always; }
         }
-        public static string[] lvl;
+        public static string[] lvl; 
         public Scene Scene;
         public JunkbotSidebar Sidebar;
 
@@ -68,21 +68,21 @@ namespace Junkbot.Game.State
                     int locY = 0; 
                     switch (decal.Decal)
                     {
-                       /* case "door":
+                       *//* case "door":
                             locY = 182;
                             break;
                         case "window":
                             locY -= 14;
-                            break;*/
+                            break;*//*
                         case "fusebox_pipes_l":
                             locY += 10;
                             break;
-                       /* case "terminal_chart":
+                       *//* case "terminal_chart":
                             locY -=28; 
                             break;
                         case "sign_keepout":
                             locY -= 14;
-                            break;*/
+                            break;*//*
                     }
 
                     decals.Draw(
@@ -91,10 +91,10 @@ namespace Junkbot.Game.State
                             new Point(decal.Location.X - (decalMap.Width / 2), decal.Location.Y - (decalMap.Height / 2) - locY), new Size(decalMap.Width, decalMap.Height)
                             )
                         );
-                    /*if (decal.Decal == "fusebox_pipes_l")
+                    *//*if (decal.Decal == "fusebox_pipes_l")
                     {
                         break;
-                    }*/
+                    }*//*
                 }
                 decals.Finish();
             }
@@ -317,7 +317,7 @@ namespace Junkbot.Game.State
 
 
 
-            /* public override void RenderFrame(IGraphicsController graphics)
+            *//* public override void RenderFrame(IGraphicsController graphics)
              {
                  var sb = graphics.CreateSpriteBatch("menu-atlas");
 
@@ -332,7 +332,7 @@ namespace Junkbot.Game.State
                      );
 
                  sb.Finish();
-             }*/
+             }*//*
         }
     }
-}
+*/}

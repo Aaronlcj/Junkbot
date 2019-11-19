@@ -49,6 +49,10 @@ namespace Junkbot.Game
             get { return PlayField; }
         }
 
+        public IActor[,] BrickGrid { get; set; }
+
+
+
 
         public Scene(JunkbotLevelData levelData, AnimationStore store)
         {
@@ -57,6 +61,7 @@ namespace Junkbot.Game
             _Decals = new List<JunkbotDecalData>();
             AnimationStore = store;
             PlayField = new IActor[levelData.Size.Width + 1, levelData.Size.Height];
+            BrickGrid = new IActor[levelData.Size.Width + 1, levelData.Size.Height];
             CellSize = levelData.Spacing;
             Size = levelData.Size;
             LevelData = levelData;
@@ -115,6 +120,12 @@ namespace Junkbot.Game
                 UpdateActorGridPosition(actor, actor.Location);
 
                 actor.LocationChanged += Actor_LocationChanged;
+                if (actor is BrickActor)
+                {
+/*                    (actor as BrickActor).BoundLocationChanged += Actor_BoundLocationChanged;
+*/                    (actor as BrickActor).BoundLocation = location.Subtract(new Point(1, actor.GridSize.Height));
+
+                }
 
                 if (actor is BrickActor)
                 {
@@ -131,16 +142,21 @@ namespace Junkbot.Game
             UpdateActorGridPosition((IActor)sender, e.NewLocation, e.OldLocation);
         }
 
+        private void Actor_BoundLocationChanged(object sender, LocationChangedEventArgs e)
+        {
+            BrickGrid[e.NewLocation.X, e.NewLocation.Y] = sender as IActor;
+            PlayField[e.OldLocation.X, e.OldLocation.Y] = null;
+
+            /*            UpdateActorGridPosition((IActor)sender, e.NewLocation, e.OldLocation);
+            */
+        }
+
         public bool CheckGridRegionFree(Rectangle region)
         {
             Point[] cellsToCheck = region.ExpandToGridCoordinates();
 
             foreach (Point cell in cellsToCheck)
             {
-                if (cell.X == 7)
-                {
-                    Console.WriteLine("top collision");
-                }
 
                int t1 = PlayField.GetLength(0);
                     int t2 = PlayField.GetLength(1);
@@ -218,8 +234,14 @@ namespace Junkbot.Game
         {
             foreach (Point cell in cellsToCheck)
             {
-                if (PlayField[cell.X, cell.Y] != actor)
-                    throw new Exception("Scene.VerifyGridInSync: Grid out of sync!! X:" + cell.X.ToString() + ", Y:" + cell.Y.ToString());
+/*                bool test = (BrickGrid[(actor as BrickActor).BoundLocation.X, (actor as BrickActor).BoundLocation.Y] != actor);
+*/                if (PlayField[cell.X, cell.Y] != actor)
+                {
+                    if (BrickGrid[cell.X, cell.Y] != actor)
+                    {
+                        throw new Exception("Scene.VerifyGridInSync: Grid out of sync!! X:" + cell.X.ToString() + ", Y:" + cell.Y.ToString());
+                    }
+                }
             }
         }
 
@@ -227,14 +249,21 @@ namespace Junkbot.Game
         {
                 foreach (Point cell in cells)
                 {
-                    // Bomb out if the cell is not free (naughty actor!)
-                    //
-                    /*   if (PlayField[cell.X, cell.Y] != null)
-
-                           throw new Exception("Scene.AssignGridCells: Attempted to assign an occupied cell!! X:" + cell.X.ToString() + ", Y:" + cell.Y.ToString());
-       */
+                if (cell.X < 35)
+                {
                     PlayField[cell.X, cell.Y] = actor;
+                    ;
                 }
+                if (cell.X == 35 && cell.Y == 21) {
+                    PlayField[cell.X, cell.Y] = null;
+                }
+                // Bomb out if the cell is not free (naughty actor!)
+                //
+                /*   if (PlayField[cell.X, cell.Y] != null)
+
+                       throw new Exception("Scene.AssignGridCells: Attempted to assign an occupied cell!! X:" + cell.X.ToString() + ", Y:" + cell.Y.ToString());
+   */
+            }
 
         }
 

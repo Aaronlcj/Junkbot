@@ -15,8 +15,6 @@ namespace Oddmatics.Rzxe
 {
     public sealed class GameEntryPoint
     {
-        System.Timers.Timer _timer;
-
         private GameEngine _GameEngine;
         public GameEngine GameEngine
         {
@@ -67,20 +65,7 @@ namespace Oddmatics.Rzxe
             
             WindowManager.Initialize();
         }
-        void Timer_Tick(object sender, EventArgs e)
-        {
 
-
-
-        }
-
-        public void SetTimer()
-        {
-            _timer = new System.Timers.Timer(2000);
-            _timer.Elapsed += Timer_Tick;
-            _timer.AutoReset = true;
-            _timer.Enabled = true;
-        }
         public void Run()
         {
             if (WindowManager == null || !WindowManager.Ready)
@@ -91,29 +76,23 @@ namespace Oddmatics.Rzxe
             // Enter the main game loop
             //
             var gameTime = new Stopwatch();
-            SetTimer();
 
 
             GameEngine.Begin();
             while (WindowManager.IsOpen)
             {
-                
+                gameTime.Reset();
                 TimeSpan deltaTime = gameTime.Elapsed;
 
-                // gameTime.Reset();                
+
                 InputEvents inputs = WindowManager.ReadInputEvents();
-/*                foreach (string thing in inputs.ActiveDownedInputs)
-                {
-                    Console.WriteLine(thing + inputs.MousePosition.ToString());
-                }*/
+
                 GameEngine.Update(deltaTime, inputs);
                 WindowManager.RenderFrame();
 
                 Thread.Yield();
 
             }
-            _timer.Stop();
-            _timer.Dispose();
         }
     }
 }

@@ -70,7 +70,11 @@ namespace Oddmatics.Rzxe.Game
 
         public virtual void Update(TimeSpan deltaTime, InputEvents inputs)
         {
-            //
+
+            for (int i = StateStack.Count - 1; i >= 0; i--)
+            {
+                StateStack[i].ProcessInputs(inputs);
+            }            //
             // Nothing yet
             //
         }

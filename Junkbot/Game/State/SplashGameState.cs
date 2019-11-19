@@ -25,7 +25,7 @@ namespace Junkbot.Game.State
         public static string[] lvl;
         public Scene Scene;
         public static AnimationStore Store = new AnimationStore();
-
+        private IActor brickToBind = null;
         public override string Name
         {
             get { return "SplashScreen"; }
@@ -48,21 +48,71 @@ namespace Junkbot.Game.State
             _timer.AutoReset = true;
             _timer.Enabled = true;
         }
+        
+        private void BindToMouse(BrickActor brick, Point mousePos)
+        {
+            if (brick != null)
+            {
+                Scene.BrickGrid[brick.Location.X, brick.Location.Y] = brick;
 
+                brick.BoundLocation = new Point(mousePos.X, mousePos.Y);
+/*                brick.Location = new Point(35, 21);
+*/
+                brick.IsBound = true;
+            }
+        }
         public override void ProcessInputs(InputEvents inputs)
         {
-            var mousePos = inputs.MousePosition;
-            var mousePress = inputs.NewPresses;
-            var mouseRelease = inputs.NewReleases;
+            var MousePosition = inputs.MousePosition;
+            var MousePress = inputs.NewPresses;
+            var MouseRelease = inputs.NewReleases;
+/*            if (MousePress.Count != 0 || MouseRelease.Count != 0)
+            {
+                Console.WriteLine();
+            }*/
+            Point MousePoint = new Point((int)Math.Floor(MousePosition.X), (int)Math.Floor(MousePosition.Y));
+            Point MousePosAsCell = MousePoint.Reduce(Scene.LevelData.Spacing);
+
+            if ((MousePosAsCell.X >= 0 && MousePosAsCell.X < 35) && (MousePosAsCell.Y >= 0 && MousePosAsCell.Y <= 21))
+            {
+                Console.WriteLine(Scene.GetPlayfield.GetLength(0).ToString() + Scene.GetPlayfield.GetLength(1).ToString() + MousePosAsCell);
+
+                IActor cell = Scene.GetPlayfield[MousePosAsCell.X, MousePosAsCell.Y];
+
+                if (cell != null && brickToBind == null)
+                {
+                    foreach (string activeInput in inputs.ActiveDownedInputs)
+                    {
+                        if (brickToBind == null)
+                        {
+                            if (activeInput == "mb.left")
+                            {
+                                brickToBind = cell;
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                }
+                if (cell == null && brickToBind != null)
+                {
+                    foreach (string activeInput in inputs.ActiveDownedInputs)
+                    {
+                        if (activeInput == "mb.left")
+                        {
+                            brickToBind = null;
+                        }
+                    }
+                }
+            }
+            BindToMouse(brickToBind as BrickActor, MousePosAsCell);
             // convert mouse x,y to cell coordinates, bind sprite to cursor on press, check region free, assign new location on mouse release
         }
         public override void RenderFrame(IGraphicsController graphics)
         {
-          if (Scene.GetPlayfield[16, 19] == null)
-            {
-                Console.WriteLine();
-            }
-
             foreach (IActor actor in Scene.GetPlayfield)
             {
                 if (actor != null)
@@ -73,6 +123,17 @@ namespace Junkbot.Game.State
             var sb = graphics.CreateSpriteBatch("menu-atlas");
             var actors = graphics.CreateSpriteBatch("actors-atlas");
             graphics.ClearViewport(Color.CornflowerBlue);
+            BrickActor movingBrick = null;
+            Point BoundLocation = new Point(9999, 9999);
+
+            foreach (BrickActor item in Scene.BrickGrid)
+            {
+                if (item != null)
+                {
+                    movingBrick = item;
+                    break;
+                }
+            }
 
             // Render order
             int x;
@@ -88,50 +149,58 @@ namespace Junkbot.Game.State
                         if (actor.Rendered == false)
                         {
                             {
+
                                 int locX;
                                 int locY;
                                 int sizY;
                                 int sizX;
+                                
                                 Type type = actor.GetType();
                                 if (actor is BrickActor)
                                 {
-                                    ActorAnimationFrame currentFrame = actor.Animation.GetCurrentFrame();
+                                    BrickActor brick = actor as BrickActor;
+                                    ActorAnimationFrame currentFrame = brick.Animation.GetCurrentFrame();
 
-
-                                    if (actor.BoundingBoxes.Count <= 1)
+                                    int xMod = brick.Location.X;
+                                    int yMod = brick.Location.Y;
+                                    if (brick.BoundingBoxes.Count <= 1)
                                     {
-                                        Rectangle testtt = actor.BoundingBoxes[0];
-                                        Size testttt = actor.GridSize;
-                                        if (actor.Location.X != 0)
+                                        
+
+                                        if (brick.BoundLocation != brick.Location)
                                         {
-                                            locX = (actor.Location.X * 15);
+                                            xMod = brick.BoundLocation.X;
+                                            yMod = brick.BoundLocation.Y;
+                                        }
+
+
+                                        if (brick.Location.X != 0)
+                                        {
+                                            locX = (xMod * 15);
                                         }
                                         else
                                         {
-                                            locX = actor.Location.X;
+                                            locX = xMod;
                                         }
 
                                         if (actor.Location.Y != 0)
                                         {
-                                            locY = (actor.Location.Y * 18) + 10;
+                                            locY = (yMod * 18) + 10;
                                         }
                                         else
                                         {
-                                            locY = actor.Location.Y + 10;
+                                            locY = yMod + 10;
                                         }
 
                                         if (actor.GridSize.Height != 1)
                                         {
-                                            sizY = (actor.GridSize.Height - 1) * 18 + 14;
+                                            sizY = (brick.GridSize.Height - 1) * 18 + 14;
                                         }
                                         else
                                         {
-                                            sizY = actor.GridSize.Height * 32;
+                                            sizY = brick.GridSize.Height * 32;
                                         }
-                                        sizX = (actor.GridSize.Width - 1) * 15 + 26;
-                                        if (actor == Scene.GetPlayfield[8, 9])
-                                        {
-                                        }
+                                        sizX = (brick.GridSize.Width - 1) * 15 + 26;
                                         actors.Draw(
                                          currentFrame.SpriteName,
                                          new Rectangle(
@@ -182,6 +251,65 @@ namespace Junkbot.Game.State
                                 }
                                 actor.Rendered = true;
                                 actors.Finish();
+                            }
+                        }
+                    }
+                    if (movingBrick != null)
+                    {
+                        int locX;
+                        int locY;
+                        int sizY;
+                        int sizX;
+                        if (movingBrick.Location.X == x && movingBrick.Location.Y == y)
+                        {
+                            ActorAnimationFrame currentFrame = movingBrick.Animation.GetCurrentFrame();
+
+                            int xMod = movingBrick.Location.X;
+                            int yMod = movingBrick.Location.Y;
+                            if (movingBrick.BoundingBoxes.Count <= 1)
+                            {
+
+
+                                if (movingBrick.BoundLocation != BoundLocation)
+                                {
+                                    xMod = movingBrick.BoundLocation.X;
+                                    yMod = movingBrick.BoundLocation.Y;
+                                }
+
+
+                                if (movingBrick.Location.X != 0)
+                                {
+                                    locX = (xMod * 15);
+                                }
+                                else
+                                {
+                                    locX = xMod;
+                                }
+
+                                if (actor.Location.Y != 0)
+                                {
+                                    locY = (yMod * 18) + 10;
+                                }
+                                else
+                                {
+                                    locY = yMod + 10;
+                                }
+
+                                if (actor.GridSize.Height != 1)
+                                {
+                                    sizY = (movingBrick.GridSize.Height - 1) * 18 + 14;
+                                }
+                                else
+                                {
+                                    sizY = movingBrick.GridSize.Height * 32;
+                                }
+                                sizX = (movingBrick.GridSize.Width - 1) * 15 + 26;
+                                actors.Draw(
+                                 currentFrame.SpriteName,
+                                 new Rectangle(
+                                     new Point(locX, locY), new Size(sizX, sizY)
+                                     )
+                                 );
                             }
                         }
                     }

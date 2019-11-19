@@ -18,6 +18,20 @@ namespace Junkbot.Game.World.Actors
         public String Type { get; set; } = "BrickActor";
         public bool Rendered { get; set; }
 
+        public Point BoundLocation
+        {
+            get { return _BoundLocation; }
+            set
+            {
+                Point oldBoundLocation = _BoundLocation;
+                _BoundLocation = value;
+
+                BoundLocationChanged?.Invoke(this, new LocationChangedEventArgs(oldBoundLocation, value));
+            }
+        }
+        private Point _BoundLocation;
+        public bool IsBound { get; set; }
+
         public AnimationServer Animation { get; private set; }
 
         public IReadOnlyList<Rectangle> BoundingBoxes { get { return this._BoundingBoxes; } }
@@ -79,6 +93,7 @@ namespace Junkbot.Game.World.Actors
         }
 
         public event LocationChangedEventHandler LocationChanged;
+        public event LocationChangedEventHandler BoundLocationChanged;
 
 
         public BrickActor(AnimationStore store, Point location, Color color, BrickSize size)
@@ -90,8 +105,10 @@ namespace Junkbot.Game.World.Actors
             Location = location;
             _Size = size;
             Rendered = false;
+            IsBound = false;
             SetBoundingBox(size);
             UpdateBrickAnim();
+            BoundLocation = Location;
         }
 
 
