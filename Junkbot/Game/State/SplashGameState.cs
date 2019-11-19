@@ -1,4 +1,5 @@
-﻿using Junkbot.Game.World.Actors;
+﻿using Junkbot.Helpers;
+using Junkbot.Game.World.Actors;
 using Junkbot.Game.World.Actors.Animation;
 using Oddmatics.Rzxe.Game;
 using Oddmatics.Rzxe.Input;
@@ -6,6 +7,7 @@ using Oddmatics.Rzxe.Windowing.Graphics;
 using System;
 using System.Drawing;
 using System.IO;
+using Pencil.Gaming;
 
 namespace Junkbot.Game.State
 {
@@ -14,6 +16,8 @@ namespace Junkbot.Game.State
     /// </summary>
     internal class SplashGameState : GameState
     {
+        System.Timers.Timer _timer;
+
         public override InputFocalMode FocalMode
         {
             get { return InputFocalMode.Always; }
@@ -31,10 +35,34 @@ namespace Junkbot.Game.State
         {
             lvl = File.ReadAllLines(Environment.CurrentDirectory + $@"\Content\Levels\{level}.txt");
             Scene = Scene.FromLevel(lvl, Store);
+            SetTimer();
+        }
+        void Timer_Tick(object sender, EventArgs e)
+        {
+            Scene.UpdateActors();
+        }
+        public void SetTimer()
+        {
+            _timer = new System.Timers.Timer(25);
+            _timer.Elapsed += Timer_Tick;
+            _timer.AutoReset = true;
+            _timer.Enabled = true;
+        }
+
+        public override void ProcessInputs(InputEvents inputs)
+        {
+            var mousePos = inputs.MousePosition;
+            var mousePress = inputs.NewPresses;
+            var mouseRelease = inputs.NewReleases;
+            // convert mouse x,y to cell coordinates, bind sprite to cursor on press, check region free, assign new location on mouse release
         }
         public override void RenderFrame(IGraphicsController graphics)
         {
-            Scene.UpdateActors();
+          if (Scene.GetPlayfield[16, 19] == null)
+            {
+                Console.WriteLine();
+            }
+
             foreach (IActor actor in Scene.GetPlayfield)
             {
                 if (actor != null)
@@ -141,30 +169,16 @@ namespace Junkbot.Game.State
                                     {
                                         locY = junkbot.Location.Y + 10;
                                     }
+                                    Size size = Size.Add(junkbot.GridSize, Scene.LevelData.Spacing);
                                     sizX = ((junkbot.GridSize.Width - 1) * 15) + 26;
                                     sizY = ((junkbot.GridSize.Height - 1) * 18) + 32;
-                                    if (junkbot.Animation.IsPlaying())
-                                    {
-                                        if (junkbot.Location.X == 35)
-                                        {
-                                            Console.WriteLine("33 lul");
-                                        }
+                                    Point frameOffset = new Point((junkbot.Location.X * 15), locY).Add(junkbot.Animation.GetCurrentFrame().Offset);
                                         actors.Draw(
                                             junkbot.Animation.GetCurrentFrame().SpriteName,
                                             new Rectangle(
-                                                new Point((junkbot.Location.X * 15), locY), new Size(sizX, sizY)
+                                                frameOffset, junkbot.Animation.GetCurrentFrame().SpriteSize
                                                 )
                                             );
-                                    }
-                                    else
-                                    {
-                                        actors.Draw(
-                                                 "minifig_walk_l_1",
-                                                 new Rectangle(
-                                                     new Point(locX, locY), new Size(sizX, sizY)
-                                                     )
-                                                 );
-                                    }
                                 }
                                 actor.Rendered = true;
                                 actors.Finish();

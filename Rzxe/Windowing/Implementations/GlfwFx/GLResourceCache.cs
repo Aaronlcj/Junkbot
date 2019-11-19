@@ -52,7 +52,7 @@ namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
                     );
 
                 Atlases.Add(newAtlas.Name, newAtlas);
-
+                 
                 return newAtlas;
             }
         }

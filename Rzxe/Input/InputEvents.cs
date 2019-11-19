@@ -20,7 +20,7 @@ namespace Oddmatics.Rzxe.Input
         public IList<string> NewReleases { get; private set; }
 
         
-        private List<string> ActiveDownedInputs { get; set; }
+        public List<string> ActiveDownedInputs { get; set; }
         
         private IList<string> LastDownedInputs { get; set; }
 

@@ -60,9 +60,22 @@ namespace Junkbot.Game.World.Actors.Animation
                         );
                     bool shouldEmitEvent = frameDef["emit_event"] != null && frameDef.Value<bool>("emit_event");
                     var spriteName = frameDef.Value<string>("sprite");
-                    var ticks = frameDef.Value<byte>("ticks");
+                    var ticks = frameDef.Value<byte>("ticks"); 
+                    Size size;
+                    if (frameDef["size"] != null)
+                    {
+                        size = new Size(
+                       frameDef["size"].Value<int>("x"),
+                       frameDef["size"].Value<int>("y")
+                       );
+                    }
+                    else
+                    {
+                        size = new Size(0,0);
+                    }
+                    Size spriteSize = size;
 
-                    frameList.Add(new ActorAnimationFrame(shouldEmitEvent, offset, spriteName, ticks));
+                    frameList.Add(new ActorAnimationFrame(shouldEmitEvent, offset, spriteName, ticks, spriteSize));
                 }
 
                 if (frameList.Count > 0) // Do not add empty animations

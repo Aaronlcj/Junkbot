@@ -15,15 +15,19 @@ namespace Junkbot.Game.World.Actors.Animation
 
         public string SpriteName { get; private set; }
 
+        public Size SpriteSize { get; private set; }
+
         public byte Ticks { get; private set; }
 
 
-        public ActorAnimationFrame(bool shouldEmitEvent, Point offset, string spriteName, byte ticks)
+        public ActorAnimationFrame(bool shouldEmitEvent, Point offset, string spriteName, byte ticks, Size spriteSize)
         {
             ShouldEmitEvent = shouldEmitEvent;
             Offset = offset;
             SpriteName = spriteName;
             Ticks = ticks;
+            SpriteSize = spriteSize;
+
         }
     }
 }
