@@ -77,27 +77,27 @@ namespace Junkbot.Game
                 switch (levelData.Types[part.TypeIndex])
                 {
                     case "brick_01":
-                        actor = new BrickActor(store, location, color, BrickSize.One);
+                        actor = new BrickActor(store, this, location, color, BrickSize.One);
                         break;
 
                     case "brick_02":
-                        actor = new BrickActor(store, location, color, BrickSize.Two);
+                        actor = new BrickActor(store, this, location, color, BrickSize.Two);
                         break;
 
                     case "brick_03":
-                        actor = new BrickActor(store, location, color, BrickSize.Three);
+                        actor = new BrickActor(store, this, location, color, BrickSize.Three);
                         break;
 
                     case "brick_04":
-                        actor = new BrickActor(store, location, color, BrickSize.Four);
+                        actor = new BrickActor(store, this, location, color, BrickSize.Four);
                         break;
 
                     case "brick_06":
-                        actor = new BrickActor(store, location, color, BrickSize.Six);
+                        actor = new BrickActor(store, this, location, color, BrickSize.Six);
                         break;
 
                     case "brick_08":
-                        actor = new BrickActor(store, location, color, BrickSize.Eight);
+                        actor = new BrickActor(store, this, location, color, BrickSize.Eight);
                         break;
 
                     case "minifig":
@@ -139,7 +139,10 @@ namespace Junkbot.Game
 
         private void Actor_LocationChanged(object sender, LocationChangedEventArgs e)
         {
+            if (!(sender is BrickActor && (sender as BrickActor).IsBound))
+            {
             UpdateActorGridPosition((IActor)sender, e.NewLocation, e.OldLocation);
+            }
         }
 
         private void Actor_BoundLocationChanged(object sender, LocationChangedEventArgs e)
@@ -151,6 +154,40 @@ namespace Junkbot.Game
             */
         }
 
+        public void MoveBrickFromPlayfield(BrickActor brick)
+        {
+            var locationCells = new List<Point>();
+            var boundlocationCells = new List<Point>();
+
+            foreach (Rectangle rect in brick.BoundingBoxes)
+            {
+                locationCells.AddRange((new Rectangle(brick.Location.Add(rect.Location), rect.Size)).ExpandToGridCoordinates());
+                boundlocationCells.AddRange((new Rectangle(brick.BoundLocation.Add(rect.Location), rect.Size)).ExpandToGridCoordinates());
+            }
+
+            if (brick.IsBound)
+            {
+                foreach (Point cell in locationCells)
+                {
+                    BrickGrid[cell.X, cell.Y] = brick;
+                    PlayField[cell.X, cell.Y] = null;
+                }
+            }
+
+            else
+            {
+                foreach (Point cell in locationCells)
+                {
+                    BrickGrid[cell.X, cell.Y] = null;
+                }
+                foreach (Point cell in boundlocationCells)
+                {
+                    PlayField[cell.X, cell.Y] = brick;
+                }
+
+            }
+        }
+    
         public bool CheckGridRegionFree(Rectangle region)
         {
             Point[] cellsToCheck = region.ExpandToGridCoordinates();
@@ -158,9 +195,9 @@ namespace Junkbot.Game
             foreach (Point cell in cellsToCheck)
             {
 
-               int t1 = PlayField.GetLength(0);
-                    int t2 = PlayField.GetLength(1);
-                if (cell.X < 0 || cell.X >= PlayField.GetLength(0))
+       /*        int t1 = PlayField.GetLength(0);
+                    int t2 = PlayField.GetLength(1);*/
+                if ((cell.X < 0 || cell.X > 34) || (cell.Y < 0 || cell.Y > 21))
                     return false;
 
                 if (PlayField[cell.X, cell.Y] != null)
@@ -237,34 +274,35 @@ namespace Junkbot.Game
 /*                bool test = (BrickGrid[(actor as BrickActor).BoundLocation.X, (actor as BrickActor).BoundLocation.Y] != actor);
 */                if (PlayField[cell.X, cell.Y] != actor)
                 {
-                    if (BrickGrid[cell.X, cell.Y] != actor)
+                   /* if (BrickGrid[cell.X, cell.Y] != actor)
                     {
                         throw new Exception("Scene.VerifyGridInSync: Grid out of sync!! X:" + cell.X.ToString() + ", Y:" + cell.Y.ToString());
-                    }
+                    }*/
                 }
             }
         }
 
         private void AssignGridCells(IActor actor, Point[] cells)
         {
-                foreach (Point cell in cells)
-                {
+            foreach (Point cell in cells)
+            {
                 if (cell.X < 35)
                 {
                     PlayField[cell.X, cell.Y] = actor;
                     ;
                 }
-                if (cell.X == 35 && cell.Y == 21) {
+                if (cell.X == 35 && cell.Y == 21)
+                {
                     PlayField[cell.X, cell.Y] = null;
                 }
+            }
                 // Bomb out if the cell is not free (naughty actor!)
                 //
                 /*   if (PlayField[cell.X, cell.Y] != null)
 
                        throw new Exception("Scene.AssignGridCells: Attempted to assign an occupied cell!! X:" + cell.X.ToString() + ", Y:" + cell.Y.ToString());
    */
-            }
-
+            
         }
 
         public bool BoundaryCheck(Rectangle region)

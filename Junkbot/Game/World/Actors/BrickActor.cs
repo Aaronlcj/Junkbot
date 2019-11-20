@@ -83,7 +83,7 @@ namespace Junkbot.Game.World.Actors
             }
         }
         private BrickSize _Size;
-
+        private Scene Scene;
         private void SetBoundingBox(BrickSize size)
         {
             _Size = size;
@@ -91,12 +91,61 @@ namespace Junkbot.Game.World.Actors
                     new Rectangle(0, 0, (int)size, 1)
                 }).AsReadOnly();
         }
+            public bool CanBePlaced()
+        {
+            var thisBounds = new System.Drawing.Rectangle(new Point(this.BoundLocation.X, this.BoundLocation.Y), this.GridSize);
+            var upBounds = new System.Drawing.Rectangle(new Point(this.BoundLocation.X, this.BoundLocation.Y - 1), this.GridSize);
+            var downBounds = new System.Drawing.Rectangle(new Point(this.BoundLocation.X, this.BoundLocation.Y + 1), this.GridSize);
+            bool downBlocked = Scene.CheckGridRegionFree(downBounds);
+            /* var leftBounds = new System.Drawing.Rectangle(new Point(this.BoundLocation.X - 1, this.BoundLocation.Y), new Size(1, 1));
+             var rightBounds = new System.Drawing.Rectangle(new Point(this.BoundLocation.X + this.GridSize.Width - 1, this.BoundLocation.Y), new Size(1, 1));*/
+            bool upBlocked = Scene.CheckGridRegionFree(upBounds);
+           /* bool leftBlocked = Scene.CheckGridRegionFree(leftBounds);
+            bool rightBlocked = Scene.CheckGridRegionFree(rightBounds);*/
+            bool thisBlocked = Scene.CheckGridRegionFree(thisBounds);
+            bool studExists;
+            int currentCell = 0;
+
+           /* do
+            {
+
+            var studCheck = new System.Drawing.Rectangle(new Point(this.BoundLocation.X + currentCell, this.BoundLocation.Y + 1), new Size(1, 1));
+            studExists = Scene.CheckGridRegionFree(downBounds);*/
+                if (!thisBlocked || (!upBlocked && !downBlocked) ||(upBlocked && downBlocked) )
+                     
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            /*}
+            while (currentCell <= this.GridSize.Width);*/
+
+        }
+        public bool CanBePicked()
+        {
+            var upBounds = new System.Drawing.Rectangle(new Point(this.BoundLocation.X, this.BoundLocation.Y - 1), this.GridSize);
+            var downBounds = new System.Drawing.Rectangle(new Point(this.BoundLocation.X, this.BoundLocation.Y + 1), this.GridSize);
+            bool downBlocked = Scene.CheckGridRegionFree(downBounds);
+            bool upBlocked = Scene.CheckGridRegionFree(upBounds);
+
+            if (!upBlocked && !downBlocked)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
 
         public event LocationChangedEventHandler LocationChanged;
         public event LocationChangedEventHandler BoundLocationChanged;
 
 
-        public BrickActor(AnimationStore store, Point location, Color color, BrickSize size)
+        public BrickActor(AnimationStore store, Scene scene, Point location, Color color, BrickSize size)
         {
             Animation = new AnimationServer(store);
             _BoundingBoxes = new List<Rectangle>().AsReadOnly();
@@ -109,6 +158,7 @@ namespace Junkbot.Game.World.Actors
             SetBoundingBox(size);
             UpdateBrickAnim();
             BoundLocation = Location;
+            Scene = scene;
         }
 
 
