@@ -20,8 +20,9 @@ namespace Junkbot.Game
         }
 
         private List<JunkbotDecalData> _Decals;
-       
 
+
+        public IList<BrickActor> ConnectedBricks { get; set; }
 
         public IList<IActor> MobileActors
         {
@@ -65,6 +66,7 @@ namespace Junkbot.Game
             CellSize = levelData.Spacing;
             Size = levelData.Size;
             LevelData = levelData;
+            ConnectedBricks = new List<BrickActor>();
 
 
 

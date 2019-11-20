@@ -49,26 +49,106 @@ namespace Junkbot.Game.State
             _timer.Enabled = true;
         }
         
+        private bool IsBrickConnected(BrickActor brick)
+        {
+            var brickPos = brick.Location;
+
+            int x = brickPos.X;
+            int y = brickPos.Y;
+            int index = 0;
+
+            do
+            {
+                IActor sceneCell = Scene.GetPlayfield[x + index, y - 1];
+                if ((x + index >= 0 && y - 1 >= 0) && (x + index <= 34 && y - 1 <= 21))
+                {
+                    if (sceneCell != null)
+                    {
+                        Scene.ConnectedBricks.Add(sceneCell as BrickActor);
+                        IsBrickConnected(sceneCell as BrickActor);
+                        break;
+                    }
+                    else
+                    {
+                        index++;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            while ((index) != brick.GridSize.Width);
+            return true;
+        }
+
         private void BindToMouse(BrickActor brick, Point mousePos)
         {
             if (brick != null)
             {
-                brick.IsBound = true;
-                brick.BoundLocation = new Point(mousePos.X, mousePos.Y);
-                Scene.MoveBrickFromPlayfield(brick);
-
+                bool isConnected = IsBrickConnected(brick);
+                if (isConnected)
+                {
+                    Scene.ConnectedBricks.Add(brick);
+                }
+                else
+                {
+                    brick.IsBound = true;
+                    brick.BoundLocation = new Point(mousePos.X, mousePos.Y);
+                    Scene.MoveBrickFromPlayfield(brick);
+                }
             }
         }
 
 
         private void UnbindBrick(BrickActor brick)
         {
-            brick.IsBound = false;
-            Scene.MoveBrickFromPlayfield(brick);
-            brick.Location = brick.BoundLocation;
+            if (Scene.ConnectedBricks.Count == 0)
+            {
+                brick.IsBound = false;
+                Scene.MoveBrickFromPlayfield(brick);
+                brick.Location = brick.BoundLocation;
+            }
+            else
+            {
+                foreach (BrickActor connectedBrick in Scene.ConnectedBricks)
+                {
+                    connectedBrick.IsBound = false;
+                    Scene.MoveBrickFromPlayfield(connectedBrick);
+                    connectedBrick.Location = connectedBrick.BoundLocation;
+                }
+                Scene.ConnectedBricks.Clear();
+            }
+        }
+
+        private void UpdateBoundBrickLocation(BrickActor brick, Point mousePos)
+        {
+            var connectedBricks = Scene.ConnectedBricks;
+            if (connectedBricks.Count > 0)
+            {
+                if (connectedBricks.Count != 1)
+                {
+                    foreach (BrickActor connectedBrick in connectedBricks)
+                    {
+                        connectedBrick.IsBound = true;
+                        connectedBrick.BoundLocation = new Point(mousePos.X - (brick.Location.X - connectedBrick.Location.X), mousePos.Y - (brick.Location.Y - connectedBrick.Location.Y));
+                        Scene.MoveBrickFromPlayfield(connectedBrick);
+                    }
+                }
+                else
+                {
+                    brick.IsBound = true;
+                    brick.BoundLocation = new Point(mousePos.X, mousePos.Y);
+                    Scene.MoveBrickFromPlayfield(brick);
+                }
+            }
         }
         public override void ProcessInputs(InputEvents inputs)
         {
+            if (Scene.GetPlayfield[10,17] == null && Scene.BrickGrid[19,17] == null && Scene.GetPlayfield[19, 17] == null)
+            {
+                Console.WriteLine("gtet");
+            }
             var MousePosition = inputs.MousePosition;
             var MousePress = inputs.NewPresses;
             var MouseRelease = inputs.NewReleases;
@@ -82,12 +162,11 @@ namespace Junkbot.Game.State
                 IActor cell = Scene.GetPlayfield[MousePosAsCell.X, MousePosAsCell.Y];
                 Console.WriteLine(Scene.GetPlayfield.GetLength(0).ToString() + Scene.GetPlayfield.GetLength(1).ToString() + MousePosAsCell);
 
-                // check if brick is already bound to mouse
-                // check if cell is empty
-                // check for mouse input
                 if (brickToBind != null)
                 {
-                    bool canBePlaced = brickToBind.CanBePlaced();
+                    UpdateBoundBrickLocation(brickToBind, MousePosAsCell);
+
+/*                    bool canBePlaced = brickToBind.CanBePlaced();
 
                     if (canBePlaced)
                     {
@@ -96,7 +175,7 @@ namespace Junkbot.Game.State
                     else
                     {
                         Console.WriteLine("BLOCK");
-                    }
+                    }*/
                     if (cell == null)
                     {
                         foreach (string keyPress in inputs.NewPresses)
@@ -132,16 +211,18 @@ namespace Junkbot.Game.State
                         {
                             bool canBePicked = (cell as BrickActor).CanBePicked();
 
-                            if (keyPress == "mb.left" && canBePicked)
+                            if (keyPress == "mb.left")
                             {
                                 brickToBind = cell as BrickActor;
+
+                                BindToMouse(brickToBind, MousePosAsCell);
+
                                 break;
                             }
                         }
                     }
                 }
                 
-                BindToMouse(brickToBind, MousePosAsCell);
             }
         }
         public override void RenderFrame(IGraphicsController graphics)
