@@ -17,20 +17,8 @@ namespace Junkbot.Game.World.Actors
 
         public String Type { get; set; } = "BrickActor";
         public bool Rendered { get; set; }
-
-        public Point BoundLocation
-        {
-            get { return _BoundLocation; }
-            set
-            {
-                Point oldBoundLocation = _BoundLocation;
-                _BoundLocation = value;
-
-                BoundLocationChanged?.Invoke(this, new LocationChangedEventArgs(oldBoundLocation, value));
-            }
-        }
-        private Point _BoundLocation;
-        public bool IsBound { get; set; }
+        public bool Selected { get; set; }
+        public bool CanMove { get; set; }
 
         public AnimationServer Animation { get; private set; }
 
@@ -68,7 +56,18 @@ namespace Junkbot.Game.World.Actors
             }
         }
         private Point _Location;
+        public Point MovingLocation
+        {
+            get { return _MovingLocation; }
+            set
+            {
+                Point oldMovingLocation = _MovingLocation;
+                _MovingLocation = value;
 
+                MovingLocationChanged?.Invoke(this, new LocationChangedEventArgs(oldMovingLocation, value));
+            }
+        }
+        private Point _MovingLocation;
         public BrickSize Size
         {
             get { return _Size; }
@@ -83,6 +82,7 @@ namespace Junkbot.Game.World.Actors
             }
         }
         private BrickSize _Size;
+        
         private Scene Scene;
         private void SetBoundingBox(BrickSize size)
         {
@@ -93,9 +93,9 @@ namespace Junkbot.Game.World.Actors
         }
             public bool CanBePlaced()
         {
-            var thisBounds = new System.Drawing.Rectangle(new Point(this.BoundLocation.X, this.BoundLocation.Y), this.GridSize);
-            var upBounds = new System.Drawing.Rectangle(new Point(this.BoundLocation.X, this.BoundLocation.Y - 1), this.GridSize);
-            var downBounds = new System.Drawing.Rectangle(new Point(this.BoundLocation.X, this.BoundLocation.Y + 1), this.GridSize);
+            var thisBounds = new System.Drawing.Rectangle(new Point(this.MovingLocation.X, this.MovingLocation.Y), this.GridSize);
+            var upBounds = new System.Drawing.Rectangle(new Point(this.MovingLocation.X, this.MovingLocation.Y - 1), this.GridSize);
+            var downBounds = new System.Drawing.Rectangle(new Point(this.MovingLocation.X, this.MovingLocation.Y + 1), this.GridSize);
             bool downBlocked = Scene.CheckGridRegionFree(downBounds);
             /* var leftBounds = new System.Drawing.Rectangle(new Point(this.BoundLocation.X - 1, this.BoundLocation.Y), new Size(1, 1));
              var rightBounds = new System.Drawing.Rectangle(new Point(this.BoundLocation.X + this.GridSize.Width - 1, this.BoundLocation.Y), new Size(1, 1));*/
@@ -103,8 +103,6 @@ namespace Junkbot.Game.World.Actors
            /* bool leftBlocked = Scene.CheckGridRegionFree(leftBounds);
             bool rightBlocked = Scene.CheckGridRegionFree(rightBounds);*/
             bool thisBlocked = Scene.CheckGridRegionFree(thisBounds);
-            bool studExists;
-            int currentCell = 0;
 
            /* do
             {
@@ -126,8 +124,8 @@ namespace Junkbot.Game.World.Actors
         }
         public bool CanBePicked()
         {
-            var upBounds = new System.Drawing.Rectangle(new Point(this.BoundLocation.X, this.BoundLocation.Y - 1), this.GridSize);
-            var downBounds = new System.Drawing.Rectangle(new Point(this.BoundLocation.X, this.BoundLocation.Y + 1), this.GridSize);
+            var upBounds = new System.Drawing.Rectangle(new Point(this.MovingLocation.X, this.MovingLocation.Y - 1), this.GridSize);
+            var downBounds = new System.Drawing.Rectangle(new Point(this.MovingLocation.X, this.MovingLocation.Y + 1), this.GridSize);
             bool downBlocked = Scene.CheckGridRegionFree(downBounds);
             bool upBlocked = Scene.CheckGridRegionFree(upBounds);
 
@@ -142,7 +140,7 @@ namespace Junkbot.Game.World.Actors
         }
 
         public event LocationChangedEventHandler LocationChanged;
-        public event LocationChangedEventHandler BoundLocationChanged;
+        public event LocationChangedEventHandler MovingLocationChanged;
 
 
         public BrickActor(AnimationStore store, Scene scene, Point location, Color color, BrickSize size)
@@ -154,11 +152,12 @@ namespace Junkbot.Game.World.Actors
             Location = location;
             _Size = size;
             Rendered = false;
-            IsBound = false;
+            Selected = false;
             SetBoundingBox(size);
             UpdateBrickAnim();
-            BoundLocation = Location;
+            MovingLocation = new Point();
             Scene = scene;
+            CanMove = true;
         }
 
 

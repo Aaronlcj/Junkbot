@@ -39,14 +39,11 @@ namespace Junkbot.Game.World.Actors
         public Size GridSize { get { return _GridSize; } }
         private static readonly Size _GridSize = new Size(2, 4);
 
-
         public FacingDirection FacingDirection;
 
         private Scene Scene;
 
-
         public event LocationChangedEventHandler LocationChanged;
-
 
         public JunkbotActor(AnimationStore store, Scene scene, Point location, FacingDirection initialDirection)
         {
@@ -57,12 +54,10 @@ namespace Junkbot.Game.World.Actors
             Rendered = false;
         }
 
-
         public void Update()
         {
             Animation.Progress();
         }
-
 
         private void SetWalkingDirection(FacingDirection direction)
         {
@@ -99,8 +94,6 @@ namespace Junkbot.Game.World.Actors
 
         public System.Drawing.Rectangle GetCheckBounds(Point point, Size size)
         {
-            int dx = FacingDirection == FacingDirection.Left ? -1 : 1;
-
             System.Drawing.Rectangle checkBounds = new System.Drawing.Rectangle(
                Location.Add(point), size);
 
@@ -113,7 +106,6 @@ namespace Junkbot.Game.World.Actors
             IList<JunkbotCollision> detectionResults = new List<JunkbotCollision>();
             int dx = FacingDirection == FacingDirection.Left ? -1 : 1;
             int dxr = FacingDirection == FacingDirection.Right ? GridSize.Width - 1 : -1;
-
             int tar = FacingDirection == FacingDirection.Left ? -1 : 2;
             
             bool StepGapRight = Scene.CheckGridRegionFree(GetCheckBounds(new Point(dx, GridSize.Height), new Size(2, 1)));
@@ -169,8 +161,6 @@ namespace Junkbot.Game.World.Actors
                             }
                         }
                     }
-                    
-
                 }
 
                 else
@@ -257,12 +247,9 @@ namespace Junkbot.Game.World.Actors
                 int dx = FacingDirection == FacingDirection.Left ? -1 : 1;
                 int tar = FacingDirection == FacingDirection.Left ? -1 : 2;
 
-                // Cell detection
-             
-                int locMods = 0;
+                // Collision detection
+                int yPos = 0;
                 JunkbotCollision collisionType = CheckCollisionType(GetCheckBounds(new Point(tar, -1), new Size(1, 7)));
-                Console.WriteLine(Location.ToString());
-
 
                 switch (collisionType)
                 {
@@ -270,51 +257,13 @@ namespace Junkbot.Game.World.Actors
                         SetWalkingDirection(FacingDirection == FacingDirection.Left ? FacingDirection.Right : FacingDirection.Left);
                         return;
                     case JunkbotCollision.StepUp:
-                        locMods = -1;
+                        yPos = -1;
                         break;
                     case JunkbotCollision.StepDown:
-                        locMods = +1;
+                        yPos = +1;
                         break;
                 }
-                Location = Location.Add(new Point(dx, locMods));
-
-                /* if (!TurnAround)
-                 {
-
-                 }
-                 else
-                 {
-
-
-                     if (!StepUp)
-                     {
-                         if (StepUpBlocked)
-                         {
-
-                         }
-                     }
-                     if ((!StepDown1 && Floor) || (!StepDown2 && Floor))
-                     {
-                         if (FacingDirection == FacingDirection.Right && StepGapRight)
-                         {
-                             locMods = +1;
-                         }
-
-                         if (FacingDirection == FacingDirection.Left && StepGapLeft)
-                         {
-                             locMods = +1;
-                         }
-                     }
-                     else
-                     {
-                         if (Floor)
-                         {
-                             SetWalkingDirection(FacingDirection == FacingDirection.Left ? FacingDirection.Right : FacingDirection.Left);
-                             return;
-                         }
-                     }*/
-            
-                
+                Location = Location.Add(new Point(dx, yPos));
             }
         }
                 public void Think(TimeSpan deltaTime)

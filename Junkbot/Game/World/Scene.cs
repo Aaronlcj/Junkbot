@@ -21,8 +21,8 @@ namespace Junkbot.Game
 
         private List<JunkbotDecalData> _Decals;
 
-
         public IList<BrickActor> ConnectedBricks { get; set; }
+        public IList<BrickActor> IgnoredBricks { get; set; }
 
         public IList<IActor> MobileActors
         {
@@ -50,7 +50,7 @@ namespace Junkbot.Game
             get { return PlayField; }
         }
 
-        public IActor[,] BrickGrid { get; set; }
+        public IActor[,] SelectedGrid { get; set; }
 
 
 
@@ -62,11 +62,12 @@ namespace Junkbot.Game
             _Decals = new List<JunkbotDecalData>();
             AnimationStore = store;
             PlayField = new IActor[levelData.Size.Width + 1, levelData.Size.Height];
-            BrickGrid = new IActor[levelData.Size.Width + 1, levelData.Size.Height];
+            SelectedGrid = new IActor[levelData.Size.Width + 1, levelData.Size.Height];
             CellSize = levelData.Spacing;
             Size = levelData.Size;
             LevelData = levelData;
             ConnectedBricks = new List<BrickActor>();
+            IgnoredBricks = new List<BrickActor>();
 
 
 
@@ -124,8 +125,8 @@ namespace Junkbot.Game
                 actor.LocationChanged += Actor_LocationChanged;
                 if (actor is BrickActor)
                 {
-/*                    (actor as BrickActor).BoundLocationChanged += Actor_BoundLocationChanged;
-*/                    (actor as BrickActor).BoundLocation = location.Subtract(new Point(1, actor.GridSize.Height));
+                    //(actor as BrickActor).MovingLocationChanged += Actor_MovingLocationChanged;
+                    (actor as BrickActor).MovingLocation = location.Subtract(new Point(1, actor.GridSize.Height));
 
                 }
 
@@ -141,37 +142,37 @@ namespace Junkbot.Game
 
         private void Actor_LocationChanged(object sender, LocationChangedEventArgs e)
         {
-            if (!(sender is BrickActor && (sender as BrickActor).IsBound))
+            if (!(sender is BrickActor && (sender as BrickActor).Selected))
             {
             UpdateActorGridPosition((IActor)sender, e.NewLocation, e.OldLocation);
             }
         }
 
-        private void Actor_BoundLocationChanged(object sender, LocationChangedEventArgs e)
+        private void Actor_MovingLocationChanged(object sender, LocationChangedEventArgs e)
         {
-            BrickGrid[e.NewLocation.X, e.NewLocation.Y] = sender as IActor;
+            SelectedGrid[e.NewLocation.X, e.NewLocation.Y] = sender as IActor;
             PlayField[e.OldLocation.X, e.OldLocation.Y] = null;
 
-            /*            UpdateActorGridPosition((IActor)sender, e.NewLocation, e.OldLocation);
-            */
+            UpdateActorGridPosition((IActor)sender, e.NewLocation, e.OldLocation);
+
         }
 
         public void MoveBrickFromPlayfield(BrickActor brick)
         {
             var locationCells = new List<Point>();
-            var boundlocationCells = new List<Point>();
+            var movingLocationCells = new List<Point>();
 
             foreach (Rectangle rect in brick.BoundingBoxes)
             {
                 locationCells.AddRange((new Rectangle(brick.Location.Add(rect.Location), rect.Size)).ExpandToGridCoordinates());
-                boundlocationCells.AddRange((new Rectangle(brick.BoundLocation.Add(rect.Location), rect.Size)).ExpandToGridCoordinates());
+                movingLocationCells.AddRange((new Rectangle(brick.MovingLocation.Add(rect.Location), rect.Size)).ExpandToGridCoordinates());
             }
 
-            if (brick.IsBound)
+            if (brick.Selected)
             {
                 foreach (Point cell in locationCells)
                 {
-                    BrickGrid[cell.X, cell.Y] = brick;
+                    SelectedGrid[cell.X, cell.Y] = brick;
                     PlayField[cell.X, cell.Y] = null;
                 }
             }
@@ -180,9 +181,9 @@ namespace Junkbot.Game
             {
                 foreach (Point cell in locationCells)
                 {
-                    BrickGrid[cell.X, cell.Y] = null;
+                    SelectedGrid[cell.X, cell.Y] = null;
                 }
-                foreach (Point cell in boundlocationCells)
+                foreach (Point cell in movingLocationCells)
                 {
                     PlayField[cell.X, cell.Y] = brick;
                 }
@@ -273,10 +274,9 @@ namespace Junkbot.Game
         {
             foreach (Point cell in cellsToCheck)
             {
-/*                bool test = (BrickGrid[(actor as BrickActor).BoundLocation.X, (actor as BrickActor).BoundLocation.Y] != actor);
-*/                if (PlayField[cell.X, cell.Y] != actor)
+               if (PlayField[cell.X, cell.Y] != actor)
                 {
-                   /* if (BrickGrid[cell.X, cell.Y] != actor)
+                    /*if (SelectedGrid[cell.X, cell.Y] != actor)
                     {
                         throw new Exception("Scene.VerifyGridInSync: Grid out of sync!! X:" + cell.X.ToString() + ", Y:" + cell.Y.ToString());
                     }*/
@@ -320,22 +320,7 @@ namespace Junkbot.Game
             return false;
 
         }
-        private bool CheckBoundaryCollision(IActor actor, Point[] cells)
-        {
-            if (cells.Length >= 1)
-            {
-                if (cells[1].X == 36)
-                {
-
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            return false;
-        }
+        
         private void ClearGridCells(Point[] cells)
         {
             foreach (Point cell in cells)
@@ -357,8 +342,7 @@ namespace Junkbot.Game
             {
                 newCells.AddRange((new Rectangle(newPos.Add(rect.Location), rect.Size)).ExpandToGridCoordinates());
             }
-/*            bool gridEdge = CheckBoundaryCollision(actor, newCells.ToArray());
-*/
+
             // If oldPos has been specified, verify and clear
             //
             if (oldPos != null)
@@ -371,44 +355,11 @@ namespace Junkbot.Game
                 }
 
                 var oldCellsArr = oldCells.ToArray();
-
                 AssertGridInSync(actor, oldCellsArr);
-                /*                   if (!gridEdge)
-                 *                   
-                */
-                /*if (actor is JunkbotActor)
-                {
-                    if (!BoundaryCheck((actor as JunkbotActor).GetCheckBounds()))
-                    {*/
-                        ClearGridCells(oldCellsArr);
-                  /*  }
-                }*/
+                ClearGridCells(oldCellsArr);
             }
-           /* if (actor is JunkbotActor)
-            {
-                bool bnd = BoundaryCheck((actor as JunkbotActor).GetCheckBounds());
-                if (!bnd)
-                {
-                    AssignGridCells(actor, newCells.ToArray());
-                }
-                else
-                {
-                    Console.WriteLine("");
-                    BoundaryCheck((actor as JunkbotActor).GetCheckBounds());
-                }
-            }
-            else
-            {*/
-                AssignGridCells(actor, newCells.ToArray());
-            /*}*/
-
+            AssignGridCells(actor, newCells.ToArray());
         }
-
-        /*   if (!gridEdge)
-           {*/
-        /*}*/
-    
-
 
         public static Scene FromLevel(string[] lvlFile, AnimationStore store)
         {
