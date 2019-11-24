@@ -25,8 +25,8 @@ namespace Junkbot.Game.State
         }
         public static string[] lvl;
         public Scene Scene;
+        public BrickMover BrickMover;
         public static AnimationStore Store = new AnimationStore();
-        private BrickActor selectedBrick = null;
         public override string Name
         {
             get { return "SplashScreen"; }
@@ -37,6 +37,7 @@ namespace Junkbot.Game.State
             lvl = File.ReadAllLines(Environment.CurrentDirectory + $@"\Content\Levels\{level}.txt");
             Scene = Scene.FromLevel(lvl, Store);
             SetTimer();
+            BrickMover = new BrickMover(Scene);
         }
         void Timer_Tick(object sender, EventArgs e)
         {
@@ -54,9 +55,10 @@ namespace Junkbot.Game.State
         {
             if (brick != null)
             {
+                BrickMover.selectedBrick = brick;
                 Scene.IgnoredBricks.Add(brick);
-                var tempConnected = IsBrickConnected(brick);
-                bool isConnected = tempConnected.Count > 0 ? true : false;
+                var tempConnected = BrickMover.IsBrickConnected(brick);
+                bool isConnected = tempConnected.Count > 1 ? true : false;
 
                 if (isConnected)
                 {
@@ -94,322 +96,20 @@ namespace Junkbot.Game.State
             foreach (BrickActor connectedBrick in Scene.ConnectedBricks)
             {
                 connectedBrick.Selected = false;
+                connectedBrick.CanMove = true;
                 Scene.MoveBrickFromPlayfield(connectedBrick);
                 connectedBrick.Location = connectedBrick.MovingLocation;
             }
             Scene.ConnectedBricks.Clear();
-
         }
 
-        private bool CanBrickMove(IList<BrickActor> bricks)
-        {
-            foreach (BrickActor brick in bricks)
-            {
-                if (brick.CanMove == true)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-        private bool IsRowAllGrey(IList<BrickActor> brickRow)
-        {
-            foreach (BrickActor brick in brickRow)
-            {
-                if (brick.Color.Name != "Gray")
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-        private IList<BrickActor> ParseRow(IList<BrickActor> row, FacingDirection direction)
-        {
-            var ignoredBricks = Scene.IgnoredBricks;
-            IList<BrickActor> tempConnected = new List<BrickActor>();
-            IList<BrickActor> selected = new List<BrickActor>();
-
-            if (direction == FacingDirection.Up)
-            {
-                foreach (BrickActor connectedBrick in row)
-                {
-                    var currentBelowRow = CheckSurroudingBricks(connectedBrick, FacingDirection.Down);
-                    bool canBrickMove = CanBrickMove(currentBelowRow);
-                    if (canBrickMove)
-                    {
-                        ignoredBricks.Add(connectedBrick);
-
-                        if (connectedBrick.Color.Name != "Gray")
-                        {
-                            if (!tempConnected.Contains(connectedBrick))
-                            {
-                                tempConnected.Add(connectedBrick);
-                            }
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                }
-                foreach (BrickActor tempBrick in tempConnected)
-                {
-                    var newTemp = IsBrickConnected(tempBrick);
-                    if (newTemp.Count > 0)
-                    {
-                        foreach (BrickActor temp in newTemp)
-                        {
-                            selected.Add(temp);
-                        }
-                    }
-                    else
-                    {
-                        tempBrick.CanMove = false;
-                    }
-                }
-            }
-            if (direction == FacingDirection.Down)
-            {
-
-
-                foreach (BrickActor connectedBrick in row)
-                {
-                    var currentBelowRow = CheckSurroudingBricks(connectedBrick, FacingDirection.Down);
-                    bool canBrickMove = CanBrickMove(currentBelowRow);
-                    if (canBrickMove)
-                    {
-                        ignoredBricks.Add(connectedBrick);
-
-                        if (connectedBrick.Color.Name != "Gray")
-                        {
-                            if (!tempConnected.Contains(connectedBrick))
-                            {
-                                tempConnected.Add(connectedBrick);
-                            }
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                }
-                foreach (BrickActor tempBrick in tempConnected)
-                {
-                    var newTemp = IsBrickConnected(tempBrick);
-                    if (newTemp.Count > 0)
-                    {
-                        foreach (BrickActor temp in newTemp)
-                        {
-                            selected.Add(temp);
-                        }
-                    }
-                    else
-                    {
-                        tempBrick.CanMove = false;
-                    }
-                }
-            }
-            return selected;
-        }
-        private IList<BrickActor> IsBrickConnected(BrickActor brick)
-        {
-            if (brick.Location.X == 28)
-            {
-
-            }
-            var currentAboveRow = CheckSurroudingBricks(brick, FacingDirection.Up);
-            var currentBelowRow = CheckSurroudingBricks(brick, FacingDirection.Down);
-            var ignoredBricks = Scene.IgnoredBricks;
-            int aboveCount = currentAboveRow.Count;
-            int belowCount = currentBelowRow.Count;
-            bool isRowGrey = IsRowAllGrey(currentBelowRow);
-
-            var connectedBricks = Scene.ConnectedBricks;
-            IList<BrickActor> tempConnected = new List<BrickActor>();
-            if (!isRowGrey || brick == selectedBrick)
-            {
-                if (aboveCount > 0)
-                {
-                    int i = 0;
-                    do
-                    {
-                        foreach (BrickActor ignoredBrick in ignoredBricks)
-                        {
-                            if (currentAboveRow.Contains(ignoredBrick))
-                            {
-                                currentAboveRow.Remove(ignoredBrick);
-                            }
-                        }
-                        i++;
-                    }
-                    while (i != aboveCount);
-                }
-                if (belowCount > 0)
-                {
-                    int i = 0;
-                    do
-                    {
-                        foreach (BrickActor ignoredBrick in ignoredBricks)
-                        {
-                            if (currentBelowRow.Contains(ignoredBrick))
-                            {
-                                currentBelowRow.Remove(ignoredBrick);
-                            }
-                        }
-                        i++;
-                    }
-                    while (i != belowCount);
-                }
-                // check if connected above
-                if (currentAboveRow.Count > 0)
-                {
-                    var newTempList = ParseRow(currentAboveRow, FacingDirection.Up);
-                    foreach (BrickActor temp in newTempList)
-                    {
-                        tempConnected.Add(temp);
-                    }
-                }
-
-                // check if connected below if nothing above
-                if (currentBelowRow.Count > 0)
-                {
-                    var newTempList = ParseRow(currentBelowRow, FacingDirection.Down);
-                    foreach (BrickActor temp in newTempList)
-                    {
-                        tempConnected.Add(temp);
-                    }
-                }
-                bool aboveStatus = ((currentAboveRow.Count == 0 || currentAboveRow.Contains(brick)) && !IsRowAllGrey(currentAboveRow)) ? true : false;
-                bool belowStatus = ((currentBelowRow.Count == 0 || currentBelowRow.Contains(brick)) && !IsRowAllGrey(currentBelowRow)) ? true : false;
-
-                /*            if ((aboveStatus && !belowStatus) || (belowStatus && !aboveStatus) || (!tempConnected.Contains(selectedBrick) && brick == selectedBrick) || (currentAboveRow.Count == 0 && currentBelowRow.Count == 0))
-                            {
-
-                                tempConnected.Add(brick);
-                            }*/
-                if (tempConnected.Count > 0 || (currentAboveRow.Count == 0 && currentBelowRow.Count == 0) || (aboveCount > 0 && belowCount == 0) || (belowCount > 0 && aboveCount == 0))
-                {
-                    tempConnected.Add(brick);
-
-                }
-            }
-            else
-            {
-                brick.CanMove = false;
-            }
-            return tempConnected;
-        }
-
-        private IList<BrickActor> CheckSurroudingBricks(BrickActor brick, FacingDirection direction)
-        {
-            if (brick.Location.X == 13 && brick.Location.Y == 17)
-            { 
-            }
-            var brickPos = brick.Location;
-            int x = brickPos.X;
-            int y = brickPos.Y;
-            int currentCellX = 0;
-            int dx = direction == FacingDirection.Up ? -1 : 1;
-            IList<BrickActor> currentRow = new List<BrickActor>();
-            // check if top of brick is connected
-            do
-            {
-                if ((x + currentCellX >= 0 && y + dx >= 0) && (x + currentCellX <= 34 && y + dx <= 21))
-                {
-                    IActor cell = Scene.GetPlayfield[x + currentCellX, y + dx];
-                    if (cell != null && !currentRow.Contains(cell as BrickActor) && !Scene.ConnectedBricks.Contains(cell as BrickActor))
-                    {
-                        BrickActor cellA = cell as BrickActor;
-                        /*if (cellA.Color.Name != "Gray")
-                        {*/
-                            currentRow.Add(cell as BrickActor);
-                        //}
-                    }
-                
-                    currentCellX++;
-                }
-            }
-            while ((currentCellX) != brick.GridSize.Width);
-            return currentRow;
-        }
-    
         
-
-        private void UpdateSelectedBrickLocation(BrickActor brick, Point mousePos)
-        {
-            var connectedBricks = Scene.ConnectedBricks;
-            if (connectedBricks.Count > 0)
-            {
-                foreach (BrickActor connectedBrick in connectedBricks)
-                {
-                    connectedBrick.MovingLocation = new Point(mousePos.X - (brick.Location.X - connectedBrick.Location.X), mousePos.Y - (brick.Location.Y - connectedBrick.Location.Y));
-                    
-                }
-            }
-                brick.MovingLocation = new Point(mousePos.X, mousePos.Y);
-
-        }
-
-        public bool PlaceBrick(IList<BrickActor> connectedBricks)
-        {
-            List<Point> connectedCells = new List<Point>();
-            bool blocked = false;
-            bool connectAbove = false;
-            bool connectBelow = false;
-
-            foreach (BrickActor brick in connectedBricks)
-            {
-                var brickPos = brick.MovingLocation;
-                int x = brickPos.X;
-                int y = brickPos.Y;
-                int index = 0;
-
-                if ((x + index >= 0 && y - 1 >= 0) && (x + index <= 34 && y - 1 <= 21))
-                {
-                    do
-                    {
-                        connectedCells.Add(new Point(brick.MovingLocation.X + index, brick.MovingLocation.Y));
-                        index++;
-                    }
-                    while (index != brick.GridSize.Width);
-                }
-            }
-
-            foreach (Point cell in connectedCells)
-            {
-                blocked = (Scene.GetPlayfield[cell.X, cell.Y] != null) ? true : false;
-                if (Scene.GetPlayfield[cell.X, cell.Y - 1] != null)
-                {
-                    if (!connectedCells.Contains(new Point(cell.X, cell.Y - 1)))
-                    {
-                        connectAbove = true;
-                    }
-                }
-                if (Scene.GetPlayfield[cell.X, cell.Y + 1] != null)
-                {
-                    if (!connectedCells.Contains(new Point(cell.X, cell.Y + 1)))
-                    {
-                        connectBelow = true;
-                    }
-                }
-            }
-            if (connectAbove && connectBelow)
-            { 
-                return false; 
-            }
-
-            if (!blocked && ((connectAbove && !connectBelow) || (connectBelow && !connectAbove)))
-            {
-                return true;
-            }
-            return false;
-        } 
         public override void ProcessInputs(InputEvents inputs)
         {
             var MousePosition = inputs.MousePosition;
             Point MousePoint = new Point((int)Math.Floor(MousePosition.X - 5), (int)Math.Floor(MousePosition.Y - 10));
             Point MousePosAsCell = MousePoint.Reduce(Scene.LevelData.Spacing);
-
+            BrickActor selectedBrick = BrickMover.selectedBrick;
             if ((MousePosAsCell.X >= 0 && MousePosAsCell.X < 35) && (MousePosAsCell.Y >= 0 && MousePosAsCell.Y <= 21))
             {
 
@@ -418,7 +118,7 @@ namespace Junkbot.Game.State
 
                 if (selectedBrick != null)
                 {
-                    UpdateSelectedBrickLocation(selectedBrick, MousePosAsCell);
+                    BrickMover.UpdateSelectedBrickLocation(MousePosAsCell);
 
 /*                    bool canBePlaced = brickToBind.CanBePlaced();
 
@@ -442,7 +142,7 @@ namespace Junkbot.Game.State
                                 {
                                     if (Scene.ConnectedBricks.Count > 0)
                                     {
-                                        placeBrick = PlaceBrick(Scene.ConnectedBricks);
+                                        placeBrick = BrickMover.PlaceBrick(Scene.ConnectedBricks);
                                     }
                                     else
                                     {
@@ -451,9 +151,9 @@ namespace Junkbot.Game.State
                                     }
                                     if (placeBrick)
                                     {
-                                        UpdateSelectedBrickLocation(selectedBrick, MousePosAsCell);
+                                        BrickMover.UpdateSelectedBrickLocation(MousePosAsCell);
                                         UnbindBrick();
-                                        selectedBrick = null;
+                                        BrickMover.selectedBrick = null;
                                         Scene scene = Scene;
                                         break;
                                     }
