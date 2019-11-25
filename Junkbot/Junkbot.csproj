@@ -55,6 +55,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Atlas\decals-atlas.json" />
+    <Compile Include="Game\BrickMover - Copy.cs" />
     <Compile Include="Game\BrickMover.cs" />
     <Compile Include="Game\GameStateChangedEventArgs.cs" />
     <Compile Include="Game\JunkbotEngineParameters.cs" />

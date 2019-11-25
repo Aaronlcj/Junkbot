@@ -19,6 +19,7 @@ namespace Junkbot.Game
             Scene = scene;
 
         }
+
         private bool CanBrickMove(IList<BrickActor> bricks)
         {
             foreach (BrickActor brick in bricks)
@@ -30,6 +31,7 @@ namespace Junkbot.Game
             }
             return false;
         }
+
         private bool IsRowAllGrey(IList<BrickActor> brickRow)
         {
             foreach (BrickActor brick in brickRow)
@@ -41,404 +43,448 @@ namespace Junkbot.Game
             }
             return true;
         }
-        private IList<BrickActor> ParseRow(IList<BrickActor> row, FacingDirection direction)
+
+        private bool IsBlocked (IList<BrickActor> brickRow)
         {
-            var ignoredBricks = Scene.IgnoredBricks;
-            IList<BrickActor> tempConnected = new List<BrickActor>();
-            IList<BrickActor> selected = new List<BrickActor>();
-
-            if (direction == FacingDirection.Up)
+            foreach (BrickActor brick in brickRow)
             {
-                foreach (BrickActor connectedBrick in row)
+                if (!Scene.IgnoredBricks.Contains(brick))
                 {
-                    var currentAboveRow = CheckSurroundingBricks(connectedBrick, FacingDirection.Up);
-                    foreach (BrickActor surroundingBrick in currentAboveRow)
-                    {
-                        var currentBelowRow = CheckSurroundingBricks(surroundingBrick, FacingDirection.Down);
-                        bool canBrickMove = CanBrickMove(currentBelowRow);
-                        if (canBrickMove)
-                        {
-                            ignoredBricks.Add(surroundingBrick);
+                    return false;
+                }
+            }
+            return true;
+        }
 
-                            if (surroundingBrick.Color.Name != "Gray")
+        private IList<BrickActor> ParseRow(IList<BrickActor> row, FacingDirection direction)
+            {
+
+                var ignoredBricks = Scene.IgnoredBricks;
+                IList<BrickActor> connectedBricks = new List<BrickActor>();
+                IList<BrickActor> selected = new List<BrickActor>();
+                var rowWithoutIgnoredBricks = RemoveIgnoredBricks(row);
+                bool rowStatus = true;
+                var currentRow = row;
+                IList<BrickActor> whichRow = new List<BrickActor>();
+                FacingDirection altDirection = direction;
+                switch (direction)
+                {
+                    case FacingDirection.Up:
+                        altDirection = FacingDirection.Down;
+                        break;
+                    case FacingDirection.Down:
+                        altDirection = FacingDirection.Up;
+                        break;
+                }
+
+            if (row.Count > 0)
+            {
+                foreach (BrickActor brick in rowWithoutIgnoredBricks)
+                {
+                    var rowToCheck = CheckSurroundingBricks(brick, direction);
+                    bool isAboveRowGrey = IsRowAllGrey(rowToCheck);
+                    if (!isAboveRowGrey)
+                    {
+                        foreach (BrickActor surroundingBrick in rowToCheck)
+                        {
+                            var surroundingBrickBelowRow = CheckSurroundingBricks(surroundingBrick, altDirection);
+                            bool canBrickMove = CanBrickMove(surroundingBrickBelowRow);
+                            if (!canBrickMove)
                             {
-                                if (!tempConnected.Contains(surroundingBrick))
-                                {
-                                    tempConnected.Add(surroundingBrick);
-                                }
+                                surroundingBrick.CanMove = false;
                             }
-                            else
+
+                            if (!connectedBricks.Contains(surroundingBrick) && (surroundingBrick.Color.Name != "Gray"))
                             {
-                                break;
+                                connectedBricks.Add(surroundingBrick);
                             }
                         }
                     }
-                }
-            }
-
-            if (direction == FacingDirection.Down)
-            {
-                foreach (BrickActor connectedBrick in row)
-                {
-                    var currentBelowRow = CheckSurroundingBricks(connectedBrick, FacingDirection.Down);
-
-                    foreach (BrickActor surroundingBrick in currentBelowRow)
+                    else
                     {
-                        var currentAboveRow = CheckSurroundingBricks(connectedBrick, FacingDirection.Up);
-                        bool canBrickMove = CanBrickMove(currentAboveRow);
-                        if (canBrickMove)
+                        if (brick.Color.Name != "Gray")
                         {
-                            ignoredBricks.Add(surroundingBrick);
-
-                            if (surroundingBrick.Color.Name != "Gray")
-                            {
-                                if (!tempConnected.Contains(surroundingBrick))
-                                {
-                                    tempConnected.Add(surroundingBrick);
-                                }
-                            }
-                            else
-                            {
-                                break;
-                            }
+                            brick.CanMove = false;
+                            ignoredBricks.Add(brick);
+                            selected.Add(brick);
                         }
                     }
+                    ignoredBricks.Add(brick);
                 }
             }
 
-            int tempCount = tempConnected.Count;
+            int tempCount = connectedBricks.Count;
             if (tempCount > 0)
             {
-                int i = 0;
-                do
+                if (connectedBricks.Count >= 2)
                 {
-                    foreach (BrickActor ignoredBrick in ignoredBricks)
-                    {
-                        if (tempConnected.Contains(ignoredBrick))
-                        {
-                            tempConnected.Remove(ignoredBrick);
-                        }
-                    }
-
-                    i++;
-                } while (i != tempCount);
-
-
-                if (tempConnected.Count >= 2)
-                {
-                    var newTempList = ParseRow(tempConnected, direction);
+                    var newTempList = ParseRow(connectedBricks, direction);
                     foreach (BrickActor temp in newTempList)
                     {
-                        if (temp.CanMove == true)
+                        selected.Add(temp);
+                    }
+
+                    foreach (BrickActor temp in row)
+                    {
+                        currentRow = CheckSurroundingBricks(temp, direction);
+                        bool canBrickMove = CanBrickMove(currentRow);
+
+                        if (!canBrickMove)
                         {
-                            selected.Add(temp);
+                            temp.CanMove = false;
                         }
+                        selected.Add(temp);
                     }
                 }
-
-                if (tempConnected.Count == 1)
+                
+                if (connectedBricks.Count == 1)
                 {
-                    var res = IsBrickConnected(tempConnected[0]);
+                    var res = ParseBrick(connectedBricks[0], direction);
                     foreach (BrickActor temp in res)
                     {
-                        if (temp.CanMove == true)
+                        selected.Add(temp);
+                    }
+
+                    foreach (BrickActor temp in rowWithoutIgnoredBricks)
+                    {
+                        currentRow = CheckSurroundingBricks(temp, direction);
+                        bool canBrickMove = CanBrickMove(currentRow);
+
+                        if (!canBrickMove)
                         {
-                            selected.Add(temp);
+                            temp.CanMove = false;
                         }
+                        selected.Add(temp);
                     }
                 }
             }
             return selected;
         }
 
-        public IList<BrickActor> IsBrickConnected(BrickActor brick)
+        public IList<BrickActor> ParseBrick(BrickActor brick, FacingDirection direction)
         {
-           
-            var currentAboveRow = CheckSurroundingBricks(brick, FacingDirection.Up);
-            var currentBelowRow = CheckSurroundingBricks(brick, FacingDirection.Down);
+            var aboveRow = CheckSurroundingBricks(brick, FacingDirection.Up);
+            var belowRow = CheckSurroundingBricks(brick, FacingDirection.Down);
+            var currentAboveRow = RemoveIgnoredBricks(aboveRow);
+            var currentBelowRow = RemoveIgnoredBricks(belowRow);
             var ignoredBricks = Scene.IgnoredBricks;
-            int aboveCount = currentAboveRow.Count;
-            int belowCount = currentBelowRow.Count;
+            IList<BrickActor> temporaryConnectedBricks = new List<BrickActor>();
+            IList<BrickActor> connectedBricks = new List<BrickActor>();
+            bool rowStatus = true;
+            var currentRow = currentAboveRow;
+            IList<BrickActor> whichRow = new List<BrickActor>();
+            FacingDirection altDirection = direction;
+            ignoredBricks.Add(brick);
 
-            bool isBelowRowGrey = IsRowAllGrey(currentBelowRow);
-
-            var connectedBricks = Scene.ConnectedBricks;
-            IList<BrickActor> tempConnected = new List<BrickActor>();
-            /*            if (!isRowGrey || brick == selectedBrick)
-                        {*/
-            if (!isBelowRowGrey || brick == selectedBrick)
+            switch (direction)
             {
+                case FacingDirection.Up:
+                    currentRow = currentAboveRow;
+                    altDirection = FacingDirection.Down;
+                    whichRow = aboveRow;
+                    break;
+                case FacingDirection.Down:
+                    currentRow = currentBelowRow;
+                    altDirection = FacingDirection.Up;
+                    whichRow = belowRow;
 
-                // refactor to remove ignored from row between loops
-                if (aboveCount > 0)
+
+                    break;
+            }
+
+            if (currentRow.Count > 0)
+            {
+                rowStatus = IsRowAllGrey(currentRow);
+                if (!rowStatus)
                 {
-                    int i = 0;
-                    do
+                    foreach (BrickActor surroundingBrick in currentRow)
                     {
-                        foreach (BrickActor ignoredBrick in ignoredBricks)
+                        var surroundingBrickRow = CheckSurroundingBricks(surroundingBrick, altDirection);
+                        bool canBrickMove = CanBrickMove(surroundingBrickRow);
+                        if (surroundingBrick.Color.Name == "Gray")
                         {
-                            if (currentAboveRow.Contains(ignoredBrick))
-                            {
-                                currentAboveRow.Remove(ignoredBrick);
-                            }
+                            break;
                         }
-
-                        i++;
-                    } while (i != aboveCount);
-                }
-
-                if (belowCount > 0)
-                {
-                    int i = 0;
-                    do
-                    {
-                        foreach (BrickActor ignoredBrick in ignoredBricks)
+                        if (!canBrickMove)
                         {
-                            if (currentBelowRow.Contains(ignoredBrick))
-                            {
-                                currentBelowRow.Remove(ignoredBrick);
-                            }
+                            surroundingBrick.CanMove = false;
                         }
-
-                        i++;
-                    } while (i != belowCount);
-                }
-
-                // check if connected above\
-                if (currentAboveRow.Count > 0 || currentBelowRow.Count > 0)
-                {
-                    if (currentAboveRow.Count >= currentBelowRow.Count)
-                    {
-                        if (currentAboveRow.Count >= 2)
+                        if (!temporaryConnectedBricks.Contains(surroundingBrick))
                         {
-                            var newTempList = ParseRow(currentAboveRow, FacingDirection.Up);
-                            foreach (BrickActor temp in newTempList)
-                            {
-                                if (temp.CanMove == true)
-                                {
-                                    tempConnected.Add(temp);
-                                }
-                            }
-                        }
-
-                        if (currentAboveRow.Count == 1)
-                        {
-                            var res = IsBrickConnected(currentAboveRow[0]);
-                            if (res.Count > 0)
-                            {
-                                foreach (BrickActor temp in res)
-                                {
-                                    if (temp.CanMove == true)
-                                    {
-                                        tempConnected.Add(temp);
-                                    }
-                                }
-                            }
-                        }
-
-                        if (currentBelowRow.Count >= 2)
-                        {
-                            var newTempList = ParseRow(currentBelowRow, FacingDirection.Down);
-                            foreach (BrickActor temp in newTempList)
-                            {
-                                if (temp.CanMove == true)
-                                {
-                                    tempConnected.Add(temp);
-                                }
-                            }
-                        }
-
-                        if (currentBelowRow.Count == 1)
-                        {
-                            ignoredBricks.Add(currentBelowRow[0]);
-
-                            var res = IsBrickConnected(currentBelowRow[0]);
-                            if (res.Count > 0)
-                            {
-                                foreach (BrickActor temp in res)
-                                {
-                                    if (temp.CanMove == true)
-                                    {
-                                        tempConnected.Add(temp);
-                                    }
-                                }
-                            }
+                            temporaryConnectedBricks.Add(surroundingBrick);
                         }
                     }
-
-                    if (currentBelowRow.Count > currentAboveRow.Count)
-                    {
-
-
-                        if (currentBelowRow.Count >= 2)
-                        {
-                            var newTempList = ParseRow(currentBelowRow, FacingDirection.Down);
-                            foreach (BrickActor temp in newTempList)
-                            {
-                                if (temp.CanMove == true)
-                                {
-                                    tempConnected.Add(temp);
-                                }
-                            }
-                        }
-
-                        if (currentBelowRow.Count == 1)
-                        {
-                            ignoredBricks.Add(currentBelowRow[0]);
-
-                            var res = IsBrickConnected(currentBelowRow[0]);
-                            if (res.Count > 0)
-                            {
-                                foreach (BrickActor temp in res)
-                                {
-                                    if (temp.CanMove == true)
-                                    {
-                                        tempConnected.Add(temp);
-                                    }
-                                }
-                            }
-                        }
-
-                        if (currentAboveRow.Count >= 2)
-                        {
-                            var newTempList = ParseRow(currentAboveRow, FacingDirection.Up);
-                            foreach (BrickActor temp in newTempList)
-                            {
-                                if (temp.CanMove == true)
-                                {
-                                    tempConnected.Add(temp);
-                                }
-                            }
-                        }
-
-                        if (currentAboveRow.Count == 1)
-                        {
-                            var res = IsBrickConnected(currentAboveRow[0]);
-                            if (res.Count > 0)
-                            {
-                                foreach (BrickActor temp in res)
-                                {
-                                    if (temp.CanMove == true)
-                                    {
-                                        tempConnected.Add(temp);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if (brick.Location.X == 26 && brick.Location.Y == 18)
-                    {
-                    }
-                    tempConnected.Add(brick);
-
                 }
                 else
                 {
-                    if (brick.Location.X == 26 && brick.Location.Y == 18)
+                    if (brick.Color.Name != "Gray")
                     {
+                        brick.CanMove = false;
+                        ignoredBricks.Add(brick);
+                        connectedBricks.Add(brick);
                     }
+                }
+            }
+            else
+            {
+                if (whichRow.Count > 0)
+                {
+                    brick.CanMove = false;
+                }
+            }
+            
 
-                    if (tempConnected.Count > 0)
+            int totalTemporaryConnectedBricks = temporaryConnectedBricks.Count;
+            if (totalTemporaryConnectedBricks > 0)
+            {
+                if (!rowStatus)
+                {
+                    if (temporaryConnectedBricks.Count >= 2)
                     {
-                        /*bool canBrickMove = CanBrickMove(tempConnected);
-                        if (canBrickMove)
-                        {*/
-                            tempConnected.Add(brick);
-                                //}
-                    }
-                    else
-                    {
-                        if (aboveCount != currentAboveRow.Count || belowCount != currentBelowRow.Count)
+                        var returnedBricks = ParseRow(temporaryConnectedBricks, direction);
+                        foreach (BrickActor brickToAdd in returnedBricks)
+                        {
+                            connectedBricks.Add(brickToAdd);
+                        }
+                        currentRow = CheckSurroundingBricks(brick, direction);
+                        bool canBrickMove = CanBrickMove(currentRow);
+
+                        if (!canBrickMove)
                         {
                             brick.CanMove = false;
-                            ignoredBricks.Add(brick);
+                        }
+                    }
 
-                            tempConnected.Add(brick);
+                    if (temporaryConnectedBricks.Count == 1)
+                    {
+                        var returnedBricks = ParseBrick(temporaryConnectedBricks[0], direction);
+                        foreach (BrickActor brickToAdd in returnedBricks)
+                        {
+                            connectedBricks.Add(brickToAdd);
+                        }
+                        currentRow = CheckSurroundingBricks(brick, direction);
+                        bool canBrickMove = CanBrickMove(currentRow);
+
+                        if (!canBrickMove)
+                        {
+                            brick.CanMove = false;
+                        }
+                    }
+                }
+                else
+                {
+                    var canBrickMove = CanBrickMove(currentRow);
+                    if (!canBrickMove)
+                    {
+                        brick.CanMove = false;
+                    }
+                }
+            }
+            else
+            {
+                if (rowStatus)
+                {
+                    // flips parse direction - unsure if needed
+                    
+                    /* bool isBlocked = currentRow == currentAboveRow ? IsBlocked(belowRow) : IsBlocked(aboveRow);
+                    if (!isBlocked)
+                    {
+                        var isConnected = IsBrickConnected(brick);
+                        foreach (BrickActor temp in isConnected)
+                        {
+                            selected.Add(temp);
+                        }
+                    }
+                    else
+                    {  */
+                        if (currentRow.Count > 0)
+                        {
+                            brick.CanMove = false;
+                        }
+                    //}
+                }
+            }
+
+            if (connectedBricks.Count == 0)
+            {
+                if (currentRow.Count > 0)
+                {
+                    brick.CanMove = false;
+                }
+            }
+
+            if (!connectedBricks.Contains(brick))
+            {
+                connectedBricks.Add(brick);
+            }
+
+            return connectedBricks;
+        }
+
+        private IList<BrickActor> RemoveIgnoredBricks(IList<BrickActor> row)
+        {
+            int count = row.Count;
+            IList<BrickActor> newRow = new List<BrickActor>(row);
+            var ignoredBricks = Scene.IgnoredBricks;
+
+            if (count > 0)
+            {
+                int i = 0;
+                do
+                {
+                    if (ignoredBricks.Contains(row[i]))
+                    {
+                        newRow.Remove(row[i]);
+                    }
+                    i++;
+                } while (i != count);
+            }
+            return newRow;
+        }
+       
+        public IList<BrickActor> IsBrickConnected(BrickActor brick)
+        {
+            var aboveRow = CheckSurroundingBricks(brick, FacingDirection.Up);
+            var belowRow = CheckSurroundingBricks(brick, FacingDirection.Down);
+            var currentAboveRow = RemoveIgnoredBricks(aboveRow);
+            var currentBelowRow = RemoveIgnoredBricks(belowRow);
+            var ignoredBricks = Scene.IgnoredBricks;
+            bool isAboveRowGrey = IsRowAllGrey(currentAboveRow);
+            bool isBelowRowGrey = IsRowAllGrey(currentBelowRow);
+
+            IList<BrickActor> connectedBricks = new List<BrickActor>();
+            /// need to refactor asap - can easily reduce 75% of this loop
+            if (currentAboveRow.Count > 0 || currentBelowRow.Count > 0)
+            {
+                if (currentAboveRow.Count >= currentBelowRow.Count)
+                {
+                    if (!isAboveRowGrey)
+                    {
+                        if (currentAboveRow.Count >= 2)
+                        {
+                            var returnedBricks = ParseRow(currentAboveRow, FacingDirection.Up);
+                            foreach (BrickActor brickToAdd in returnedBricks)
+                            {
+                                connectedBricks.Add(brickToAdd);
+                            }
+                        }
+
+                        if (currentAboveRow.Count == 1)
+                        {
+                            var returnedBricks = ParseBrick(currentAboveRow[0], FacingDirection.Up);
+                            foreach (BrickActor brickToAdd in returnedBricks)
+                            {
+                                connectedBricks.Add(brickToAdd);
+                            }
+                        }
+                    }
+
+                    currentBelowRow = RemoveIgnoredBricks(currentBelowRow);
+
+                    if (!isBelowRowGrey)
+                    {
+                        if (currentBelowRow.Count >= 2)
+                        {
+                            var returnedBricks = ParseRow(currentBelowRow, FacingDirection.Down);
+                            foreach (BrickActor brickToAdd in returnedBricks)
+                            {
+                                connectedBricks.Add(brickToAdd);
+                            }
+                        }
+
+                        if (currentBelowRow.Count == 1)
+                        {
+                            ignoredBricks.Add(currentBelowRow[0]);
+
+                            var returnedBricks = ParseBrick(currentBelowRow[0], FacingDirection.Down);
+                            foreach (BrickActor brickToAdd in returnedBricks)
+                            {
+                                connectedBricks.Add(brickToAdd);
+                            }
+
                         }
                     }
                 }
 
-            }
-            else
-            {
-                brick.CanMove = false;
-                ignoredBricks.Add(brick);
-                tempConnected.Add(brick);
-
-            }
-
-            bool aboveStatus = ((currentAboveRow.Count == 0 || currentAboveRow.Contains(brick)) && !IsRowAllGrey(currentAboveRow)) ? true : false;
-            bool belowStatus = ((currentBelowRow.Count == 0 || currentBelowRow.Contains(brick)) && !IsRowAllGrey(currentBelowRow)) ? true : false;
-/*            int tempInt = currentBelowRow.Count;
-            var tempRow = currentBelowRow;
-
-            if (tempInt > 0)
-            {
-                do
+                if (currentBelowRow.Count > currentAboveRow.Count)
                 {
-
-                    if (tempRow[tempInt - 1].Color.Name == "Gray")
+                    if (!isBelowRowGrey)
                     {
-                        currentBelowRow.Remove(tempRow[tempInt - 1]);
+                        if (currentBelowRow.Count >= 2)
+                        {
+                            var returnedBricks = ParseRow(currentBelowRow, FacingDirection.Down);
+                            foreach (BrickActor brickToAdd in returnedBricks)
+                            {
+                                connectedBricks.Add(brickToAdd);
+                            }
+                        }
+
+                        if (currentBelowRow.Count == 1)
+                        {
+                            var returnedBricks = ParseBrick(currentBelowRow[0], FacingDirection.Down);
+                            foreach (BrickActor brickToAdd in returnedBricks)
+                            {
+                                connectedBricks.Add(brickToAdd);
+                            }
+                        }
                     }
-                    tempInt -= 1;
+
+                    currentAboveRow = RemoveIgnoredBricks(currentAboveRow);
+
+                    if (!isAboveRowGrey)
+                    {
+                        if (currentAboveRow.Count >= 2)
+                        {
+                            var returnedBricks = ParseRow(currentAboveRow, FacingDirection.Up);
+                            foreach (BrickActor brickToAdd in returnedBricks)
+                            {
+                                connectedBricks.Add(brickToAdd);
+                            }
+                        }
+
+                        if (currentAboveRow.Count == 1)
+                        {
+                            var returnedBricks = ParseBrick(currentAboveRow[0], FacingDirection.Up);
+                            foreach (BrickActor brickToAdd in returnedBricks)
+                            {
+                                connectedBricks.Add(brickToAdd);
+                            }
+                        }
+                    }
                 }
-                while (tempInt != 0);
-            }*/
-
-            /*            if ((aboveStatus && !belowStatus) || (belowStatus && !aboveStatus) || (!tempConnected.Contains(selectedBrick) && brick == selectedBrick) || (currentAboveRow.Count == 0 && currentBelowRow.Count == 0))
-                        {
-
-                            tempConnected.Add(brick);
-                        }*/
-/*                        if (tempConnected.Count == 0 || (currentAboveRow.Count != 0 && currentBelowRow.Count != 0))
-                        {
-                            brick.CanMove = false;
-                        }*/
-
-            /*}
-            else
-            {
-                brick.CanMove = false;
-            }*/
-
-            return tempConnected;
+            }
+            connectedBricks.Add(brick);
+            return connectedBricks;
         }
 
         private IList<BrickActor> CheckSurroundingBricks(BrickActor brick, FacingDirection direction)
-        {
-            if (brick.Location.X == 13 && brick.Location.Y == 17)
             {
-            }
-            var brickPos = brick.Location;
-            int x = brickPos.X;
-            int y = brickPos.Y;
-            int currentCellX = 0;
-            int dx = direction == FacingDirection.Up ? -1 : 1;
-            IList<BrickActor> currentRow = new List<BrickActor>();
-            // check if top of brick is connected
-            do
-            {
-                if ((x + currentCellX >= 0 && y + dx >= 0) && (x + currentCellX <= 34 && y + dx <= 21))
+                if (brick.Location.X == 13 && brick.Location.Y == 17)
                 {
-                    IActor cell = Scene.GetPlayfield[x + currentCellX, y + dx];
-                    if (cell != null && !currentRow.Contains(cell as BrickActor) && !Scene.ConnectedBricks.Contains(cell as BrickActor))
-                    {
-                        BrickActor cellA = cell as BrickActor;
-                        /*if (cellA.Color.Name != "Gray")
-                        {*/
-                        currentRow.Add(cell as BrickActor);
-                        //}
-                    }
-
-                    currentCellX++;
                 }
+                var brickPos = brick.Location;
+                int x = brickPos.X;
+                int y = brickPos.Y;
+                int currentCellX = 0;
+                int dx = direction == FacingDirection.Up ? -1 : 1;
+                IList<BrickActor> currentRow = new List<BrickActor>();
+                do
+                {
+                    if ((x + currentCellX >= 0 && y + dx >= 0) && (x + currentCellX <= 34 && y + dx <= 21))
+                    {
+                        IActor cell = Scene.GetPlayfield[x + currentCellX, y + dx];
+                        if (cell != null && !currentRow.Contains(cell as BrickActor) && !Scene.ConnectedBricks.Contains(cell as BrickActor))
+                        {
+                            currentRow.Add(cell as BrickActor);
+                        }
+
+                        currentCellX++;
+                    }
+                }
+                while ((currentCellX) != brick.GridSize.Width);
+
+                return currentRow;
             }
-            while ((currentCellX) != brick.GridSize.Width);
-            return currentRow;
-        }
-
-
 
         public void UpdateSelectedBrickLocation(Point mousePos)
         {

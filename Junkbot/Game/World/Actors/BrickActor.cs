@@ -157,7 +157,7 @@ namespace Junkbot.Game.World.Actors
             UpdateBrickAnim();
             MovingLocation = new Point();
             Scene = scene;
-            CanMove = true;
+            CanMove = color.Name != "Gray" ? true : false;
         }
 
 

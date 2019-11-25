@@ -9,6 +9,7 @@ using System.Drawing;
 using System.IO;
 using Pencil.Gaming;
 using System.Collections.Generic;
+using Junkbot.Game.World.Level;
 
 namespace Junkbot.Game.State
 {
@@ -26,6 +27,7 @@ namespace Junkbot.Game.State
         public static string[] lvl;
         public Scene Scene;
         public BrickMover BrickMover;
+        public JunkbotSidebar Sidebar;
         public static AnimationStore Store = new AnimationStore();
         public override string Name
         {
@@ -38,6 +40,7 @@ namespace Junkbot.Game.State
             Scene = Scene.FromLevel(lvl, Store);
             SetTimer();
             BrickMover = new BrickMover(Scene);
+            Sidebar = new JunkbotSidebar(Scene.LevelData);
         }
         void Timer_Tick(object sender, EventArgs e)
         {
@@ -61,31 +64,34 @@ namespace Junkbot.Game.State
                 bool isConnected = tempConnected.Count > 1 ? true : false;
 
                 if (isConnected)
-                {
-
+                { 
                     foreach (BrickActor brickToAdd in tempConnected)
                     {
-                        if (Scene.ConnectedBricks.Contains(brickToAdd))
+                        if (brickToAdd.CanMove)
                         {
-                            if (brickToAdd.Size == BrickSize.Two)
+                            if (!Scene.ConnectedBricks.Contains(brickToAdd))
                             {
-
+                                Scene.ConnectedBricks.Add(brickToAdd);
                             }
+
                         }
-                        Scene.ConnectedBricks.Add(brickToAdd);
+
+                        brickToAdd.CanMove = true;
                     }
 
                     foreach (BrickActor connectedBrick in Scene.ConnectedBricks)
                     {
-                        if (connectedBrick != brick)
-                        {
-                            connectedBrick.Selected = true;
-                            Scene.MoveBrickFromPlayfield(connectedBrick);
-                        }
+                        connectedBrick.Selected = true;
+                        Scene.MoveBrickFromPlayfield(connectedBrick);
                     }
                 }
-                brick.Selected = true;
-                Scene.MoveBrickFromPlayfield(brick);
+                else
+                {
+                    brick.Selected = true;
+                    Scene.ConnectedBricks.Add(brick);
+                    Scene.MoveBrickFromPlayfield(brick);
+                }
+                
                 Scene.IgnoredBricks.Clear();
             }
         }
@@ -101,9 +107,11 @@ namespace Junkbot.Game.State
                 connectedBrick.Location = connectedBrick.MovingLocation;
             }
             Scene.ConnectedBricks.Clear();
+            Scene.IgnoredBricks.Clear();
+
         }
 
-        
+
         public override void ProcessInputs(InputEvents inputs)
         {
             var MousePosition = inputs.MousePosition;
@@ -196,6 +204,14 @@ namespace Junkbot.Game.State
                 if (actor != null)
                 {
                     actor.Rendered = false;
+                }
+
+                if (actor is BrickActor)
+                {
+                    if ((actor as BrickActor).CanMove == false && (actor as BrickActor).Color.Name != "Gray")
+                    {
+
+                    }
                 }
             }
             foreach (IActor actor in Scene.SelectedGrid)

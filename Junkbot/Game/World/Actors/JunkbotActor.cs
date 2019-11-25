@@ -174,7 +174,7 @@ namespace Junkbot.Game.World.Actors
                     }
                     else
                     {
-                        if ((Scene.GetPlayfield[cell.X - 1, cell.Y] != null) || (Scene.GetPlayfield[cell.X - 2, cell.Y] != null))
+                        if ((Scene.GetPlayfield[cell.X - 1, cell.Y] != null) || (Scene.GetPlayfield[cell.X, cell.Y] != null))
                         {
                             detectionResults.Add((JunkbotCollision)index);
                         }
