@@ -54,7 +54,7 @@ namespace Junkbot.Game.State
         {
             if (inputs != null)
             {
-                Shell.HandleInputs(inputs);
+                Shell.HandleMouseInputs(inputs);
             }
         }
     }
