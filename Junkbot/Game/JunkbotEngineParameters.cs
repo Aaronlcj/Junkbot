@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,7 +21,11 @@ namespace Junkbot.Game
         {
             get
             {
-                return Environment.CurrentDirectory + "\\Content";
+                return String.Format(
+                     "{0}{1}Content",
+                     Environment.CurrentDirectory,
+                     Path.DirectorySeparatorChar
+                );
             }
         }
     }
