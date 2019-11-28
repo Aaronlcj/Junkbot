@@ -18,6 +18,7 @@ namespace Junkbot.Game
         {
             get { return _Parameters; }
         }
+
         private IGameEngineParameters _Parameters;
 
         public GameState CurrentGameState
@@ -35,7 +36,9 @@ namespace Junkbot.Game
 
         public void Begin()
         {
-            CurrentGameState = new SplashGameState();
+            string level = "loading_level";
+
+            CurrentGameState = new MainMenuState(level, this);
         }
 
         public void RenderFrame(IGraphicsController graphics)
@@ -43,7 +46,6 @@ namespace Junkbot.Game
             graphics.ClearViewport(Color.CornflowerBlue);
 
             CurrentGameState.RenderFrame(graphics);
-            string level = "loading_level";
         }
 
         public void Update(TimeSpan deltaTime, InputEvents inputs)

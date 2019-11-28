@@ -80,11 +80,11 @@
     <None Include="Content\Atlas\decals-atlas.json" />
     <Compile Include="Game\BrickMover - Copy.cs" />
     <Compile Include="Game\BrickMover.cs" />
-    <Compile Include="Game\GameStateChangedEventArgs.cs" />
     <Compile Include="Game\JunkbotEngineParameters.cs" />
     <Compile Include="Game\State\DemoGameState.cs" />
     <Compile Include="Game\State\LevelSelectState.cs" />
     <Compile Include="Game\UI\FontService.cs" />
+    <Compile Include="Game\UI\Menus\Help\Button.cs" />
     <Compile Include="Game\UI\Menus\Help\HelpTextItem.cs" />
     <Compile Include="Game\UI\Menus\Help\HelpMenu.cs" />
     <Compile Include="Game\UI\Menus\Intro.cs" />
@@ -103,10 +103,7 @@
     <Compile Include="Helpers\RectangleHelper.cs" />
     <Compile Include="Helpers\SizeHelper.cs" />
     <Compile Include="Game\JunkbotGame.cs" />
-    <Compile Include="Game\State\IGameState.cs" />
     <Compile Include="Game\State\MainMenuState.cs" />
-    <Compile Include="Game\UI\Controls\Control.cs" />
-    <Compile Include="Game\UI\JunkbotInterface.cs" />
     <Compile Include="Game\State\SplashGameState.cs" />
     <Compile Include="Game\World\Actors\Animation\ActorAnimation.cs" />
     <Compile Include="Game\World\Actors\Animation\ActorAnimationFrame.cs" />
@@ -937,10 +934,13 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Game\UI\Controls\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>

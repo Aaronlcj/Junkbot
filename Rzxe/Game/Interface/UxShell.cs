@@ -40,6 +40,13 @@ namespace Oddmatics.Rzxe.Game.Interface
             ClickStartedComponent = new UxComponent[3];
         }
 
+        public void AddComponent(UxComponent component)
+        {
+            if (component != null)
+            {
+                Components.Add(component);
+            }
+        }
 
         public bool HandleMouseInputs(InputEvents inputs)
         {

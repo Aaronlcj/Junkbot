@@ -5,6 +5,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Junkbot.Game.UI.Menus.Help;
+using Oddmatics.Rzxe.Game.Interface;
 
 namespace Junkbot.Game.World.Level
 {
@@ -12,22 +14,29 @@ namespace Junkbot.Game.World.Level
     {
 
         private ISpriteBatch _buttons;
-
+        internal JunkbotGame JunkbotGame;
         public IList<JunkbotDecalData> Button_List;
         private string _play = "play";
         private string _credits;
         private string _replayIntro;
         private string _clearScreen;
         private bool _hover = false;
+        private UxShell Shell;
+        private Button Play;
 
-        public MainMenuButtons()
+        public MainMenuButtons(UxShell shell, JunkbotGame junkbotGame)
         {
+            JunkbotGame = junkbotGame;
+            Shell = shell;
             _play = "play";
             _credits = "credits";
             _replayIntro = "replay_intro";
             _clearScreen = "clear_screen";
+            Play = new Button(JunkbotGame, "play", new SizeF(116, 45), new PointF(139, 148));
+            Shell.AddComponent(Play);
         }
         // make buttons list w/ loc & size for mouse checking
+
         public void HoverButton(string button)
         {
             _hover = _hover == false ? true : false;
@@ -53,9 +62,9 @@ namespace Junkbot.Game.World.Level
             _buttons = graphics.CreateSpriteBatch("buttons-atlas");
 
             _buttons.Draw(
-                _play,
+                Play.Name,
                 new Rectangle(
-                    139, 148, 116, 45)
+                    (int)Play.Location.X, (int)Play.Location.Y, (int)Play.Size.Width, (int)Play.Size.Height)
                 );
             //Go To Help
             _buttons.Draw(

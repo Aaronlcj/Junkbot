@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using Junkbot.Game.World.Level;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Oddmatics.Rzxe.Game.Interface;
 
 namespace Junkbot.Game.State
 {
@@ -36,6 +37,9 @@ namespace Junkbot.Game.State
         public HelpMenu HelpMenu;
         public LevelSelectGif LevelSelectGif;
 
+        private UxShell Shell { get; set; }
+
+
         public static AnimationStore Store = new AnimationStore();
         public override string Name
         {
@@ -49,6 +53,9 @@ namespace Junkbot.Game.State
             HelpMenu = new HelpMenu();
             LevelSelectGif = new LevelSelectGif();
             var key = $"Building_{Buttons.Tab}";
+
+            Shell = new UxShell();
+
 
             JToken jsonLevels = JObject.Parse(File.ReadAllText(Environment.CurrentDirectory + @"\Content\Levels\level_list.json"))[key];
             _levelList = jsonLevels.ToObject<List<string>>();
@@ -71,10 +78,6 @@ namespace Junkbot.Game.State
             _timer.Enabled = true;
         }
 
-        public override void ProcessInputs(InputEvents inputs)
-        {
-        }
-
         public override void RenderFrame(IGraphicsController graphics)
         {
             graphics.ClearViewport(Color.CornflowerBlue);
@@ -84,6 +87,14 @@ namespace Junkbot.Game.State
             LevelSelectText.Render(graphics);
 
             //HelpMenu.Render(graphics);
+        }
+
+        public override void Update(TimeSpan deltaTime, InputEvents inputs)
+        {
+            if (inputs != null)
+            {
+                Shell.HandleMouseInputs(inputs);
+            }
         }
     }
 }

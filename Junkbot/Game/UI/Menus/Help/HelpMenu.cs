@@ -11,6 +11,7 @@ using Junkbot.Game.UI;
 using Junkbot.Game.UI.Menus.Help;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Oddmatics.Rzxe.Game.Interface;
 
 namespace Junkbot.Game.World.Level
 {
