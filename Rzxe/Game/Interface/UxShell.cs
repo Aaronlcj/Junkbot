@@ -47,7 +47,16 @@ namespace Oddmatics.Rzxe.Game.Interface
                 Components.Add(component);
             }
         }
-
+        public void AddComponents(List<UxComponent> components)
+        {
+            if (components != null)
+            {
+                foreach (UxComponent component in components)
+                {
+                    Components.Add(component);
+                }
+            }
+        }
         public bool HandleMouseInputs(InputEvents inputs)
         {
             UxComponent component = MouseHitTest(inputs.MousePosition);

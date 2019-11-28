@@ -22,7 +22,7 @@ namespace Junkbot.Game.State
     internal class LevelSelectState : GameState
     {
         System.Timers.Timer _timer;
-
+        internal JunkbotGame JunkbotGame;
         public override InputFocalMode FocalMode
         {
             get { return InputFocalMode.Always; }
@@ -34,7 +34,7 @@ namespace Junkbot.Game.State
         public LevelSelectButtons Buttons;
         public LevelSelectBackground LevelSelectBackground;
         public LevelSelectText LevelSelectText;
-        public HelpMenu HelpMenu;
+        public HelpMenu HelpMenu { get; set; }
         public LevelSelectGif LevelSelectGif;
 
         private UxShell Shell { get; set; }
@@ -46,20 +46,20 @@ namespace Junkbot.Game.State
             get { return "LevelSelect"; }
         }
 
-        public LevelSelectState(string level)
+        public LevelSelectState(JunkbotGame junkbotGame, string level)
         {
-            Buttons = new LevelSelectButtons();
+            JunkbotGame = junkbotGame;
+            Shell = new UxShell();
+            Buttons = new LevelSelectButtons(Shell, JunkbotGame);
             LevelSelectBackground = new LevelSelectBackground();
-            HelpMenu = new HelpMenu();
             LevelSelectGif = new LevelSelectGif();
             var key = $"Building_{Buttons.Tab}";
 
-            Shell = new UxShell();
 
 
             JToken jsonLevels = JObject.Parse(File.ReadAllText(Environment.CurrentDirectory + @"\Content\Levels\level_list.json"))[key];
             _levelList = jsonLevels.ToObject<List<string>>();
-            LevelSelectText = new LevelSelectText(_levelList, Buttons);
+            LevelSelectText = new LevelSelectText(JunkbotGame, Shell, _levelList, Buttons);
 
             lvl = File.ReadAllLines(Environment.CurrentDirectory + $@"\Content\Levels\{level}.txt");
             Scene = Scene.FromLevel(lvl, Store);
@@ -80,13 +80,17 @@ namespace Junkbot.Game.State
 
         public override void RenderFrame(IGraphicsController graphics)
         {
+
             graphics.ClearViewport(Color.CornflowerBlue);
             LevelSelectBackground.Render(graphics);
             LevelSelectGif.Render(graphics);
-            Buttons.Render(graphics); 
+            Buttons.Render(graphics);
             LevelSelectText.Render(graphics);
 
-            //HelpMenu.Render(graphics);
+            if (HelpMenu != null)
+            {
+                HelpMenu.Render(graphics);
+            }
         }
 
         public override void Update(TimeSpan deltaTime, InputEvents inputs)

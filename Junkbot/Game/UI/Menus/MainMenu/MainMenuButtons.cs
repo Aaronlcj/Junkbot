@@ -5,12 +5,13 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Junkbot.Game.UI.Menus;
 using Junkbot.Game.UI.Menus.Help;
 using Oddmatics.Rzxe.Game.Interface;
 
 namespace Junkbot.Game.World.Level
 {
-    internal class MainMenuButtons
+    internal class MainMenuButtons : UIPage
     {
 
         private ISpriteBatch _buttons;
@@ -23,8 +24,12 @@ namespace Junkbot.Game.World.Level
         private bool _hover = false;
         private UxShell Shell;
         private Button Play;
+        private Button Credits;
+        private Button ReplayIntro;
+        private Button ClearScreen;
 
         public MainMenuButtons(UxShell shell, JunkbotGame junkbotGame)
+            : base(shell, junkbotGame)
         {
             JunkbotGame = junkbotGame;
             Shell = shell;
@@ -32,30 +37,18 @@ namespace Junkbot.Game.World.Level
             _credits = "credits";
             _replayIntro = "replay_intro";
             _clearScreen = "clear_screen";
-            Play = new Button(JunkbotGame, "play", new SizeF(116, 45), new PointF(139, 148));
-            Shell.AddComponent(Play);
-        }
-        // make buttons list w/ loc & size for mouse checking
-
-        public void HoverButton(string button)
-        {
-            _hover = _hover == false ? true : false;
-
-            switch (button)
-            {
-                case "play":
-                    _play = _hover ? _play += "_x" : _play.Remove(_play.Length - 2, 2);
-                    break;
-                case "credits":
-                    _credits = _hover ? _credits += "_x" : _credits.Remove(_credits.Length - 2, 2);
-                    break;
-                case "replay_intro":
-                    _replayIntro = _hover ? _replayIntro += "_x" : _replayIntro.Remove(_replayIntro.Length - 2, 2);
-                    break;
-                case "clear_screen":
-                    _clearScreen = _hover ? _clearScreen += "_x" : _clearScreen.Remove(_clearScreen.Length - 2, 2);
-                    break;
-            }
+            Play = new Button(JunkbotGame, "play", new SizeF(116, 45), new PointF(139, 148), this);
+            Credits = new Button(JunkbotGame, "credits", new SizeF(96, 26), new PointF(310, 159), this);
+            ReplayIntro = new Button(JunkbotGame, "replay_intro", new SizeF(96, 26), new PointF(508, 337), this);
+            ClearScreen = new Button(JunkbotGame, "clear_screen", new SizeF(96, 26), new PointF(508, 367), this);
+            Shell.AddComponents(new List<UxComponent>()
+                {
+                    Play,
+                    Credits,
+                    ReplayIntro,
+                    ClearScreen
+                }
+            );
         }
         public void Render(IGraphicsController graphics)
         {
@@ -68,20 +61,20 @@ namespace Junkbot.Game.World.Level
                 );
             //Go To Help
             _buttons.Draw(
-                _credits,
+                Credits.Name,
                 new Rectangle(
-                    310, 159, 96, 26)
-                );
+                    (int)Credits.Location.X, (int)Credits.Location.Y, (int)Credits.Size.Width, (int)Credits.Size.Height)
+            );
             //Hint
             _buttons.Draw(
-                _replayIntro,
+                ReplayIntro.Name,
                 new Rectangle(
-                    508, 337, 96, 26)
-                );
+                    (int)ReplayIntro.Location.X, (int)ReplayIntro.Location.Y, (int)ReplayIntro.Size.Width, (int)ReplayIntro.Size.Height)
+            );
             _buttons.Draw(
-                _clearScreen,
+                ClearScreen.Name,
                 new Rectangle(
-                    508, 367, 96, 26)
+                    (int)ClearScreen.Location.X, (int)ClearScreen.Location.Y, (int)ClearScreen.Size.Width, (int)ClearScreen.Size.Height)
             );
 
             _buttons.Finish();

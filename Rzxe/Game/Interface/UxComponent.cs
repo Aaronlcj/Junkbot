@@ -35,10 +35,14 @@ namespace Oddmatics.Rzxe.Game.Interface
         public virtual void OnClick() { }
 
         public virtual void OnMouseDown() { }
-        
-        public virtual void OnMouseEnter() { }
 
-        public virtual void OnMouseLeave() { }
+        public virtual void OnMouseEnter()
+        {
+        }
+
+        public virtual void OnMouseLeave()
+        {
+        }
 
         public virtual void OnMouseUp() { }
     }

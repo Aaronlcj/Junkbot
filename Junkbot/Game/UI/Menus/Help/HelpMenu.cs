@@ -5,9 +5,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net.Configuration;
 using System.Text;
 using System.Threading.Tasks;
 using Junkbot.Game.UI;
+using Junkbot.Game.UI.Menus;
 using Junkbot.Game.UI.Menus.Help;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -15,9 +17,13 @@ using Oddmatics.Rzxe.Game.Interface;
 
 namespace Junkbot.Game.World.Level
 {
-    internal class HelpMenu
+    internal class HelpMenu : UIPage
     {
-
+        internal JunkbotGame JunkbotGame;
+        private UxShell Shell;
+        private Button Next;
+        private Button Previous;
+        private Button Ok;
         private ISpriteBatch _sprites;
         private ISpriteBatch _buttons;
         private ISpriteBatch _box;
@@ -25,20 +31,29 @@ namespace Junkbot.Game.World.Level
         private FontService _fontService;
         private IList<HelpTextItem> _textList;
         private int _page;
-        private string _next;
-        private string _previous;
-        private string _ok;
-        private bool _hover;
+        bool disposed = false;
 
-        public HelpMenu()
+        // Protected implementation of Dispose pattern.
+        
+        public HelpMenu(UxShell shell, JunkbotGame junkbotGame)
+            : base(shell, junkbotGame)
         {
-            _page = 2;
-            _next = "next_button";
-            _previous = "prev_button";
-            _ok = "ok_button";
-            _hover = false;
+            JunkbotGame = junkbotGame;
+            Shell = shell;
+            _page = 1;
             _fontService = new FontService();
             LoadText();
+            Next = new Button(JunkbotGame, "next_button", new SizeF(36, 26), new PointF(391, 355), this);
+            //Previous = new Button(JunkbotGame, "prev_button", new SizeF(36, 26), new PointF(300, 350), this);
+            //Ok = new Button(JunkbotGame, "ok_button", new SizeF(76, 42), new PointF(351, 342), this);
+            Shell.AddComponent(Next);
+            /*Shell.AddComponents(new List<UxComponent>()
+                {
+                    Next,
+                    Previous,
+                    Ok
+                }
+            );*/
         }
 
         public void LoadText()
@@ -54,27 +69,29 @@ namespace Junkbot.Game.World.Level
             }).ToList();
         }
 
-        public void HoverButton(string button)
+        public override void ChangeProperty()
         {
-            _hover = _hover == false ? true : false;
-
-            switch (button)
+            if (_page == 1)
             {
-                case "next_button":
-                    _next = _hover ? _next += "_x" : _next.Remove(_next.Length - 2, 2);
-                    break;
-                case "prev_button":
-                    _previous = _hover ? _previous += "_x" : _previous.Remove(_previous.Length - 2, 2);
-                    break;
-                case "ok_button":
-                    _ok = _hover ? _ok += "_x" : _ok.Remove(_ok.Length - 2, 2);
-                    break;
+                _page = 2;
+                Next = null;
+                Previous = new Button(JunkbotGame, "prev_button", new SizeF(36, 26), new PointF(300, 350), this);
+                Ok = new Button(JunkbotGame, "ok_button", new SizeF(76, 42), new PointF(351, 342), this);
+                Shell.AddComponents(new List<UxComponent>()
+                    {
+                        Previous,
+                        Ok
+                    }
+                );
             }
-        }
-
-        public void ChangePage(int page)
-        {
-            _page = page;
+            else
+            {
+                _page = 1;
+                Previous = null;
+                Ok = null;
+                Next = new Button(JunkbotGame, "next_button", new SizeF(36, 26), new PointF(391, 355), this);
+                Shell.AddComponent(Next);
+            }
             LoadText();
         }
 
@@ -148,23 +165,23 @@ namespace Junkbot.Game.World.Level
             if (_page == 1)
             {
                 _buttons.Draw(
-                    _next,
+                    Next.Name,
                     new Rectangle(
-                        391, 355, _buttons.GetSpriteUV(_next).Width, _buttons.GetSpriteUV(_next).Height)
+                        (int)Next.Location.X, (int)Next.Location.Y, (int)Next.Size.Width, (int)Next.Size.Height)
                 );
             }
 
             if (_page == 2)
             {
                 _buttons.Draw(
-                    _previous,
+                    Previous.Name,
                     new Rectangle(
-                        300, 350, _buttons.GetSpriteUV(_previous).Width, _buttons.GetSpriteUV(_previous).Height)
+                        (int)Previous.Location.X, (int)Previous.Location.Y, (int)Previous.Size.Width, (int)Previous.Size.Height)
                 );
                 _buttons.Draw(
-                    _ok,
+                    Ok.Name,
                     new Rectangle(
-                        351, 342, _buttons.GetSpriteUV(_ok).Width, _buttons.GetSpriteUV(_ok).Height)
+                        (int)Ok.Location.X, (int)Ok.Location.Y, (int)Ok.Size.Width, (int)Ok.Size.Height)
                 );
             }
 
@@ -172,6 +189,29 @@ namespace Junkbot.Game.World.Level
             _sprites.Finish();
 
             _buttons.Finish();
+        }
+        protected override void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                // Free any other managed objects here.
+                //
+            }
+
+            // Free any unmanaged objects here.
+            //
+            disposed = true;
+
+            // Call the base class implementation.
+            base.Dispose(disposing);
+        }
+
+        ~HelpMenu()
+        {
+            Dispose(false);
         }
     }
 }

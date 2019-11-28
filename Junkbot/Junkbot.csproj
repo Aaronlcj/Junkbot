@@ -87,7 +87,9 @@
     <Compile Include="Game\UI\Menus\Help\Button.cs" />
     <Compile Include="Game\UI\Menus\Help\HelpTextItem.cs" />
     <Compile Include="Game\UI\Menus\Help\HelpMenu.cs" />
+    <Compile Include="Game\UI\Menus\UIPage.cs" />
     <Compile Include="Game\UI\Menus\Intro.cs" />
+    <Compile Include="Game\UI\Menus\LevelSelect\LevelSelectRow.cs" />
     <Compile Include="Game\UI\Menus\LevelSelect\LevelSelectGif.cs" />
     <Compile Include="Game\UI\Menus\LevelSelect\LevelSelectText.cs" />
     <Compile Include="Game\UI\Menus\LevelSelect\LevelSelectBackground.cs" />

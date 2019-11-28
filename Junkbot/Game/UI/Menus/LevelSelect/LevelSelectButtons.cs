@@ -5,11 +5,24 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Junkbot.Game.UI.Menus;
+using Junkbot.Game.UI.Menus.Help;
+using Oddmatics.Rzxe.Game.Interface;
 
 namespace Junkbot.Game.World.Level
 {
-    internal class LevelSelectButtons
+
+    internal class LevelSelectButtons : UIPage
     {
+        internal JunkbotGame JunkbotGame;
+        private UxShell Shell;
+        private Button Building1;
+        private Button Building2;
+        private Button Building3;
+        private Button Building4;
+        private Button HallOfFame;
+        private Button Help;
+        private Button Main;
 
         private ISpriteBatch _buttons;
         private ISpriteBatch _tabs;
@@ -17,62 +30,39 @@ namespace Junkbot.Game.World.Level
         public IList<JunkbotDecalData> Button_List;
         private string _tab;
         public int Tab { get; set; }
-        private string _building1;
-        private string _building2;
-        private string _building3;
-        private string _building4;
-        private string _hallOfFame;
-        private string _help;
-        private string _mainMenu;
-        private bool _hover = false;
 
-        public LevelSelectButtons()
+        public LevelSelectButtons(UxShell shell, JunkbotGame junkbotGame)
+        : base(shell, junkbotGame)
         {
-            _tab = "tab_1";
-            _building1 = "building_tab_1";
-            _building2 = "building_tab_2";
-            _building3 = "building_tab_3";
-            _building4 = "building_tab_4";
+            JunkbotGame = junkbotGame;
+            Shell = shell;
 
+            Building1 = new Button(JunkbotGame, "building_tab_1", new SizeF(83, 13), new PointF(21, 59), this);
+            Building2 = new Button(JunkbotGame, "building_tab_2", new SizeF(88, 13), new PointF(131, 59), this);
+            Building3 = new Button(JunkbotGame, "building_tab_3", new SizeF(89, 13), new PointF(244, 59), this);
+            Building4 = new Button(JunkbotGame, "building_tab_4", new SizeF(88, 13), new PointF(357, 59), this);
+            HallOfFame = new Button(JunkbotGame, "hiscore", new SizeF(96, 26), new PointF(511, 321), this);
+            Help = new Button(JunkbotGame, "help", new SizeF(96, 26), new PointF(511, 350), this);
+            Main = new Button(JunkbotGame, "quit", new SizeF(96, 26), new PointF(511, 379), this);
+
+            Shell.AddComponents(new List<UxComponent>()
+                {
+                    Building1,
+                    Building2,
+                    Building3,
+                    Building4,
+                    HallOfFame,
+                    Help,
+                    Main
+                }
+            );
             Tab = 1;
-            _hallOfFame = "hiscore";
-            _help = "help";
-            _mainMenu = "quit";
-        }
-        // make buttons list w/ loc & size for mouse checking
-        public void HoverButton(string button)
-        {
-            _hover = _hover == false ? true : false;
-
-            switch (button)
-            {
-                case "building_1":
-                    _building1 = _hover ? _building1 += "_x" : _building1.Remove(_building1.Length - 2, 2);
-                    break;
-                case "building_2":
-                    _building2 = _hover ? _building2 += "_x" : _building2.Remove(_building2.Length - 2, 2);
-                    break;
-                case "building_3":
-                    _building3 = _hover ? _building3 += "_x" : _building3.Remove(_building3.Length - 2, 2);
-                    break;
-                case "building_4":
-                    _building4 = _hover ? _building4 += "_x" : _building4.Remove(_building4.Length - 2, 2);
-                    break;
-                case "hiscore":
-                    _hallOfFame = _hover ? _hallOfFame += "_x" : _hallOfFame.Remove(_hallOfFame.Length - 2, 2);
-                    break;
-                case "help":
-                    _help = _hover ? _help += "_x" : _help.Remove(_help.Length - 2, 2);
-                    break;
-                case "quit":
-                    _mainMenu = _hover ? _mainMenu += "_x" : _mainMenu.Remove(_mainMenu.Length - 2, 2);
-                    break;
-            }
+            _tab = $"tab_{Tab}";
         }
 
-        public void ChangeTab(int tab)
+        public void ChangeProperty()
         {
-            Tab = tab;
+            //Tab = tab;
             _tab = $"tab_{Tab}";
         }
 
@@ -87,43 +77,43 @@ namespace Junkbot.Game.World.Level
                     0, 52, 468, 22)
             );
             _tabs.Draw(
-                _building1,
+                Building1.Name,
                 new Rectangle(
-                    21, 59, 83, 13)
-                );
+                    (int) Building1.Location.X, (int) Building1.Location.Y, (int) Building1.Size.Width,
+                    (int) Building1.Size.Height));
             _tabs.Draw(
-                _building2,
+                Building2.Name,
                 new Rectangle(
-                    131, 59, 88, 13)
-                );
+                    (int) Building2.Location.X, (int) Building2.Location.Y, (int) Building2.Size.Width,
+                    (int) Building2.Size.Height));
             _tabs.Draw(
-                _building3,
+                Building3.Name,
                 new Rectangle(
-                    244, 59, 89, 13)
-            );
+                    (int) Building3.Location.X, (int) Building3.Location.Y, (int) Building3.Size.Width,
+                    (int) Building3.Size.Height));
             _tabs.Draw(
-                _building4,
+                Building4.Name,
                 new Rectangle(
-                    357, 59, 88, 13)
-            );
+                    (int) Building4.Location.X, (int) Building4.Location.Y, (int) Building4.Size.Width,
+                    (int) Building4.Size.Height));
             _tabs.Finish();
 
             _buttons.Draw(
-                _hallOfFame,
+                HallOfFame.Name,
                 new Rectangle(
-                    511, 321, 96, 26)
-                );
+                    (int) HallOfFame.Location.X, (int) HallOfFame.Location.Y, (int) HallOfFame.Size.Width,
+                    (int) HallOfFame.Size.Height));
             _buttons.Draw(
-                _help,
+                Help.Name,
                 new Rectangle(
-                    511, 350, 96, 26)
-            );
+                    (int) Help.Location.X, (int) Help.Location.Y, (int) Help.Size.Width, (int) Help.Size.Height));
             _buttons.Draw(
-                _mainMenu,
+                Main.Name,
                 new Rectangle(
-                    511, 379, 96, 26)
-            );
+                    (int) Main.Location.X, (int) Main.Location.Y, (int) Main.Size.Width, (int) Main.Size.Height));
             _buttons.Finish();
         }
+        public void Dispose()
+        { }
     }
 }
