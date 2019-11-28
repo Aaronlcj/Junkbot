@@ -1,1 +1,0 @@
-&userID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX&username=XXXXX&state=&total=&record=&rank=0&outof=0&domainname=localhost&

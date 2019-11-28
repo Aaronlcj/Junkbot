@@ -2,6 +2,7 @@
 using Pencil.Gaming.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -28,7 +29,7 @@ namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
         }
 
 
-        public GLSpriteAtlas GetAtlas(string atlasName)
+        public GLSpriteAtlas GetAtlas(string atlasName, int type = 0)
         {
             if (Disposing)
             {
@@ -43,13 +44,21 @@ namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
             }
             else
             {
-                var newAtlas = GLSpriteAtlas.FromFileSet(
-                    string.Format(
-                        "{0}\\Atlas\\{1}",
-                        EngineParameters.GameContentRoot,
-                        atlasName
+                GLSpriteAtlas newAtlas;
+                if (type == 1)
+                {
+                    newAtlas = GLSpriteAtlas.FromGif(atlasName);
+                }
+                else
+                {
+                    newAtlas = GLSpriteAtlas.FromFileSet(
+                        string.Format(
+                            "{0}\\Atlas\\{1}",
+                            EngineParameters.GameContentRoot,
+                            atlasName
                         )
                     );
+                }
 
                 Atlases.Add(newAtlas.Name, newAtlas);
                  

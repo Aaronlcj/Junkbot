@@ -91,10 +91,11 @@
     <Content Include="PencilTemp\natives64\lua.dll" />
     <Content Include="PencilTemp\natives64\openal32.dll" />
     <Content Include="PencilTemp\natives64\wrap_oal.dll" />
+    <Compile Include="Windowing\Graphics\GifImage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
-xcopy /s /y "$(SolutionDir)packages\Pencil.Gaming.GLFW3.1.0.4955\NativeBinaries\x86\*.*" "$(TargetDir)"</PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

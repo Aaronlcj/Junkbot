@@ -33,7 +33,7 @@ namespace Junkbot.Game
             // Start with the splash screen
             //
             string level = "loading_level";
-            PushState(new SplashGameState(level));
+            PushState(new MainMenuState(level));
         }
     }
 }

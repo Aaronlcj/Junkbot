@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Junkbot.Helpers;
 
 namespace Junkbot.Game
 {
@@ -57,25 +58,25 @@ namespace Junkbot.Game
         }
 
         private IList<BrickActor> ParseRow(IList<BrickActor> row, FacingDirection direction)
-            {
+        {
 
-                var ignoredBricks = Scene.IgnoredBricks;
-                IList<BrickActor> connectedBricks = new List<BrickActor>();
-                IList<BrickActor> selected = new List<BrickActor>();
-                var rowWithoutIgnoredBricks = RemoveIgnoredBricks(row);
-                bool rowStatus = true;
-                var currentRow = row;
-                IList<BrickActor> whichRow = new List<BrickActor>();
-                FacingDirection altDirection = direction;
-                switch (direction)
-                {
-                    case FacingDirection.Up:
-                        altDirection = FacingDirection.Down;
-                        break;
-                    case FacingDirection.Down:
-                        altDirection = FacingDirection.Up;
-                        break;
-                }
+            var ignoredBricks = Scene.IgnoredBricks;
+            IList<BrickActor> connectedBricks = new List<BrickActor>();
+            IList<BrickActor> selected = new List<BrickActor>();
+            var rowWithoutIgnoredBricks = RemoveIgnoredBricks(row);
+            bool rowStatus = true;
+            var currentRow = row;
+            IList<BrickActor> whichRow = new List<BrickActor>();
+            FacingDirection altDirection = direction;
+            switch (direction)
+            {
+                case FacingDirection.Up:
+                    altDirection = FacingDirection.Down;
+                    break;
+                case FacingDirection.Down:
+                    altDirection = FacingDirection.Up;
+                    break;
+            }
 
             if (row.Count > 0)
             {
@@ -489,17 +490,63 @@ namespace Junkbot.Game
         public void UpdateSelectedBrickLocation(Point mousePos)
         {
             var connectedBricks = Scene.ConnectedBricks;
-            if (connectedBricks.Count > 0)
-            {
-                foreach (BrickActor connectedBrick in connectedBricks)
-                {
-                    connectedBrick.MovingLocation = new Point(mousePos.X - (selectedBrick.Location.X - connectedBrick.Location.X), mousePos.Y - (selectedBrick.Location.Y - connectedBrick.Location.Y));
+            Array.Clear(Scene.SelectedGrid, 0, Scene.SelectedGrid.Length - 1);
 
+            foreach (BrickActor connectedBrick in connectedBricks)
+            {
+                connectedBrick.MovingLocation = new Point(mousePos.X - (selectedBrick.Location.X - connectedBrick.Location.X), mousePos.Y - (selectedBrick.Location.Y - connectedBrick.Location.Y));
+                MoveBrickSelectedGrid(connectedBrick);
+            }
+        }
+        public void MoveBrickSelectedGrid(BrickActor brick)
+        {
+            var movingLocationCells = new List<Point>();
+
+            foreach (Rectangle rect in brick.BoundingBoxes)
+            {
+                movingLocationCells.AddRange((new Rectangle(brick.MovingLocation.Add(rect.Location), rect.Size)).ExpandToGridCoordinates());
+            }
+
+            if (brick.Selected)
+            {
+                foreach (Point cell in movingLocationCells)
+                {
+                    Scene.SelectedGrid[cell.X, cell.Y] = brick;
                 }
             }
-            selectedBrick.MovingLocation = new Point(mousePos.X, mousePos.Y);
-
         }
+        public void MoveBrickFromPlayfield(BrickActor brick)
+        {
+            var locationCells = new List<Point>();
+            var movingLocationCells = new List<Point>();
+
+            foreach (Rectangle rect in brick.BoundingBoxes)
+            {
+                locationCells.AddRange((new Rectangle(brick.Location.Add(rect.Location), rect.Size)).ExpandToGridCoordinates());
+                movingLocationCells.AddRange((new Rectangle(brick.MovingLocation.Add(rect.Location), rect.Size)).ExpandToGridCoordinates());
+            }
+
+            if (brick.Selected)
+            {
+                foreach (Point cell in locationCells)
+                {
+                    Scene.SelectedGrid[cell.X, cell.Y] = brick;
+                    Scene.GetPlayfield[cell.X, cell.Y] = null;
+                }
+            }
+            else
+            {
+                foreach (Point cell in locationCells)
+                {
+                    Scene.SelectedGrid[cell.X, cell.Y] = null;
+                }
+                foreach (Point cell in movingLocationCells)
+                {
+                    Scene.GetPlayfield[cell.X, cell.Y] = brick;
+                }
+            }
+        }
+
 
         public bool PlaceBrick(IList<BrickActor> connectedBricks)
         {

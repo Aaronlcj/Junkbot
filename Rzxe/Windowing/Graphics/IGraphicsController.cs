@@ -13,7 +13,6 @@ namespace Oddmatics.Rzxe.Windowing.Graphics
 
         void ClearViewport(Color color);
 
-        ISpriteBatch CreateSpriteBatch(string atlasName);
-
+        ISpriteBatch CreateSpriteBatch(string atlasName, int type = 0);
     }
 }

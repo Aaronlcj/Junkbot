@@ -1,0 +1,7 @@
+[{"Name":"dbox_lg","Bounds":"0,0,410,274"},
+{"Name":"dbox_sm","Bounds":"0,481,336,164"},
+{"Name":"key","Bounds":"179,670,15,20"},
+{"Name":"key_confirm","Bounds":"179,645,20,25"},
+{"Name":"level_end_main","Bounds":"0,274,383,207"},
+{"Name":"level_lose","Bounds":"0,645,179,81"}
+]

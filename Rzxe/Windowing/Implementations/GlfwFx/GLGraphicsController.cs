@@ -39,11 +39,12 @@ namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
             GL.Clear(ClearBufferMask.ColorBufferBit);
         }
 
-        public ISpriteBatch CreateSpriteBatch(string atlasName)
+        public ISpriteBatch CreateSpriteBatch(string atlasName, int type = 0)
         {
             return new GLSpriteBatch(
                 this,
                 atlasName,
+                type,
                 ResourceCache
                 );
         }

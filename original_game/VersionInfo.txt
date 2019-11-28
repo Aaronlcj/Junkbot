@@ -1,8 +1,0 @@
-NoSave version:
-1. Will not save progress.
-2. Does not require installation.
-3. Has all levels unlocked and set to gold award.
-
-WithSaveFeature version:
-1. Will save progress.
-2. Requires installation into XAMPP or equivalent (details in ReamMe.txt).

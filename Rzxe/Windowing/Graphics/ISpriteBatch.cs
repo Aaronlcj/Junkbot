@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Oddmatics.Rzxe.Game;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -9,9 +10,9 @@ namespace Oddmatics.Rzxe.Windowing.Graphics
     public interface ISpriteBatch
     {
         void Draw(string spriteName, Rectangle rect);
-
         Pencil.Gaming.MathUtils.Rectanglei GetSpriteUV(string spriteName);
-
+        int GetAtlasLength();
         void Finish();
+        void FinishFrame(int frame);
     }
 }

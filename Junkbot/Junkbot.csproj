@@ -11,6 +11,21 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -38,6 +53,14 @@
     <Reference Include="Pencil.Gaming, Version=1.0.5895.28250, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Pencil.GLFW3.1.0.7\lib\net451\Pencil.Gaming.dll</HintPath>
     </Reference>
+    <Reference Include="SharpFont, Version=4.0.1.200, Culture=neutral, PublicKeyToken=48add4c483071cdf, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>FreeType\SharpFont.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpFont.Gdi, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>FreeType\SharpFont.Gdi.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -60,9 +83,20 @@
     <Compile Include="Game\GameStateChangedEventArgs.cs" />
     <Compile Include="Game\JunkbotEngineParameters.cs" />
     <Compile Include="Game\State\DemoGameState.cs" />
+    <Compile Include="Game\State\LevelSelectState.cs" />
+    <Compile Include="Game\UI\FontService.cs" />
+    <Compile Include="Game\UI\Menus\Help\HelpTextItem.cs" />
+    <Compile Include="Game\UI\Menus\Help\HelpMenu.cs" />
+    <Compile Include="Game\UI\Menus\Intro.cs" />
+    <Compile Include="Game\UI\Menus\LevelSelect\LevelSelectGif.cs" />
+    <Compile Include="Game\UI\Menus\LevelSelect\LevelSelectText.cs" />
+    <Compile Include="Game\UI\Menus\LevelSelect\LevelSelectBackground.cs" />
+    <Compile Include="Game\UI\Menus\LevelSelect\LevelSelectButtons.cs" />
+    <Compile Include="Game\UI\Menus\LevelSidebar.cs" />
+    <Compile Include="Game\UI\Menus\MainMenu\MainMenuBackground.cs" />
+    <Compile Include="Game\UI\Menus\MainMenu\MainMenuButtons.cs" />
     <Compile Include="Game\World\Actors\BotActor.cs" />
     <Compile Include="Game\World\Actors\BinActor.cs" />
-    <Compile Include="Game\UI\Menus\Sidebar.cs" />
     <Compile Include="Game\World\Actors\JunkbotCollision.cs" />
     <Compile Include="Helpers\ListHelper.cs" />
     <Compile Include="Helpers\PointHelper.cs" />
@@ -71,7 +105,7 @@
     <Compile Include="Game\Input\InputEvents.cs" />
     <Compile Include="Game\JunkbotGame.cs" />
     <Compile Include="Game\State\IGameState.cs" />
-    <Compile Include="Game\State\SplashGameState.cs" />
+    <Compile Include="Game\State\MainMenuState.cs" />
     <Compile Include="Game\UI\Controls\Control.cs" />
     <Compile Include="Game\UI\JunkbotInterface.cs" />
     <Compile Include="Game\World\Actors\Animation\ActorAnimation.cs" />
@@ -121,9 +155,7 @@
     <None Include="Content\Atlas\actors-atlas.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\Atlas\menu-atlas.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="Content\Levels\level_list.json" />
     <None Include="Content\Music\demo6_3.ogg" />
     <None Include="Content\Music\demo6_5.ogg" />
     <None Include="Content\Music\demo6_6.ogg" />
@@ -192,6 +224,9 @@
     <None Include="Content\Shaders\OpenGL\SimpleUVs\vertex.glsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Content\Text\font.TTF" />
+    <None Include="Content\Text\Help\page_1.json" />
+    <None Include="Content\Text\Help\page_2.json" />
     <None Include="packages.config" />
     <None Include="PencilTemp\natives32\GLFW_LINUX_BROKEN.so" />
     <None Include="PencilTemp\natives32\liblua.dylib" />
@@ -209,9 +244,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Atlas\actors-atlas.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Atlas\menu-atlas.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Levels\###LEVEL LISTING.txt" />
@@ -816,6 +848,84 @@
     <Content Include="Content\RippedSprites\Undercover Exclusive\transEfx_1.png" />
     <Content Include="Content\RippedSprites\Undercover Exclusive\transEfx_2.png" />
     <Content Include="Content\RippedSprites\Undercover Exclusive\transEfx_3.png" />
+    <Content Include="Content\Text\Help\sprites\awards_main_1.png" />
+    <Content Include="Content\Text\Help\sprites\awards_main_2.png" />
+    <Content Include="Content\Text\Help\sprites\awards_main_3.png" />
+    <Content Include="Content\Text\Help\sprites\awards_sub_1.png" />
+    <Content Include="Content\Text\Help\sprites\awards_sub_2.png" />
+    <Content Include="Content\Text\Help\sprites\awards_sub_3.png" />
+    <Content Include="Content\Text\Help\sprites\brick_fan_main_1.png" />
+    <Content Include="Content\Text\Help\sprites\brick_fan_sub_1.png" />
+    <Content Include="Content\Text\Help\sprites\brick_fan_sub_2.png" />
+    <Content Include="Content\Text\Help\sprites\brick_fire_main_1.png" />
+    <Content Include="Content\Text\Help\sprites\brick_fire_sub_1.png" />
+    <Content Include="Content\Text\Help\sprites\brick_fire_sub_2.png" />
+    <Content Include="Content\Text\Help\sprites\brick_grey_main_1.png" />
+    <Content Include="Content\Text\Help\sprites\brick_grey_main_2.png" />
+    <Content Include="Content\Text\Help\sprites\brick_grey_main_3.png" />
+    <Content Include="Content\Text\Help\sprites\brick_grey_main_4.png" />
+    <Content Include="Content\Text\Help\sprites\brick_grey_sub_1.png" />
+    <Content Include="Content\Text\Help\sprites\brick_grey_sub_2.png" />
+    <Content Include="Content\Text\Help\sprites\brick_grey_sub_3.png" />
+    <Content Include="Content\Text\Help\sprites\brick_jump_main_1.png" />
+    <Content Include="Content\Text\Help\sprites\brick_jump_movable_main_1.png" />
+    <Content Include="Content\Text\Help\sprites\brick_jump_movable_main_2.png" />
+    <Content Include="Content\Text\Help\sprites\brick_jump_movable_sub_1.png" />
+    <Content Include="Content\Text\Help\sprites\brick_jump_movable_sub_2.png" />
+    <Content Include="Content\Text\Help\sprites\brick_jump_movable_sub_3.png" />
+    <Content Include="Content\Text\Help\sprites\brick_jump_sub_1.png" />
+    <Content Include="Content\Text\Help\sprites\brick_shield_main_1.png" />
+    <Content Include="Content\Text\Help\sprites\brick_shield_sub_1.png" />
+    <Content Include="Content\Text\Help\sprites\brick_shield_sub_2.png" />
+    <Content Include="Content\Text\Help\sprites\climbbot_main_1.png" />
+    <Content Include="Content\Text\Help\sprites\climbbot_sub_1.png" />
+    <Content Include="Content\Text\Help\sprites\climbbot_sub_2.png" />
+    <Content Include="Content\Text\Help\sprites\climbbot_sub_3.png" />
+    <Content Include="Content\Text\Help\sprites\climbbot_sub_4.png" />
+    <Content Include="Content\Text\Help\sprites\drip_main_1.png" />
+    <Content Include="Content\Text\Help\sprites\drip_sub_1.png" />
+    <Content Include="Content\Text\Help\sprites\drip_sub_2.png" />
+    <Content Include="Content\Text\Help\sprites\drip_sub_3.png" />
+    <Content Include="Content\Text\Help\sprites\eyebot_main_1.png" />
+    <Content Include="Content\Text\Help\sprites\eyebot_sub_1.png" />
+    <Content Include="Content\Text\Help\sprites\eyebot_sub_2.png" />
+    <Content Include="Content\Text\Help\sprites\eyebot_sub_3.png" />
+    <Content Include="Content\Text\Help\sprites\eyebot_sub_4.png" />
+    <Content Include="Content\Text\Help\sprites\flybot_main_1.png" />
+    <Content Include="Content\Text\Help\sprites\flybot_sub_1.png" />
+    <Content Include="Content\Text\Help\sprites\flybot_sub_2.png" />
+    <Content Include="Content\Text\Help\sprites\flybot_sub_3.png" />
+    <Content Include="Content\Text\Help\sprites\gearbot_main_1.png" />
+    <Content Include="Content\Text\Help\sprites\gearbot_sub_1.png" />
+    <Content Include="Content\Text\Help\sprites\gearbot_sub_2.png" />
+    <Content Include="Content\Text\Help\sprites\gearbot_sub_3.png" />
+    <Content Include="Content\Text\Help\sprites\gearbot_sub_4.png" />
+    <Content Include="Content\Text\Help\sprites\gearbot_sub_5.png" />
+    <Content Include="Content\Text\Help\sprites\junkbot_main_1.png" />
+    <Content Include="Content\Text\Help\sprites\junkbot_main_2.png" />
+    <Content Include="Content\Text\Help\sprites\junkbot_sub_1.png" />
+    <Content Include="Content\Text\Help\sprites\junkbot_sub_2.png" />
+    <Content Include="Content\Text\Help\sprites\junkbot_sub_3.png" />
+    <Content Include="Content\Text\Help\sprites\key_main_1.png" />
+    <Content Include="Content\Text\Help\sprites\key_main_2.png" />
+    <Content Include="Content\Text\Help\sprites\key_main_3.png" />
+    <Content Include="Content\Text\Help\sprites\key_sub_1.png" />
+    <Content Include="Content\Text\Help\sprites\key_sub_2.png" />
+    <Content Include="Content\Text\Help\sprites\key_sub_3.png" />
+    <Content Include="Content\Text\Help\sprites\key_sub_4.png" />
+    <Content Include="Content\Text\Help\sprites\key_sub_5.png" />
+    <Content Include="Content\Text\Help\sprites\key_sub_6.png" />
+    <Content Include="Content\Text\Help\sprites\switch_main_1.png" />
+    <Content Include="Content\Text\Help\sprites\switch_sub_.png" />
+    <Content Include="Content\Text\Help\sprites\switch_sub_1.png" />
+    <Content Include="Content\Text\Help\sprites\trash_main_1.png" />
+    <Content Include="Content\Text\Help\sprites\trash_main_2.png" />
+    <Content Include="Content\Text\Help\sprites\trash_main_3.png" />
+    <Content Include="Content\Text\Help\sprites\trash_sub_1.png" />
+    <Content Include="Content\Text\Help\sprites\trash_sub_2.png" />
+    <Content Include="FreeType\freetype6.dll" />
+    <Content Include="FreeType\SharpFont.dll" />
+    <Content Include="FreeType\SharpFont.Gdi.dll" />
     <Content Include="PencilTemp\natives32\glfw.dll" />
     <Content Include="PencilTemp\natives32\lua.dll" />
     <Content Include="PencilTemp\natives32\openal32.dll" />
@@ -824,6 +934,18 @@
     <Content Include="PencilTemp\natives64\lua.dll" />
     <Content Include="PencilTemp\natives64\openal32.dll" />
     <Content Include="PencilTemp\natives64\wrap_oal.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

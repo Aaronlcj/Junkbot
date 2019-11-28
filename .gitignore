@@ -286,3 +286,37 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
+
+original_game/
+
+thirdparty/freetype6.dll
+
+thirdparty/SharpFont.dll
+
+Junkbot/Content/RippedMenus/Select Level/
+
+Junkbot/Content/RippedMenus/Help/
+
+Junkbot/Content/RippedMenus/main menu/
+
+Junkbot/Content/RippedMenus/Buttons/
+
+Junkbot/Content/RippedVideos/intro/
+
+Junkbot/Content/RippedVideos/new_employee/
+
+Junkbot/Content/RippedVideos/president/
+
+Junkbot/Content/RippedVideos/intro.stg
+
+Junkbot/Content/RippedVideos/intro.zip
+
+Junkbot/Content/RippedVideos/new_employee.stg
+
+Junkbot/Content/RippedVideos/new_employee.zip
+
+Junkbot/Content/RippedVideos/president.stg
+
+Junkbot/Content/RippedVideos/president.zip
+
+Junkbot/Content/Text/Help/

@@ -8,6 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Oddmatics.Rzxe.Windowing.Graphics;
+using Oddmatics.Rzxe.Game;
 
 namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
 {
@@ -16,13 +18,16 @@ namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
         public int GlTextureId { get; private set; }
 
         public string Name { get; private set; }
+        public List<int> GifMap { get; private set; }
 
         public Vector2 Size { get; private set; }
 
         public Dictionary<string, Rectanglei> GetSpriteMap {  get { return SpriteMap;  } }
+
         private Dictionary<string, Rectanglei> SpriteMap { get; set; }
 
         private bool Disposing { get; set; }
+
 
 
         private GLSpriteAtlas(
@@ -38,6 +43,18 @@ namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
             SpriteMap = map;
         }
 
+        private GLSpriteAtlas(
+            string name,
+            Vector2 size,
+            List<int> gifMap,
+            Dictionary<string, Rectanglei> map
+        )
+        {
+            Name = name;
+            Size = size;
+            GifMap = gifMap;
+            SpriteMap = map;
+        }
 
         public void Dispose()
         {
@@ -57,13 +74,9 @@ namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
             {
                 Console.WriteLine("test");
             }
-            
-                return SpriteMap[spriteName];
-            
-
+            return SpriteMap[spriteName];
         }
-
-
+        
         internal static GLSpriteAtlas FromFileSet(string pathNoExt)
         {
             // Read texture atlas information and bitmap data
@@ -121,6 +134,40 @@ namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
                 atlasNoExt,
                 atlasDimensions,
                 glTextureId,
+                atlasMap
+                );
+        }
+        internal static GLSpriteAtlas FromGif(string atlasName)
+        {
+            var gifImage = new GifImage(atlasName);
+
+            Image[] frames = gifImage.getFrames();
+            Vector2 atlasDimensions = new Vector2(135, 118);
+            var atlasMap = new Dictionary<string, Rectanglei>();
+            var gifMap = new List<int>();
+            int i = 0;
+            do
+            {
+                var atlasBmp = (Bitmap)frames[i];
+                int glTextureId = GLUtility.LoadBitmapTexture(atlasBmp);
+
+                atlasMap.Add(
+                    $"{atlasName}_{i}",
+                    new Rectanglei(
+                        0,
+                        0,
+                        135,
+                        118)
+                );
+                gifMap.Add(glTextureId);
+                atlasBmp.Dispose();
+                i++;
+            } while (i != gifImage.FrameCount);
+
+            return new GLSpriteAtlas(
+                atlasName,
+                atlasDimensions,
+                gifMap,
                 atlasMap
                 );
         }

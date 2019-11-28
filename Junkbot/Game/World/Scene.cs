@@ -123,17 +123,11 @@ namespace Junkbot.Game
                 UpdateActorGridPosition(actor, actor.Location);
 
                 actor.LocationChanged += Actor_LocationChanged;
-                if (actor is BrickActor)
-                {
-                    //(actor as BrickActor).MovingLocationChanged += Actor_MovingLocationChanged;
-                    (actor as BrickActor).MovingLocation = location.Subtract(new Point(1, actor.GridSize.Height));
-
-                }
 
                 if (actor is BrickActor)
                 {
-                    var brick = (BrickActor)actor;
                     _ImmobileBricks.InsertSorted((BrickActor)actor);
+                    (actor as BrickActor).MovingLocation = location.Subtract(new Point(1, actor.GridSize.Height));
                 }
                 else
                     _MobileActors.Add(actor);
@@ -148,49 +142,6 @@ namespace Junkbot.Game
             }
         }
 
-        private void Actor_MovingLocationChanged(object sender, LocationChangedEventArgs e)
-        {
-            SelectedGrid[e.NewLocation.X, e.NewLocation.Y] = sender as IActor;
-            PlayField[e.OldLocation.X, e.OldLocation.Y] = null;
-
-            UpdateActorGridPosition((IActor)sender, e.NewLocation, e.OldLocation);
-
-        }
-
-        public void MoveBrickFromPlayfield(BrickActor brick)
-        {
-            var locationCells = new List<Point>();
-            var movingLocationCells = new List<Point>();
-
-            foreach (Rectangle rect in brick.BoundingBoxes)
-            {
-                locationCells.AddRange((new Rectangle(brick.Location.Add(rect.Location), rect.Size)).ExpandToGridCoordinates());
-                movingLocationCells.AddRange((new Rectangle(brick.MovingLocation.Add(rect.Location), rect.Size)).ExpandToGridCoordinates());
-            }
-
-            if (brick.Selected)
-            {
-                foreach (Point cell in locationCells)
-                {
-                    SelectedGrid[cell.X, cell.Y] = brick;
-                    PlayField[cell.X, cell.Y] = null;
-                }
-            }
-
-            else
-            {
-                foreach (Point cell in locationCells)
-                {
-                    SelectedGrid[cell.X, cell.Y] = null;
-                }
-                foreach (Point cell in movingLocationCells)
-                {
-                    PlayField[cell.X, cell.Y] = brick;
-                }
-
-            }
-        }
-    
         public bool CheckGridRegionFree(Rectangle region)
         {
             Point[] cellsToCheck = region.ExpandToGridCoordinates();
