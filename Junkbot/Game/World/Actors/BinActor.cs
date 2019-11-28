@@ -12,8 +12,11 @@ namespace Junkbot.Game.World.Actors
     {
         public AnimationServer Animation { get; private set; }
 
-        public IReadOnlyList<Rectangle> BoundingBoxes { get { return this._BoundingBoxes; } }
-        private IReadOnlyList<Rectangle> _BoundingBoxes;
+        public IReadOnlyList<System.Drawing.Rectangle> BoundingBoxes { get { return this._BoundingBoxes; } }
+        private IReadOnlyList<System.Drawing.Rectangle> _BoundingBoxes = new List<System.Drawing.Rectangle>(new System.Drawing.Rectangle[]
+        {
+            new System.Drawing.Rectangle(0, 0, 1, 2)
+        }).AsReadOnly();
 
         public Size GridSize { get { return _GridSize; } }
         private static readonly Size _GridSize = new Size(1, 2);
@@ -38,7 +41,6 @@ namespace Junkbot.Game.World.Actors
         public BinActor(AnimationStore store, Point location)
         {
             Animation = new AnimationServer(store);
-            _BoundingBoxes = new List<Rectangle>().AsReadOnly();
             Location = location;
             Rendered = false;
         }

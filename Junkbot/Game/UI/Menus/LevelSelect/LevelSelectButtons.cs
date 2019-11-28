@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Junkbot.Game.UI.Controls;
 using Junkbot.Game.UI.Menus;
 using Junkbot.Game.UI.Menus.Help;
 using Oddmatics.Rzxe.Game.Interface;
@@ -37,13 +38,13 @@ namespace Junkbot.Game.World.Level
             JunkbotGame = junkbotGame;
             Shell = shell;
 
-            Building1 = new Button(JunkbotGame, "building_tab_1", new SizeF(83, 13), new PointF(21, 59), this);
-            Building2 = new Button(JunkbotGame, "building_tab_2", new SizeF(88, 13), new PointF(131, 59), this);
-            Building3 = new Button(JunkbotGame, "building_tab_3", new SizeF(89, 13), new PointF(244, 59), this);
-            Building4 = new Button(JunkbotGame, "building_tab_4", new SizeF(88, 13), new PointF(357, 59), this);
-            HallOfFame = new Button(JunkbotGame, "hiscore", new SizeF(96, 26), new PointF(511, 321), this);
-            Help = new Button(JunkbotGame, "help", new SizeF(96, 26), new PointF(511, 350), this);
-            Main = new Button(JunkbotGame, "quit", new SizeF(96, 26), new PointF(511, 379), this);
+            Building1 = new Button(JunkbotGame, this, "building_tab_1", new SizeF(83, 13), new PointF(21, 59), 1);
+            Building2 = new Button(JunkbotGame, this, "building_tab_2", new SizeF(88, 13), new PointF(131, 59), 1);
+            Building3 = new Button(JunkbotGame, this, "building_tab_3", new SizeF(89, 13), new PointF(244, 59), 1);
+            Building4 = new Button(JunkbotGame, this, "building_tab_4", new SizeF(88, 13), new PointF(357, 59), 1);
+            HallOfFame = new Button(JunkbotGame, this, "hiscore", new SizeF(96, 26), new PointF(511, 321), 1);
+            Help = new Button(JunkbotGame, this, "help", new SizeF(96, 26), new PointF(511, 350), 1);
+            Main = new Button(JunkbotGame, this, "quit", new SizeF(96, 26), new PointF(511, 379), 1);
 
             Shell.AddComponents(new List<UxComponent>()
                 {

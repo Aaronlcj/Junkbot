@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using Junkbot.Game.State;
+using Junkbot.Game.UI.Menus;
 using Junkbot.Game.World.Level;
 using Oddmatics.Rzxe.Game.Interface;
 
-namespace Junkbot.Game.UI.Menus.Help
+namespace Junkbot.Game.UI.Controls
 {
     internal class Button : UxComponent
     {
@@ -22,8 +18,8 @@ namespace Junkbot.Game.UI.Menus.Help
         public SizeF Size { get; set; }
         public int ZIndex { get; set; }
 
-        public Button(JunkbotGame junkbotGame, string name, SizeF size, PointF location, UIPage uiPage)
-            : base(name, size, location)
+        public Button(JunkbotGame junkbotGame, UIPage uiPage, string name, SizeF size, PointF location, int zIndex)
+            : base(name, size, location, zIndex)
         {
             JunkbotGame = junkbotGame;
             Name = name;
@@ -34,6 +30,7 @@ namespace Junkbot.Game.UI.Menus.Help
             Bounds = new RectangleF(Location, Size);
             ZIndex = 1;
             UIPage = uiPage;
+            ZIndex = zIndex;
         }
 
         public override void OnClick()
@@ -55,11 +52,11 @@ namespace Junkbot.Game.UI.Menus.Help
             }
             if (Name == "replay_intro" || Name == "replay_intro_x")
             {
-                //JunkbotGame.CurrentGameState = new Intro();
+                (JunkbotGame.CurrentGameState as MainMenuState).IntroPlayed = false;
             }
             if (Name == "clear_screen" || Name == "clear_screen_x")
             {
-                JunkbotGame.CurrentGameState = new MainMenuState("loading_level", JunkbotGame);
+                JunkbotGame.CurrentGameState = new MainMenuState("loading_level", JunkbotGame, true);
             }
             if (Name == "next_button" || Name == "next_button_x")
             {

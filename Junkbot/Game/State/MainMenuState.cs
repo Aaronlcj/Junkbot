@@ -32,24 +32,25 @@ namespace Junkbot.Game.State
         public ISpriteBatch _actors;
         public Intro Intro;
         private UxShell Shell { get; set; }
-
         public BrickMover BrickMover;
         public MainMenuButtons Buttons;
         public MainMenuBackground MainMenuBackground;
         public static AnimationStore Store = new AnimationStore();
+        public bool IntroPlayed;
         public override string Name
         {
             get { return "MainMenu"; }
         }
 
-        public MainMenuState(string level, JunkbotGame junkbotGame)
+        public MainMenuState(string level, JunkbotGame junkbotGame, bool introPlayed = true)
         {
             JunkbotGame = junkbotGame;
             lvl = File.ReadAllLines(Environment.CurrentDirectory + $@"\Content\Levels\{level}.txt");
             Scene = Scene.FromLevel(lvl, Store);
             SetTimer();
             Shell = new UxShell();
-            Intro = new Intro();
+            //Intro = new Intro(Shell, JunkbotGame);
+            IntroPlayed = introPlayed;
             BrickMover = new BrickMover(Scene);
             Buttons = new MainMenuButtons(Shell, JunkbotGame);
             MainMenuBackground = new MainMenuBackground();
@@ -287,78 +288,90 @@ namespace Junkbot.Game.State
 
             MainMenuBackground.Render(graphics);
             Buttons.Render(graphics);
-            //Intro.Render(graphics);
+            /*if (Intro.Gif == null && IntroPlayed == false)
+            {
+                Intro.LoadIntro(graphics);
+            }
+            if (Intro.Gif != null && IntroPlayed == false)
+            {
+                Intro.Render(graphics);
+            }*/
         }
+
         public override void Update(TimeSpan deltaTime, InputEvents inputs)
         {
             if (inputs != null)
             {
-                Shell.HandleMouseInputs(inputs);
-            }
-            var MousePosition = inputs.MousePosition;
-            Point MousePoint = new Point((int)Math.Floor(MousePosition.X - 5), (int)Math.Floor(MousePosition.Y - 10));
-            Point MousePosAsCell = MousePoint.Reduce(Scene.LevelData.Spacing);
-            BrickActor selectedBrick = BrickMover.selectedBrick;
-            if ((MousePosAsCell.X >= 0 && MousePosAsCell.X < 35) && (MousePosAsCell.Y >= 0 && MousePosAsCell.Y <= 21))
-            {
+                   Shell.HandleMouseInputs(inputs);
 
-                IActor cell = Scene.GetPlayfield[MousePosAsCell.X, MousePosAsCell.Y];
-                Console.WriteLine(Scene.GetPlayfield.GetLength(0).ToString() +
-                                  Scene.GetPlayfield.GetLength(1).ToString() + MousePosAsCell);
-
-                if (selectedBrick != null)
+                var MousePosition = inputs.MousePosition;
+                Point MousePoint = new Point((int) Math.Floor(MousePosition.X - 5),
+                    (int) Math.Floor(MousePosition.Y - 10));
+                Point MousePosAsCell = MousePoint.Reduce(Scene.LevelData.Spacing);
+                BrickActor selectedBrick = BrickMover.selectedBrick;
+                if ((MousePosAsCell.X >= 0 && MousePosAsCell.X < 35) &&
+                    (MousePosAsCell.Y >= 0 && MousePosAsCell.Y <= 21))
                 {
-                    BrickMover.UpdateSelectedBrickLocation(MousePosAsCell);
-                    if (cell == null)
+
+                    IActor cell = Scene.GetPlayfield[MousePosAsCell.X, MousePosAsCell.Y];
+                    Console.WriteLine(Scene.GetPlayfield.GetLength(0).ToString() +
+                                      Scene.GetPlayfield.GetLength(1).ToString() + MousePosAsCell);
+
+                    if (selectedBrick != null)
                     {
-                        foreach (string keyPress in inputs.NewPresses)
+                        BrickMover.UpdateSelectedBrickLocation(MousePosAsCell);
+                        if (cell == null)
                         {
-                            if (keyPress == "mb.left")
+                            foreach (string keyPress in inputs.NewPresses)
                             {
-                                int currentCell = 0;
-                                bool placeBrick;
-                                do
+                                if (keyPress == "mb.left")
                                 {
-                                    if (Scene.ConnectedBricks.Count > 0)
+                                    int currentCell = 0;
+                                    bool placeBrick;
+                                    do
                                     {
-                                        placeBrick = BrickMover.PlaceBrick(Scene.ConnectedBricks);
-                                    }
-                                    else
-                                    {
-                                        var checkBounds = new System.Drawing.Rectangle(
-                                            new Point(selectedBrick.MovingLocation.X + currentCell,
-                                                selectedBrick.MovingLocation.Y + 1), new Size(1, 1));
-                                        placeBrick = Scene.CheckGridRegionFree(checkBounds);
-                                    }
+                                        if (Scene.ConnectedBricks.Count > 0)
+                                        {
+                                            placeBrick = BrickMover.PlaceBrick(Scene.ConnectedBricks);
+                                        }
+                                        else
+                                        {
+                                            var checkBounds = new System.Drawing.Rectangle(
+                                                new Point(selectedBrick.MovingLocation.X + currentCell,
+                                                    selectedBrick.MovingLocation.Y + 1), new Size(1, 1));
+                                            placeBrick = Scene.CheckGridRegionFree(checkBounds);
+                                        }
 
-                                    if (placeBrick)
-                                    {
-                                        BrickMover.UpdateSelectedBrickLocation(MousePosAsCell);
-                                        UnbindBrick();
-                                        BrickMover.selectedBrick = null;
-                                        break;
-                                    }
+                                        if (placeBrick)
+                                        {
+                                            BrickMover.UpdateSelectedBrickLocation(MousePosAsCell);
+                                            UnbindBrick();
+                                            BrickMover.selectedBrick = null;
+                                            break;
+                                        }
 
-                                    currentCell += 1;
-                                } while (currentCell <= selectedBrick.GridSize.Width);
+                                        currentCell += 1;
+                                    } while (currentCell <= selectedBrick.GridSize.Width);
+                                }
                             }
                         }
                     }
-                }
-                else
-                {
-                    if (cell != null)
+                    else
                     {
-                        foreach (string keyPress in inputs.NewPresses)
+                        if (cell != null)
                         {
-                            if (keyPress == "mb.left" && (cell as BrickActor).Color.Name != "Gray")
+                            foreach (string keyPress in inputs.NewPresses)
                             {
-                                selectedBrick = cell as BrickActor;
-                                BindBrick(selectedBrick, MousePosAsCell);
-                                break;
+                                if (keyPress == "mb.left" && (cell as BrickActor).Color.Name != "Gray")
+                                {
+                                    selectedBrick = cell as BrickActor;
+                                    BindBrick(selectedBrick, MousePosAsCell);
+                                    break;
+                                }
                             }
                         }
                     }
+
                 }
             }
         }

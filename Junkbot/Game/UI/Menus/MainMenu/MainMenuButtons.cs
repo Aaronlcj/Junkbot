@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Junkbot.Game.UI.Controls;
 using Junkbot.Game.UI.Menus;
 using Junkbot.Game.UI.Menus.Help;
 using Oddmatics.Rzxe.Game.Interface;
@@ -16,12 +17,6 @@ namespace Junkbot.Game.World.Level
 
         private ISpriteBatch _buttons;
         internal JunkbotGame JunkbotGame;
-        public IList<JunkbotDecalData> Button_List;
-        private string _play = "play";
-        private string _credits;
-        private string _replayIntro;
-        private string _clearScreen;
-        private bool _hover = false;
         private UxShell Shell;
         private Button Play;
         private Button Credits;
@@ -33,14 +28,10 @@ namespace Junkbot.Game.World.Level
         {
             JunkbotGame = junkbotGame;
             Shell = shell;
-            _play = "play";
-            _credits = "credits";
-            _replayIntro = "replay_intro";
-            _clearScreen = "clear_screen";
-            Play = new Button(JunkbotGame, "play", new SizeF(116, 45), new PointF(139, 148), this);
-            Credits = new Button(JunkbotGame, "credits", new SizeF(96, 26), new PointF(310, 159), this);
-            ReplayIntro = new Button(JunkbotGame, "replay_intro", new SizeF(96, 26), new PointF(508, 337), this);
-            ClearScreen = new Button(JunkbotGame, "clear_screen", new SizeF(96, 26), new PointF(508, 367), this);
+            Play = new Button(JunkbotGame,this, "play", new SizeF(116, 45), new PointF(139, 148), 1);
+            Credits = new Button(JunkbotGame, this, "credits", new SizeF(96, 26), new PointF(310, 159), 1);
+            ReplayIntro = new Button(JunkbotGame, this, "replay_intro", new SizeF(96, 26), new PointF(508, 337), 1);
+            ClearScreen = new Button(JunkbotGame, this, "clear_screen", new SizeF(96, 26), new PointF(508, 367), 1);
             Shell.AddComponents(new List<UxComponent>()
                 {
                     Play,

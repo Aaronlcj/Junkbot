@@ -9,6 +9,7 @@ using System.Net.Configuration;
 using System.Text;
 using System.Threading.Tasks;
 using Junkbot.Game.UI;
+using Junkbot.Game.UI.Controls;
 using Junkbot.Game.UI.Menus;
 using Junkbot.Game.UI.Menus.Help;
 using Newtonsoft.Json;
@@ -32,6 +33,7 @@ namespace Junkbot.Game.World.Level
         private IList<HelpTextItem> _textList;
         private int _page;
         bool disposed = false;
+        //write zindex sorting for uipage to block input
 
         // Protected implementation of Dispose pattern.
         
@@ -43,7 +45,7 @@ namespace Junkbot.Game.World.Level
             _page = 1;
             _fontService = new FontService();
             LoadText();
-            Next = new Button(JunkbotGame, "next_button", new SizeF(36, 26), new PointF(391, 355), this);
+            Next = new Button(JunkbotGame,this, "next_button", new SizeF(36, 26), new PointF(391, 355),2);
             //Previous = new Button(JunkbotGame, "prev_button", new SizeF(36, 26), new PointF(300, 350), this);
             //Ok = new Button(JunkbotGame, "ok_button", new SizeF(76, 42), new PointF(351, 342), this);
             Shell.AddComponent(Next);
@@ -75,8 +77,8 @@ namespace Junkbot.Game.World.Level
             {
                 _page = 2;
                 Next = null;
-                Previous = new Button(JunkbotGame, "prev_button", new SizeF(36, 26), new PointF(300, 350), this);
-                Ok = new Button(JunkbotGame, "ok_button", new SizeF(76, 42), new PointF(351, 342), this);
+                Previous = new Button(JunkbotGame,this, "prev_button", new SizeF(36, 26), new PointF(300, 350), 2);
+                Ok = new Button(JunkbotGame,this, "ok_button", new SizeF(76, 42), new PointF(351, 342), 2);
                 Shell.AddComponents(new List<UxComponent>()
                     {
                         Previous,
@@ -89,7 +91,7 @@ namespace Junkbot.Game.World.Level
                 _page = 1;
                 Previous = null;
                 Ok = null;
-                Next = new Button(JunkbotGame, "next_button", new SizeF(36, 26), new PointF(391, 355), this);
+                Next = new Button(JunkbotGame,this, "next_button", new SizeF(36, 26), new PointF(391, 355), 2);
                 Shell.AddComponent(Next);
             }
             LoadText();

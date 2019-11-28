@@ -81,10 +81,10 @@
     <Compile Include="Game\BrickMover - Copy.cs" />
     <Compile Include="Game\BrickMover.cs" />
     <Compile Include="Game\JunkbotEngineParameters.cs" />
-    <Compile Include="Game\State\DemoGameState.cs" />
+    <Compile Include="Game\State\LevelState.cs" />
     <Compile Include="Game\State\LevelSelectState.cs" />
     <Compile Include="Game\UI\FontService.cs" />
-    <Compile Include="Game\UI\Menus\Help\Button.cs" />
+    <Compile Include="Game\UI\Controls\Button.cs" />
     <Compile Include="Game\UI\Menus\Help\HelpTextItem.cs" />
     <Compile Include="Game\UI\Menus\Help\HelpMenu.cs" />
     <Compile Include="Game\UI\Menus\UIPage.cs" />
@@ -936,9 +936,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Game\UI\Controls\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

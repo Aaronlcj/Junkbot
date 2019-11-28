@@ -22,7 +22,7 @@ namespace Oddmatics.Rzxe.Game.Interface
 
         public int ZIndex { get; set; }
 
-        public UxComponent(string name, SizeF size, PointF location)
+        public UxComponent(string name, SizeF size, PointF location, int zIndex)
         {
             Name = name;
             Size = size;
@@ -30,7 +30,7 @@ namespace Oddmatics.Rzxe.Game.Interface
             Enabled = true;
             Selectable = true;
             Bounds = new RectangleF(Location, Size);
-            ZIndex = 1;
+            ZIndex = zIndex;
         }
         public virtual void OnClick() { }
 

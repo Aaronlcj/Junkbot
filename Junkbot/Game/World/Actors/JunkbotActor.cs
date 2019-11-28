@@ -100,47 +100,41 @@ namespace Junkbot.Game.World.Actors
             return checkBounds;
         }
 
+        private void CollectTrash()
+        {
+            //Animation.GoToAndPlay("junkbot-trash-left");
+        }
+
         private JunkbotCollision CheckCollisionType(System.Drawing.Rectangle region)
         {
             Point[] cellsToCheck = region.ExpandToGridCoordinates();
             IList<JunkbotCollision> detectionResults = new List<JunkbotCollision>();
             int dx = FacingDirection == FacingDirection.Left ? -1 : 1;
-            int dxr = FacingDirection == FacingDirection.Right ? GridSize.Width - 1 : -1;
-            int tar = FacingDirection == FacingDirection.Left ? -1 : 2;
-            
             bool StepGapRight = Scene.CheckGridRegionFree(GetCheckBounds(new Point(dx, GridSize.Height), new Size(2, 1)));
             bool StepGapLeft = Scene.CheckGridRegionFree(GetCheckBounds(new Point(dx, GridSize.Height), new Size(2, 1)));
-
-            bool doesFloorExist = Scene.CheckFloorExists(this);
-            bool TurnAround = Scene.CheckGridRegionFree(GetCheckBounds(new Point(tar, 0), new Size(1, 3)));
-            bool Ceiling = Scene.CheckGridRegionFree(GetCheckBounds(new Point(-1, -1), new Size(4, 1)));
-            bool StepUp = Scene.CheckGridRegionFree(GetCheckBounds(new Point(tar, GridSize.Height - 1), new Size(1, 1)));
-            bool StepUpBlocked = Scene.CheckGridRegionFree(GetCheckBounds(new Point(tar, -1), new Size(1, 4)));
-            bool StepDown1 = Scene.CheckGridRegionFree(GetCheckBounds(new Point(0, GridSize.Height + 1), new Size(1, 1)));
-            bool StepDown2 = Scene.CheckGridRegionFree(GetCheckBounds(new Point(dxr, GridSize.Height), new Size(1, 1)));
-            bool StepDownBlocked = Scene.CheckGridRegionFree(GetCheckBounds(new Point(dx * GridSize.Width, +1), new Size(1, 4)));
             bool Floor2 = Scene.CheckGridRegionFree(GetCheckBounds(new Point(dx, GridSize.Height), new Size(2, 1)));
-            bool Gap = Scene.CheckGridRegionFree(GetCheckBounds(new Point(dx * GridSize.Width, GridSize.Height), new Size(2, 2)));
-
-
-
-            int index = 1;
             bool stepDown = false;
             bool floor = false;
             bool stepUp = false;
             bool stepDownBlocked = false;
             bool turnAround = false;
             bool stepUpBlocked = false;
+            int index = 1;
+
             foreach (Point cell in cellsToCheck)
             {
                 if (index != 7)
                 {
 
 
-                    if (index == 2 || index == 3)
+                    if (index == 2 || index == 3 || index == 4) 
                     {
                         if (Scene.GetPlayfield[cell.X, cell.Y] != null)
                         {
+                            if (Scene.GetPlayfield[cell.X, cell.Y] is BinActor)
+                            {
+                                CollectTrash();
+                            }
                             detectionResults.Add((JunkbotCollision)2);
                         }
                     }

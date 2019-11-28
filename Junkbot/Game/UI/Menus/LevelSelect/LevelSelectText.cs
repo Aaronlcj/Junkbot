@@ -8,13 +8,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Junkbot.Game.UI;
+using Junkbot.Game.UI.Menus;
 using Junkbot.Game.UI.Menus.Help;
 using Oddmatics.Rzxe.Game.Interface;
 using SharpFont;
 
 namespace Junkbot.Game.World.Level
 {
-    internal class LevelSelectText
+    internal class LevelSelectText : UIPage
     {
         internal JunkbotGame JunkbotGame;
         private UxShell Shell;
@@ -26,10 +27,11 @@ namespace Junkbot.Game.World.Level
         private List<UxComponent> Rows;
 
 
-        public LevelSelectText(JunkbotGame junkbotGame, UxShell uxShell, List<string> levels, LevelSelectButtons buttons)
+        public LevelSelectText(JunkbotGame junkbotGame, UxShell shell, List<string> levels, LevelSelectButtons buttons)
+        : base (shell, junkbotGame)
         {
             JunkbotGame = junkbotGame;
-            Shell = uxShell;
+            Shell = shell;
             _fontService = new FontService();
             _levelSelectButtons = buttons;
             _fontService.SetFont();
@@ -38,7 +40,7 @@ namespace Junkbot.Game.World.Level
             int i = 88;
             foreach (string level in _levels)
             {
-                Rows.Add(new LevelSelectRow(JunkbotGame, level, new SizeF(448, 20), new PointF(10, i)));
+                Rows.Add(new LevelSelectRow(JunkbotGame, level, new SizeF(448, 20), new PointF(10, i), 1));
                 i += 21;
             }
             Shell.AddComponents(Rows);

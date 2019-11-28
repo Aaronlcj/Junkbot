@@ -19,11 +19,10 @@ namespace Junkbot.Game.UI.Menus.Help
         public string Name { get; set; }
         public bool Selectable { get; }
         public SizeF Size { get; set; }
-        public int ZIndex { get; set; }
         public bool Hover { get; private set; }
 
-        public LevelSelectRow(JunkbotGame junkbotGame, string name, SizeF size, PointF location)
-            : base(name, size, location)
+        public LevelSelectRow(JunkbotGame junkbotGame, string name, SizeF size, PointF location, int zIndex)
+            : base(name, size, location, zIndex)
         {
             JunkbotGame = junkbotGame;
             Name = name;
@@ -32,12 +31,12 @@ namespace Junkbot.Game.UI.Menus.Help
             Enabled = true;
             Selectable = true;
             Bounds = new RectangleF(Location, Size);
-            ZIndex = 1;
+            ZIndex = zIndex;
         }
 
         public override void OnClick()
         {
-            JunkbotGame.CurrentGameState = new DemoGameState(Name);
+            JunkbotGame.CurrentGameState = new LevelState(Name);
          
         }
 

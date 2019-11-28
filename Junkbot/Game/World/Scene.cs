@@ -237,6 +237,10 @@ namespace Junkbot.Game
 
         private void AssignGridCells(IActor actor, Point[] cells)
         {
+            if (actor.Type == "BinActor")
+            {
+            }
+
             foreach (Point cell in cells)
             {
                 if (cell.X < 35)
@@ -283,7 +287,8 @@ namespace Junkbot.Game
         private void UpdateActorGridPosition(IActor actor, Point newPos, Point? oldPos = null)
         {
             
-
+            if (actor.Type == "BinActor")
+            { }
             // Update new cells
             //
 
