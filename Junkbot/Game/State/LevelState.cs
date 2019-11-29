@@ -28,7 +28,8 @@ namespace Junkbot.Game.State
         public Scene Scene;
         //public JunkbotSidebar Sidebar;
         public ISpriteBatch _actors;
-
+        public ISpriteBatch Junkbot;
+        private BrickMover BrickMover;
         public static AnimationStore Store = new AnimationStore();
         private UxShell Shell { get; set; }
 
@@ -37,6 +38,7 @@ namespace Junkbot.Game.State
             Shell = new UxShell();
             lvl = File.ReadAllLines(Environment.CurrentDirectory + $@"\Content\Levels\{level}.txt");
             Scene = Scene.FromLevel(lvl, Store);
+            BrickMover = new BrickMover(Scene);
             SetTimer();
             //Sidebar = new JunkbotSidebar(Scene.LevelData);
         }
@@ -192,7 +194,7 @@ namespace Junkbot.Game.State
             sizX = ((junkbot.GridSize.Width - 1) * 15) + 26;
             sizY = ((junkbot.GridSize.Height - 1) * 18) + 32;
             Point frameOffset = new Point((junkbot.Location.X * 15), locY).Add(junkbot.Animation.GetCurrentFrame().Offset);
-            _actors.Draw(
+            Junkbot.Draw(
                 junkbot.Animation.GetCurrentFrame().SpriteName,
                 new Rectangle(
                     frameOffset, junkbot.Animation.GetCurrentFrame().SpriteSize
@@ -245,6 +247,7 @@ namespace Junkbot.Game.State
             ResetActorRenderStatus();
 
             _actors = graphics.CreateSpriteBatch("actors-atlas");
+            Junkbot = graphics.CreateSpriteBatch("junkbot-animation-atlas");
             var background = graphics.CreateSpriteBatch("background-atlas");
             var decals = graphics.CreateSpriteBatch("decals-atlas");
             //var sidebar = graphics.CreateSpriteBatch("sidebar-atlas");
@@ -305,6 +308,7 @@ namespace Junkbot.Game.State
             }
             ParseGridRenderOrder();
             _actors.Finish();
+            Junkbot.Finish();
             /*foreach (IActor item in Scene.ImmobileBricks)
             {
                 if (item != null)
@@ -534,9 +538,134 @@ namespace Junkbot.Game.State
             if (inputs != null)
             {
                 Shell.HandleMouseInputs(inputs);
+
+                var MousePosition = inputs.MousePosition;
+                Point MousePoint = new Point((int)Math.Floor(MousePosition.X - 5),
+                    (int)Math.Floor(MousePosition.Y - 10));
+                Point MousePosAsCell = MousePoint.Reduce(Scene.LevelData.Spacing);
+                BrickActor selectedBrick = BrickMover.selectedBrick;
+                if ((MousePosAsCell.X >= 0 && MousePosAsCell.X < 35) &&
+                    (MousePosAsCell.Y >= 0 && MousePosAsCell.Y <= 21))
+                {
+
+                    IActor cell = Scene.GetPlayfield[MousePosAsCell.X, MousePosAsCell.Y];
+                    /*Console.WriteLine(Scene.GetPlayfield.GetLength(0).ToString() +
+                                      Scene.GetPlayfield.GetLength(1).ToString() + MousePosAsCell);
+*/
+
+                    if (selectedBrick != null)
+                    {
+                        BrickMover.UpdateSelectedBrickLocation(MousePosAsCell);
+                        if (cell == null)
+                        {
+                            foreach (string keyPress in inputs.NewPresses)
+                            {
+                                if (keyPress == "mb.left")
+                                {
+                                    int currentCell = 0;
+                                    bool placeBrick;
+                                    do
+                                    {
+                                        if (Scene.ConnectedBricks.Count > 0)
+                                        {
+                                            placeBrick = BrickMover.PlaceBrick(Scene.ConnectedBricks);
+                                        }
+                                        else
+                                        {
+                                            var checkBounds = new System.Drawing.Rectangle(
+                                                new Point(selectedBrick.MovingLocation.X + currentCell,
+                                                    selectedBrick.MovingLocation.Y + 1), new Size(1, 1));
+                                            placeBrick = Scene.CheckGridRegionFree(checkBounds);
+                                        }
+
+                                        if (placeBrick)
+                                        {
+                                            BrickMover.UpdateSelectedBrickLocation(MousePosAsCell);
+                                            UnbindBrick();
+                                            BrickMover.selectedBrick = null;
+                                            break;
+                                        }
+
+                                        currentCell += 1;
+                                    } while (currentCell <= selectedBrick.GridSize.Width);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (cell != null)
+                        {
+                            foreach (string keyPress in inputs.NewPresses)
+                            {
+                                if (keyPress == "mb.left" && (cell as BrickActor).Color.Name != "Gray")
+                                {
+                                    selectedBrick = cell as BrickActor;
+                                    BindBrick(selectedBrick, MousePosAsCell);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+        private void BindBrick(BrickActor brick, Point mousePos)
+        {
+            if (brick != null)
+            {
+                BrickMover.selectedBrick = brick;
+                Scene.IgnoredBricks.Add(brick);
+                var tempConnected = BrickMover.IsBrickConnected(brick);
+                bool isConnected = tempConnected.Count > 1 ? true : false;
+
+                if (isConnected)
+                {
+                    foreach (BrickActor brickToAdd in tempConnected)
+                    {
+                        if (brickToAdd.CanMove)
+                        {
+                            if (!Scene.ConnectedBricks.Contains(brickToAdd))
+                            {
+                                Scene.ConnectedBricks.Add(brickToAdd);
+                            }
+
+                        }
+
+                        brickToAdd.CanMove = true;
+                    }
+
+                    foreach (BrickActor connectedBrick in Scene.ConnectedBricks)
+                    {
+                        connectedBrick.Selected = true;
+                        BrickMover.MoveBrickFromPlayfield(connectedBrick);
+                    }
+                }
+                else
+                {
+                    brick.Selected = true;
+                    Scene.ConnectedBricks.Add(brick);
+                    BrickMover.MoveBrickFromPlayfield(brick);
+                }
+
+                Scene.IgnoredBricks.Clear();
             }
         }
 
+        private void UnbindBrick()
+        {
+            foreach (BrickActor connectedBrick in Scene.ConnectedBricks)
+            {
+                connectedBrick.Selected = false;
+                connectedBrick.CanMove = true;
+                BrickMover.MoveBrickFromPlayfield(connectedBrick);
+                connectedBrick.Location = connectedBrick.MovingLocation;
+            }
+            Scene.ConnectedBricks.Clear();
+            Scene.IgnoredBricks.Clear();
+
+        }
     }
 }
 //Sidebar.Render(graphics);

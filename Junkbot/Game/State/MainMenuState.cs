@@ -30,6 +30,7 @@ namespace Junkbot.Game.State
         public static string[] lvl;
         public Scene Scene;
         public ISpriteBatch _actors;
+        private ISpriteBatch Junkbot;
         public Intro Intro;
         private UxShell Shell { get; set; }
         public BrickMover BrickMover;
@@ -244,7 +245,6 @@ namespace Junkbot.Game.State
                          )
                      );
                 }
-                _actors.Finish();
                 testList.Add(brick);
         }
 
@@ -264,13 +264,12 @@ namespace Junkbot.Game.State
             sizX = ((junkbot.GridSize.Width - 1) * 15) + 26;
             sizY = ((junkbot.GridSize.Height - 1) * 18) + 32;
             Point frameOffset = new Point((junkbot.Location.X * 15), locY).Add(junkbot.Animation.GetCurrentFrame().Offset);
-            _actors.Draw(
+            Junkbot.Draw(
                 junkbot.Animation.GetCurrentFrame().SpriteName,
                 new Rectangle(
                     frameOffset, junkbot.Animation.GetCurrentFrame().SpriteSize
                 )
             );
-            _actors.Finish();
         }
 
         public override void RenderFrame(IGraphicsController graphics)
@@ -279,15 +278,18 @@ namespace Junkbot.Game.State
 
             //var mainMenu = graphics.CreateSpriteBatch("main-menu-atlas");
             _actors = graphics.CreateSpriteBatch("actors-atlas");
+            Junkbot = graphics.CreateSpriteBatch("junkbot-animation-atlas");
             MainMenuBackground.RenderFrame(graphics);
 
             graphics.ClearViewport(Color.CornflowerBlue);
 
             // Render order
             ParseGridRenderOrder();
-
+            _actors.Finish();
+            Junkbot.Finish();
             MainMenuBackground.Render(graphics);
             Buttons.Render(graphics);
+            
             /*if (Intro.Gif == null && IntroPlayed == false)
             {
                 Intro.LoadIntro(graphics);
@@ -314,8 +316,8 @@ namespace Junkbot.Game.State
                 {
 
                     IActor cell = Scene.GetPlayfield[MousePosAsCell.X, MousePosAsCell.Y];
-                    Console.WriteLine(Scene.GetPlayfield.GetLength(0).ToString() +
-                                      Scene.GetPlayfield.GetLength(1).ToString() + MousePosAsCell);
+                    /*Console.WriteLine(Scene.GetPlayfield.GetLength(0).ToString() +
+                                      Scene.GetPlayfield.GetLength(1).ToString() + MousePosAsCell);*/
 
                     if (selectedBrick != null)
                     {

@@ -22,7 +22,6 @@ namespace Junkbot.Game.World.Actors
 
         public String Type { get; set; } = "JunkbotActor";
         public bool Rendered { get; set; }
-
         public Point Location
         {
             get { return _Location; }
@@ -35,7 +34,7 @@ namespace Junkbot.Game.World.Actors
             }
         }
         private Point _Location;
-
+        private bool IsWalking = true;
         public Size GridSize { get { return _GridSize; } }
         private static readonly Size _GridSize = new Size(2, 4);
 
@@ -63,33 +62,37 @@ namespace Junkbot.Game.World.Actors
         {
             FacingDirection = direction;
 
-
-            // Detach event if necessary
-            //
-            try
+            if (IsWalking)
+            {
+                // Detach event if necessary
+                //
+                try
             {
                 Animation.SpecialFrameEntered -= Animation_SpecialFrameEntered;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                Console.WriteLine("SFE exception: " + ex.ToString());
             }
 
-            switch (direction)
-            {
-                case FacingDirection.Left:
-                    Animation.GoToAndPlay("junkbot-walk-left");
-                    break;
 
-                case FacingDirection.Right:
-                    Animation.GoToAndPlay("junkbot-walk-right");
-                    break;
+                switch (direction)
+                {
+                    case FacingDirection.Left:
+                        Animation.GoToAndPlay("junkbot-walk-left");
+                        break;
 
-                default:
-                    throw new Exception("JunkbotActor.SetWalkingDirection: Invalid direction provided.");
-            }
+                    case FacingDirection.Right:
+                        Animation.GoToAndPlay("junkbot-walk-right");
+                        break;
 
+                    default:
+                        throw new Exception("JunkbotActor.SetWalkingDirection: Invalid direction provided.");
+                }
+
+         
             Animation.SpecialFrameEntered += Animation_SpecialFrameEntered;
+            }
         }
 
         public System.Drawing.Rectangle GetCheckBounds(Point point, Size size)
@@ -102,17 +105,49 @@ namespace Junkbot.Game.World.Actors
 
         private void CollectTrash()
         {
-            //Animation.GoToAndPlay("junkbot-trash-left");
+            try
+            {
+                Animation.SpecialFrameEntered -= Animation_SpecialFrameEntered;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            if (IsWalking)
+            {
+                var animName = FacingDirection == FacingDirection.Left ? "junkbot-walk-left" : "junkbot-walk-right";
+                Animation.GoToAndStop(animName);
+                IsWalking = false;
+                Animation.GoToAndPlay("junkbot-eat");
+                Animation.SpecialFrameEntered += Animation_SpecialFrameEntered;
+            }
         }
 
         private JunkbotCollision CheckCollisionType(System.Drawing.Rectangle region)
         {
             Point[] cellsToCheck = region.ExpandToGridCoordinates();
             IList<JunkbotCollision> detectionResults = new List<JunkbotCollision>();
-            int dx = FacingDirection == FacingDirection.Left ? -1 : 1;
+            int dx = FacingDirection == FacingDirection.Left ? -1 : 2;
+            int sd = FacingDirection == FacingDirection.Left ? 0 : 1;
+            int su = FacingDirection == FacingDirection.Left ? -1 : 1;
+
+            int fl = FacingDirection == FacingDirection.Left ? 0 : 2;
+            int fl2 = FacingDirection == FacingDirection.Left ? -1 : 3;
+
             bool StepGapRight = Scene.CheckGridRegionFree(GetCheckBounds(new Point(dx, GridSize.Height), new Size(2, 1)));
             bool StepGapLeft = Scene.CheckGridRegionFree(GetCheckBounds(new Point(dx, GridSize.Height), new Size(2, 1)));
-            bool Floor2 = Scene.CheckGridRegionFree(GetCheckBounds(new Point(dx, GridSize.Height), new Size(2, 1)));
+            bool StepUpBlocked = Scene.CheckGridRegionFree(GetCheckBounds(new Point(dx, -1), new Size(1, 1)));
+            bool TurnAround = Scene.CheckGridRegionFree(GetCheckBounds(new Point(dx, 1), new Size(1, 1)));
+            bool TurnAround2 = Scene.CheckGridRegionFree(GetCheckBounds(new Point(dx, 2), new Size(1, 1)));
+            bool HeadCheck = Scene.CheckGridRegionFree(GetCheckBounds(new Point(dx, 0), new Size(1, 1)));
+
+            bool StepUp = Scene.CheckGridRegionFree(GetCheckBounds(new Point(su, 3), new Size(2, 1)));
+            bool Floor1 = Scene.CheckGridRegionFree(GetCheckBounds(new Point(fl, 4), new Size(1, 1)));
+            bool Floor2 = Scene.CheckGridRegionFree(GetCheckBounds(new Point(fl2, 4), new Size(1, 1)));
+            bool StepDown = Scene.CheckGridRegionFree(GetCheckBounds(new Point(sd, 5), new Size(1, 1)));
+            bool StepDownFloor = Scene.CheckGridRegionFree(GetCheckBounds(new Point(sd, 6), new Size(1, 1)));
+            bool StepDownBlocked = Scene.CheckGridRegionFree(GetCheckBounds(new Point(dx, 5), new Size(2, 1)));
+
             bool stepDown = false;
             bool floor = false;
             bool stepUp = false;
@@ -121,13 +156,13 @@ namespace Junkbot.Game.World.Actors
             bool stepUpBlocked = false;
             int index = 1;
 
-            foreach (Point cell in cellsToCheck)
+            /*foreach (Point cell in cellsToCheck)
             {
                 if (index != 7)
                 {
 
 
-                    if (index == 2 || index == 3 || index == 4) 
+                    if (index == 2 || index == 3 || index == 1) 
                     {
                         if (Scene.GetPlayfield[cell.X, cell.Y] != null)
                         {
@@ -175,7 +210,7 @@ namespace Junkbot.Game.World.Actors
                     }
                 }
                 index += 1;
-            }
+            }*/
 
             foreach (JunkbotCollision result in detectionResults)
             {
@@ -208,32 +243,33 @@ namespace Junkbot.Game.World.Actors
                 JunkbotCollision collisionType = result;
             }
 
-            if (turnAround)
+            if (!TurnAround | !TurnAround2 || (!HeadCheck && !StepUp))
             {
                 return JunkbotCollision.TurnAround;
             }
             else
             {
-                if (stepDown && !stepDownBlocked && !stepUp && Floor2 && !floor)
+                if (StepDown && StepDownBlocked && (Floor1 && Floor2) && !StepUp)
                 {
                     if ((FacingDirection == FacingDirection.Left && StepGapLeft) || (FacingDirection == FacingDirection.Right && StepGapRight))
                     {
                         return JunkbotCollision.StepDown;
                     }
                 }
-                if (stepUp && !stepUpBlocked)
+                if (!StepUp && StepUpBlocked)
                 {
                     return JunkbotCollision.StepUp;
                 }
-                if (!Floor2 && !stepDownBlocked && !stepUp)
+                if ((Floor1 || Floor2) && stepUp && HeadCheck)
                 {
                     return JunkbotCollision.CanWalk;
                 }
-                return JunkbotCollision.TurnAround;
+                return JunkbotCollision.CanWalk;
             }
         }
         private void Animation_SpecialFrameEntered(object sender, EventArgs e)
         {
+
             if (Scene != null)
             {
                 //quick maffs:
@@ -244,20 +280,34 @@ namespace Junkbot.Game.World.Actors
                 // Collision detection
                 int yPos = 0;
                 JunkbotCollision collisionType = CheckCollisionType(GetCheckBounds(new Point(tar, -1), new Size(1, 7)));
-
-                switch (collisionType)
+                if (sender != null)
                 {
-                    case JunkbotCollision.TurnAround:
-                        SetWalkingDirection(FacingDirection == FacingDirection.Left ? FacingDirection.Right : FacingDirection.Left);
-                        return;
-                    case JunkbotCollision.StepUp:
-                        yPos = -1;
-                        break;
-                    case JunkbotCollision.StepDown:
-                        yPos = +1;
-                        break;
+                    Console.WriteLine((sender as ActorAnimation).Name);
+                    if ((sender as ActorAnimation).Name.Contains("junkbot_eat"))
+                    {
+                        IsWalking = true;
+                    }
                 }
-                Location = Location.Add(new Point(dx, yPos));
+
+                if (IsWalking)
+                {
+                    switch (collisionType)
+                    {
+                        case JunkbotCollision.TurnAround:
+                            SetWalkingDirection(FacingDirection == FacingDirection.Left
+                                ? FacingDirection.Right
+                                : FacingDirection.Left);
+                            return;
+                        case JunkbotCollision.StepUp:
+                            yPos = -1;
+                            break;
+                        case JunkbotCollision.StepDown:
+                            yPos = +1;
+                            break;
+                    }
+
+                    Location = Location.Add(new Point(dx, yPos));
+                }
             }
         }
                 public void Think(TimeSpan deltaTime)

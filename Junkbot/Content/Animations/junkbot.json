@@ -3,11 +3,11 @@
     "name": "junkbot-walk-left",
     "frames": [
       {
-        "sprite": "minifig_walk_l_1",
+        "sprite": "junkbot_walk_l_1",
         "ticks": 3,
         "offset": {
           "x": 0,
-          "y":5
+          "y": 5
         },
         "size": {
           "x": 40,
@@ -15,11 +15,11 @@
         }
       },
       {
-        "sprite": "minifig_walk_l_2",
+        "sprite": "junkbot_walk_l_2",
         "ticks": 1,
         "offset": {
           "x": 0,
-          "y":5
+          "y": 5
         },
         "size": {
           "x": 40,
@@ -27,11 +27,11 @@
         }
       },
       {
-        "sprite": "minifig_walk_l_3",
+        "sprite": "junkbot_walk_l_3",
         "ticks": 1,
         "offset": {
           "x": 0,
-          "y":5
+          "y": 5
         },
         "size": {
           "x": 40,
@@ -39,11 +39,11 @@
         }
       },
       {
-        "sprite": "minifig_walk_l_4",
+        "sprite": "junkbot_walk_l_4",
         "ticks": 1,
         "offset": {
-          "x":-6,
-          "y":7
+          "x": -6,
+          "y": 7
         },
         "size": {
           "x": 51,
@@ -52,11 +52,11 @@
       },
       {
         "emit_event": true,
-        "sprite": "minifig_walk_l_5",
+        "sprite": "junkbot_walk_l_5",
         "ticks": 1,
         "offset": {
           "x": 0,
-          "y":5
+          "y": 5
         },
         "size": {
           "x": 50,
@@ -64,11 +64,11 @@
         }
       },
       {
-        "sprite": "minifig_walk_l_6",
+        "sprite": "junkbot_walk_l_6",
         "ticks": 3,
         "offset": {
           "x": 0,
-          "y":5
+          "y": 5
         },
         "size": {
           "x": 40,
@@ -76,11 +76,11 @@
         }
       },
       {
-        "sprite": "minifig_walk_l_7",
+        "sprite": "junkbot_walk_l_7",
         "ticks": 1,
         "offset": {
           "x": 0,
-          "y":5
+          "y": 5
         },
         "size": {
           "x": 40,
@@ -88,11 +88,11 @@
         }
       },
       {
-        "sprite": "minifig_walk_l_8",
+        "sprite": "junkbot_walk_l_8",
         "ticks": 1,
         "offset": {
           "x": 0,
-          "y":5
+          "y": 5
         },
         "size": {
           "x": 40,
@@ -100,11 +100,11 @@
         }
       },
       {
-        "sprite": "minifig_walk_l_9",
+        "sprite": "junkbot_walk_l_9",
         "ticks": 1,
         "offset": {
-          "x":-5,
-          "y":7
+          "x": -5,
+          "y": 7
         },
         "size": {
           "x": 47,
@@ -113,11 +113,11 @@
       },
       {
         "emit_event": true,
-        "sprite": "minifig_walk_l_10",
+        "sprite": "junkbot_walk_l_10",
         "ticks": 1,
         "offset": {
           "x": 0,
-          "y":4
+          "y": 4
         },
         "size": {
           "x": 47,
@@ -130,11 +130,11 @@
     "name": "junkbot-walk-right",
     "frames": [
       {
-        "sprite": "minifig_walk_r_1",
+        "sprite": "junkbot_walk_r_1",
         "ticks": 3,
         "offset": {
           "x": 0,
-          "y":7
+          "y": 7
         },
         "size": {
           "x": 41,
@@ -142,11 +142,11 @@
         }
       },
       {
-        "sprite": "minifig_walk_r_2",
+        "sprite": "junkbot_walk_r_2",
         "ticks": 1,
         "offset": {
           "x": 0,
-          "y":7
+          "y": 7
         },
         "size": {
           "x": 41,
@@ -154,11 +154,11 @@
         }
       },
       {
-        "sprite": "minifig_walk_r_3",
+        "sprite": "junkbot_walk_r_3",
         "ticks": 1,
         "offset": {
           "x": 0,
-          "y":6
+          "y": 6
         },
         "size": {
           "x": 41,
@@ -166,11 +166,11 @@
         }
       },
       {
-        "sprite": "minifig_walk_r_4",
+        "sprite": "junkbot_walk_r_4",
         "ticks": 1,
         "offset": {
-          "x":-3,
-          "y":4
+          "x": -3,
+          "y": 4
         },
         "size": {
           "x": 49,
@@ -179,11 +179,11 @@
       },
       {
         "emit_event": true,
-        "sprite": "minifig_walk_r_5",
+        "sprite": "junkbot_walk_r_5",
         "ticks": 1,
         "offset": {
-          "x":-8,
-          "y":7
+          "x": -8,
+          "y": 7
         },
         "size": {
           "x": 49,
@@ -191,11 +191,11 @@
         }
       },
       {
-        "sprite": "minifig_walk_r_6",
+        "sprite": "junkbot_walk_r_6",
         "ticks": 3,
         "offset": {
           "x": 0,
-          "y":7
+          "y": 7
         },
         "size": {
           "x": 41,
@@ -203,11 +203,11 @@
         }
       },
       {
-        "sprite": "minifig_walk_r_7",
+        "sprite": "junkbot_walk_r_7",
         "ticks": 1,
         "offset": {
           "x": 0,
-          "y":7
+          "y": 7
         },
         "size": {
           "x": 41,
@@ -215,11 +215,11 @@
         }
       },
       {
-        "sprite": "minifig_walk_r_8",
+        "sprite": "junkbot_walk_r_8",
         "ticks": 1,
         "offset": {
           "x": 0,
-          "y":8
+          "y": 8
         },
         "size": {
           "x": 41,
@@ -227,11 +227,11 @@
         }
       },
       {
-        "sprite": "minifig_walk_r_9",
+        "sprite": "junkbot_walk_r_9",
         "ticks": 1,
         "offset": {
-          "x":-7,
-          "y":6
+          "x": -7,
+          "y": 6
         },
         "size": {
           "x": 52,
@@ -240,15 +240,225 @@
       },
       {
         "emit_event": true,
-        "sprite": "minifig_walk_r_10",
+        "sprite": "junkbot_walk_r_10",
         "ticks": 1,
         "offset": {
-          "x":-11,
-          "y":7
+          "x": -11,
+          "y": 7
         },
         "size": {
           "x": 52,
           "y": 76
+        }
+      }
+    ]
+  },
+  {
+    "name": "junkbot-eat",
+    "frames": [
+      {
+        "sprite": "junkbot_eat_start_1",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 7
+        },
+        "size": {
+          "x": 41,
+          "y": 79
+        }
+      },
+      {
+        "sprite": "junkbot_eat_start_2",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 7
+        },
+        "size": {
+          "x": 46,
+          "y": 79
+        }
+      },
+      {
+        "sprite": "junkbot_eat_start_3",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 7
+        },
+        "size": {
+          "x": 74,
+          "y": 79
+        }
+      },
+      {
+        "sprite": "junkbot_eat_start_4",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 5
+        },
+        "size": {
+          "x": 77,
+          "y": 81
+        }
+      },
+      {
+        "sprite": "junkbot_eat_start_5",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": -20
+        },
+        "size": {
+          "x": 63,
+          "y": 106
+        }
+      },
+      {
+        "sprite": "junkbot_eat_start_6",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": -20
+        },
+        "size": {
+          "x": 63,
+          "y": 106
+        }
+      },
+      {
+        "sprite": "junkbot_eat_start_7",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": -18
+        },
+        "size": {
+          "x": 61,
+          "y": 104
+        }
+      },
+      {
+        "sprite": "junkbot_eat_start_8",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": -20
+        },
+        "size": {
+          "x": 63,
+          "y": 106
+        }
+      },
+      {
+        "sprite": "junkbot_eat_start_9",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": -18
+        },
+        "size": {
+          "x": 61,
+          "y": 104
+        }
+      },
+      {
+        "sprite": "junkbot_eat_start_10",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": -20
+        },
+        "size": {
+          "x": 63,
+          "y": 106
+        }
+      },
+      {
+        "sprite": "junkbot_eat_start_11",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": -10
+        },
+        "size": {
+          "x": 63,
+          "y": 96
+        }
+      },
+      {
+        "sprite": "junkbot_eat_start_12",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": -8
+        },
+        "size": {
+          "x": 63,
+          "y": 94
+        }
+      },
+      {
+        "sprite": "junkbot_eat_start_13",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": -3
+        },
+        "size": {
+          "x": 54,
+          "y": 89
+        }
+      },
+      {
+        "sprite": "junkbot_eat_start_14",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": -1
+        },
+        "size": {
+          "x": 54,
+          "y": 87
+        }
+      },
+      {
+        "sprite": "junkbot_eat_start_15",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 5
+        },
+        "size": {
+          "x": 50,
+          "y": 81
+        }
+      },
+      {
+        "sprite": "junkbot_eat_start_16",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 7
+        },
+        "size": {
+          "x": 58,
+          "y": 79
+        }
+      },
+      {
+        "emit_event": true,
+        "sprite": "junkbot_eat_start_17",
+        "ticks": 1,
+        "offset": {
+          "x": 0,
+          "y": 7
+        },
+        "size": {
+          "x": 51,
+          "y": 79
         }
       }
     ]
