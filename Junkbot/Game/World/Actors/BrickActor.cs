@@ -15,7 +15,6 @@ namespace Junkbot.Game.World.Actors
             Color.Red, Color.Yellow, Color.White, Color.Green, Color.Blue
         }).AsReadOnly();
 
-        public String Type { get; set; } = "BrickActor";
         public bool Rendered { get; set; }
         public bool Selected { get; set; }
         public bool CanMove { get; set; }

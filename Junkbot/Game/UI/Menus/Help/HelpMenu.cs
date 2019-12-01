@@ -29,7 +29,6 @@ namespace Junkbot.Game.World.Level
         private ISpriteBatch _buttons;
         private ISpriteBatch _box;
         private ISpriteBatch _helpText;
-        private FontService _fontService;
         private IList<HelpTextItem> _textList;
         private int _page;
         bool disposed = false;
@@ -43,7 +42,6 @@ namespace Junkbot.Game.World.Level
             JunkbotGame = junkbotGame;
             Shell = shell;
             _page = 1;
-            _fontService = new FontService();
             LoadText();
             Next = new Button(JunkbotGame,this, "next_button", new SizeF(36, 26), new PointF(391, 355),2);
             //Previous = new Button(JunkbotGame, "prev_button", new SizeF(36, 26), new PointF(300, 350), this);

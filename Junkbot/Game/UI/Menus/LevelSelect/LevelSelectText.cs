@@ -21,7 +21,6 @@ namespace Junkbot.Game.World.Level
         private UxShell Shell;
         private ISpriteBatch _font;
         private ISpriteBatch _levelNumbers;
-        private FontService _fontService;
         private List<string> _levels;
         private LevelSelectButtons _levelSelectButtons;
         private List<UxComponent> Rows;
@@ -32,9 +31,7 @@ namespace Junkbot.Game.World.Level
         {
             JunkbotGame = junkbotGame;
             Shell = shell;
-            _fontService = new FontService();
             _levelSelectButtons = buttons;
-            _fontService.SetFont();
             _levels = levels;
             Rows = new List<UxComponent>();
             int i = 88;

@@ -9,19 +9,12 @@ using Junkbot.Helpers;
 
 namespace Junkbot.Game
 {
-    class BrickMover
+    static class BrickMover
     {
-        public Scene Scene;
-        public BrickActor selectedBrick { get; set; }
+        public static Scene Scene { get; set; }
+        public static BrickActor SelectedBrick = null;
 
-        public BrickMover(Scene scene)
-        {
-            selectedBrick = null;
-            Scene = scene;
-
-        }
-
-        private bool CanBrickMove(IList<BrickActor> bricks)
+        static bool CanBrickMove(IList<BrickActor> bricks)
         {
             foreach (BrickActor brick in bricks)
             {
@@ -33,7 +26,7 @@ namespace Junkbot.Game
             return false;
         }
 
-        private bool IsRowAllGrey(IList<BrickActor> brickRow)
+        static bool IsRowAllGrey(IList<BrickActor> brickRow)
         {
             foreach (BrickActor brick in brickRow)
             {
@@ -45,7 +38,7 @@ namespace Junkbot.Game
             return true;
         }
 
-        private bool IsBlocked (IList<BrickActor> brickRow)
+        public static bool IsBlocked (IList<BrickActor> brickRow)
         {
             foreach (BrickActor brick in brickRow)
             {
@@ -57,7 +50,7 @@ namespace Junkbot.Game
             return true;
         }
 
-        private IList<BrickActor> ParseRow(IList<BrickActor> row, FacingDirection direction)
+        static IList<BrickActor> ParseRow(IList<BrickActor> row, FacingDirection direction)
         {
 
             var ignoredBricks = Scene.IgnoredBricks;
@@ -162,7 +155,7 @@ namespace Junkbot.Game
             return selected;
         }
 
-        public IList<BrickActor> ParseBrick(BrickActor brick, FacingDirection direction)
+        static IList<BrickActor> ParseBrick(BrickActor brick, FacingDirection direction)
         {
             var aboveRow = CheckSurroundingBricks(brick, FacingDirection.Up);
             var belowRow = CheckSurroundingBricks(brick, FacingDirection.Down);
@@ -322,7 +315,7 @@ namespace Junkbot.Game
             return connectedBricks;
         }
 
-        private IList<BrickActor> RemoveIgnoredBricks(IList<BrickActor> row)
+        static IList<BrickActor> RemoveIgnoredBricks(IList<BrickActor> row)
         {
             int count = row.Count;
             IList<BrickActor> newRow = new List<BrickActor>(row);
@@ -342,8 +335,8 @@ namespace Junkbot.Game
             }
             return newRow;
         }
-       
-        public IList<BrickActor> IsBrickConnected(BrickActor brick)
+
+        public static IList<BrickActor> IsBrickConnected(BrickActor brick)
         {
             var aboveRow = CheckSurroundingBricks(brick, FacingDirection.Up);
             var belowRow = CheckSurroundingBricks(brick, FacingDirection.Down);
@@ -458,7 +451,7 @@ namespace Junkbot.Game
             return connectedBricks;
         }
 
-        private IList<BrickActor> CheckSurroundingBricks(BrickActor brick, FacingDirection direction)
+        static IList<BrickActor> CheckSurroundingBricks(BrickActor brick, FacingDirection direction)
             {
                 if (brick.Location.X == 13 && brick.Location.Y == 17)
                 {
@@ -487,18 +480,18 @@ namespace Junkbot.Game
                 return currentRow;
             }
 
-        public void UpdateSelectedBrickLocation(Point mousePos)
+        public static void UpdateSelectedBrickLocation(Point mousePos)
         {
             var connectedBricks = Scene.ConnectedBricks;
             Array.Clear(Scene.SelectedGrid, 0, Scene.SelectedGrid.Length - 1);
 
             foreach (BrickActor connectedBrick in connectedBricks)
             {
-                connectedBrick.MovingLocation = new Point(mousePos.X - (selectedBrick.Location.X - connectedBrick.Location.X), mousePos.Y - (selectedBrick.Location.Y - connectedBrick.Location.Y));
+                connectedBrick.MovingLocation = new Point(mousePos.X - (SelectedBrick.Location.X - connectedBrick.Location.X), mousePos.Y - (SelectedBrick.Location.Y - connectedBrick.Location.Y));
                 MoveBrickSelectedGrid(connectedBrick);
             }
         }
-        public void MoveBrickSelectedGrid(BrickActor brick)
+        static void MoveBrickSelectedGrid(BrickActor brick)
         {
             var movingLocationCells = new List<Point>();
 
@@ -515,7 +508,7 @@ namespace Junkbot.Game
                 }
             }
         }
-        public void MoveBrickFromPlayfield(BrickActor brick)
+        public static void MoveBrickFromPlayfield(BrickActor brick)
         {
             var locationCells = new List<Point>();
             var movingLocationCells = new List<Point>();
@@ -548,7 +541,7 @@ namespace Junkbot.Game
         }
 
 
-        public bool PlaceBrick(IList<BrickActor> connectedBricks)
+        public static bool PlaceBrick(IList<BrickActor> connectedBricks)
         {
             List<Point> connectedCells = new List<Point>();
             bool blocked = false;

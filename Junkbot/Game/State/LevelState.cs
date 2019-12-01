@@ -29,7 +29,6 @@ namespace Junkbot.Game.State
         //public JunkbotSidebar Sidebar;
         public ISpriteBatch _actors;
         public ISpriteBatch Junkbot;
-        private BrickMover BrickMover;
         public static AnimationStore Store = new AnimationStore();
         private UxShell Shell { get; set; }
 
@@ -38,7 +37,6 @@ namespace Junkbot.Game.State
             Shell = new UxShell();
             lvl = File.ReadAllLines(Environment.CurrentDirectory + $@"\Content\Levels\{level}.txt");
             Scene = Scene.FromLevel(lvl, Store);
-            BrickMover = new BrickMover(Scene);
             SetTimer();
             //Sidebar = new JunkbotSidebar(Scene.LevelData);
         }
@@ -84,37 +82,43 @@ namespace Junkbot.Game.State
                 do
                 {
                     IActor actor = Scene.GetPlayfield[x, y];
-                    BrickActor selectedBrick = Scene.SelectedGrid[x, y] as BrickActor;
-                    // check playfield
-                    if (actor != null)
+                    if (Scene.SelectedGrid[x, y] is BrickActor selectedBrick)
                     {
-                        if (!actor.Rendered)
+                        // check playfield
+                        if (actor != null)
                         {
-                            switch (actor.Type)
+                            if (!actor.Rendered)
                             {
-                                case "BrickActor":
+                                if (actor is BrickActor)
+                                {
                                     DrawBrick(actor as BrickActor, testList);
-                                    break;
-                                case "JunkbotActor":
-                                    DrawJunkbot(actor as JunkbotActor);
-                                    break;
-                                case "BinActor":
-                                    DrawBin(actor as BinActor);
-                                    break;
-                            }
-                        }
-                        actor.Rendered = true;
-                    }
-                    // check moving bricks
-                    if (selectedBrick != null)
-                    {
-                        if (!selectedBrick.Rendered)
-                        {
-                            DrawBrick(selectedBrick, testList);
-                        }
-                        selectedBrick.Rendered = true;
-                    }
+                                }
 
+                                if (actor is JunkbotActor)
+                                {
+                                    DrawJunkbot(actor as JunkbotActor);
+                                }
+
+                                if (actor is BinActor)
+                                {
+                                    DrawBin(actor as BinActor);
+                                }
+                            }
+
+                            actor.Rendered = true;
+                        }
+
+                        // check moving bricks
+                        if (selectedBrick != null)
+                        {
+                            if (!selectedBrick.Rendered)
+                            {
+                                DrawBrick(selectedBrick, testList);
+                            }
+
+                            selectedBrick.Rendered = true;
+                        }
+                    }
                     x += 1;
                 }
                 while (x != 34);
@@ -122,6 +126,7 @@ namespace Junkbot.Game.State
             }
             while (y != 0);
         }
+            
 
         private void DrawBrick(BrickActor brick, List<BrickActor> testList)
         {
@@ -543,7 +548,7 @@ namespace Junkbot.Game.State
                 Point MousePoint = new Point((int)Math.Floor(MousePosition.X - 5),
                     (int)Math.Floor(MousePosition.Y - 10));
                 Point MousePosAsCell = MousePoint.Reduce(Scene.LevelData.Spacing);
-                BrickActor selectedBrick = BrickMover.selectedBrick;
+                BrickActor selectedBrick = BrickMover.SelectedBrick;
                 if ((MousePosAsCell.X >= 0 && MousePosAsCell.X < 35) &&
                     (MousePosAsCell.Y >= 0 && MousePosAsCell.Y <= 21))
                 {
@@ -582,7 +587,7 @@ namespace Junkbot.Game.State
                                         {
                                             BrickMover.UpdateSelectedBrickLocation(MousePosAsCell);
                                             UnbindBrick();
-                                            BrickMover.selectedBrick = null;
+                                            BrickMover.SelectedBrick = null;
                                             break;
                                         }
 
@@ -615,7 +620,7 @@ namespace Junkbot.Game.State
         {
             if (brick != null)
             {
-                BrickMover.selectedBrick = brick;
+                BrickMover.SelectedBrick = brick;
                 Scene.IgnoredBricks.Add(brick);
                 var tempConnected = BrickMover.IsBrickConnected(brick);
                 bool isConnected = tempConnected.Count > 1 ? true : false;

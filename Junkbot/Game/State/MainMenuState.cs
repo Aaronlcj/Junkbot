@@ -33,7 +33,6 @@ namespace Junkbot.Game.State
         private ISpriteBatch Junkbot;
         public Intro Intro;
         private UxShell Shell { get; set; }
-        public BrickMover BrickMover;
         public MainMenuButtons Buttons;
         public MainMenuBackground MainMenuBackground;
         public static AnimationStore Store = new AnimationStore();
@@ -50,9 +49,9 @@ namespace Junkbot.Game.State
             Scene = Scene.FromLevel(lvl, Store);
             SetTimer();
             Shell = new UxShell();
+            BrickMover.Scene = Scene;
             //Intro = new Intro(Shell, JunkbotGame);
             IntroPlayed = introPlayed;
-            BrickMover = new BrickMover(Scene);
             Buttons = new MainMenuButtons(Shell, JunkbotGame);
             MainMenuBackground = new MainMenuBackground();
         }
@@ -72,7 +71,7 @@ namespace Junkbot.Game.State
         {
             if (brick != null)
             {
-                BrickMover.selectedBrick = brick;
+                BrickMover.SelectedBrick = brick;
                 Scene.IgnoredBricks.Add(brick);
                 var tempConnected = BrickMover.IsBrickConnected(brick);
                 bool isConnected = tempConnected.Count > 1 ? true : false;
@@ -310,7 +309,7 @@ namespace Junkbot.Game.State
                 Point MousePoint = new Point((int) Math.Floor(MousePosition.X - 5),
                     (int) Math.Floor(MousePosition.Y - 10));
                 Point MousePosAsCell = MousePoint.Reduce(Scene.LevelData.Spacing);
-                BrickActor selectedBrick = BrickMover.selectedBrick;
+                BrickActor selectedBrick = BrickMover.SelectedBrick;
                 if ((MousePosAsCell.X >= 0 && MousePosAsCell.X < 35) &&
                     (MousePosAsCell.Y >= 0 && MousePosAsCell.Y <= 21))
                 {
@@ -348,7 +347,7 @@ namespace Junkbot.Game.State
                                         {
                                             BrickMover.UpdateSelectedBrickLocation(MousePosAsCell);
                                             UnbindBrick();
-                                            BrickMover.selectedBrick = null;
+                                            BrickMover.SelectedBrick = null;
                                             break;
                                         }
 

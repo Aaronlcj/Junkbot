@@ -8,6 +8,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Junkbot.Game.Logic;
+using Oddmatics.Rzxe.Logic;
 
 namespace Junkbot.Game
 {
@@ -68,7 +70,7 @@ namespace Junkbot.Game
             LevelData = levelData;
             ConnectedBricks = new List<BrickActor>();
             IgnoredBricks = new List<BrickActor>();
-
+            CollisionDetection.Scene = this;
 
 
             foreach (JunkbotPartData part in levelData.Parts)
@@ -107,7 +109,7 @@ namespace Junkbot.Game
                         actor = new JunkbotActor(store, this, new Point(location.X, location.Y), (part.AnimationName == "walk_l" ? FacingDirection.Left : FacingDirection.Right));
                         break;
                     case "haz_climber":
-                        actor = new BotActor(store, this, location, (part.AnimationName == "walk_r" ? FacingDirection.Right : FacingDirection.Left));
+                        actor = new ClimbBotActor(store, this, location, (part.AnimationName == "walk_r" ? FacingDirection.Right : FacingDirection.Left));
                         break;
 
                     case "flag":
@@ -187,7 +189,7 @@ namespace Junkbot.Game
             }
         }
 
-        public bool CheckBotFloorExists(BotActor actor)
+        public bool CheckBotFloorExists(IBotActor actor)
         {
             Point actorPos = actor.Location;
             int directionModifier = actorPos.X;
@@ -237,7 +239,7 @@ namespace Junkbot.Game
 
         private void AssignGridCells(IActor actor, Point[] cells)
         {
-            if (actor.Type == "BinActor")
+            if (actor is BinActor)
             {
             }
 
@@ -287,7 +289,7 @@ namespace Junkbot.Game
         private void UpdateActorGridPosition(IActor actor, Point newPos, Point? oldPos = null)
         {
             
-            if (actor.Type == "BinActor")
+            if (actor is BinActor)
             { }
             // Update new cells
             //

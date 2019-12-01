@@ -20,8 +20,6 @@ namespace Junkbot.Game.World.Actors
 
         bool Rendered { get; set; }
 
-        string Type { get; set; }
-
         event LocationChangedEventHandler LocationChanged;
 
         void Update();

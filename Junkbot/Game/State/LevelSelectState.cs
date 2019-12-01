@@ -30,7 +30,6 @@ namespace Junkbot.Game.State
         public static string[] lvl;
         private List<string> _levelList;
         public Scene Scene;
-        public BrickMover BrickMover;
         public LevelSelectButtons Buttons;
         public LevelSelectBackground LevelSelectBackground;
         public LevelSelectText LevelSelectText;
