@@ -14,6 +14,7 @@ using Junkbot.Game.UI.Menus;
 using Junkbot.Game.UI.Menus.Help;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Oddmatics.Rzxe.Game;
 using Oddmatics.Rzxe.Game.Interface;
 
 namespace Junkbot.Game.World.Level
@@ -22,6 +23,8 @@ namespace Junkbot.Game.World.Level
     {
         internal JunkbotGame JunkbotGame;
         private UxShell Shell;
+        private GameState State;
+
         private Button Next;
         private Button Previous;
         private Button Ok;
@@ -36,11 +39,12 @@ namespace Junkbot.Game.World.Level
 
         // Protected implementation of Dispose pattern.
         
-        public HelpMenu(UxShell shell, JunkbotGame junkbotGame)
-            : base(shell, junkbotGame)
+        public HelpMenu(UxShell shell, JunkbotGame junkbotGame, GameState state)
+            : base(shell, junkbotGame, state)
         {
             JunkbotGame = junkbotGame;
             Shell = shell;
+            State = state;
             _page = 1;
             LoadText();
             Next = new Button(JunkbotGame,this, "next_button", new SizeF(36, 26), new PointF(391, 355),2);

@@ -3,8 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Win32.SafeHandles;
 
 namespace Junkbot.Game.World.Actors
 {
@@ -179,6 +181,40 @@ namespace Junkbot.Game.World.Actors
 
                 Animation.GoToAndStop("legopart-brick-" + Color.Name.ToLower() + "-" + brickSize);
             }
+        }
+        bool disposed = false;
+        // Instantiate a SafeHandle instance.
+        SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
+
+        // Public implementation of Dispose pattern callable by consumers.
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        // Protected implementation of Dispose pattern.
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                handle.Dispose();
+                Animation.StopPlaying();
+                Animation = null;
+                // Free any other managed objects here.
+                //
+            }
+
+            disposed = true;
+        }
+        ~BrickActor()
+        {
+
+            Dispose(false);
+            System.Diagnostics.Trace.WriteLine("LevelSelect's destructor is called.");
         }
     }
 }

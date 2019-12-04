@@ -41,6 +41,8 @@ namespace Junkbot.Game
             CurrentGameState = new MainMenuState(level, this);
         }
 
+
+
         public void RenderFrame(IGraphicsController graphics)
         {
             graphics.ClearViewport(Color.CornflowerBlue);

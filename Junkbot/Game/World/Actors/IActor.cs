@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Junkbot.Game.World.Actors
 {
-    internal interface IActor
+    internal interface IActor : IDisposable
     {
         AnimationServer Animation { get; }
 
@@ -23,5 +23,7 @@ namespace Junkbot.Game.World.Actors
         event LocationChangedEventHandler LocationChanged;
 
         void Update();
+
+        void Dispose();
     }
 }

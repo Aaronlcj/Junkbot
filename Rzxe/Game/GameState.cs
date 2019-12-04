@@ -7,18 +7,14 @@ using System.Text;
 
 namespace Oddmatics.Rzxe.Game
 {
-    public abstract class GameState : IEquatable<GameState>
+    public abstract class GameState : IDisposable
     {
         public abstract InputFocalMode FocalMode { get; }
 
         public abstract string Name { get; }
 
 
-        public bool Equals(GameState other)
-        {
-            return this.Name == other.Name;
-        }
-
+        public abstract void Dispose();
 
         public abstract void RenderFrame(IGraphicsController graphics);
 

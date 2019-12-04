@@ -78,22 +78,23 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Atlas\bot-animation-atlas.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\Atlas\buttons-atlas.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\Atlas\decals-atlas.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Compile Include="Game\BrickMover - Copy.cs" />
     <Compile Include="Game\Logic\BrickMover.cs" />
     <Compile Include="Game\JunkbotEngineParameters.cs" />
     <Compile Include="Game\Logic\CollisionDetection.cs" />
     <Compile Include="Game\State\LevelState.cs" />
     <Compile Include="Game\State\LevelSelectState.cs" />
+    <Compile Include="Game\State\LevelStats.cs" />
     <Compile Include="Game\UI\FontService.cs" />
     <Compile Include="Game\UI\Controls\Button.cs" />
+    <Compile Include="Game\UI\Menus\Level\EndLevelCard.cs" />
     <Compile Include="Game\UI\Menus\Help\HelpTextItem.cs" />
     <Compile Include="Game\UI\Menus\Help\HelpMenu.cs" />
     <Compile Include="Game\UI\Menus\UIPage.cs" />
@@ -103,7 +104,7 @@
     <Compile Include="Game\UI\Menus\LevelSelect\LevelSelectText.cs" />
     <Compile Include="Game\UI\Menus\LevelSelect\LevelSelectBackground.cs" />
     <Compile Include="Game\UI\Menus\LevelSelect\LevelSelectButtons.cs" />
-    <Compile Include="Game\UI\Menus\LevelSidebar.cs" />
+    <Compile Include="Game\UI\Menus\Level\LevelSidebar.cs" />
     <Compile Include="Game\UI\Menus\MainMenu\MainMenuBackground.cs" />
     <Compile Include="Game\UI\Menus\MainMenu\MainMenuButtons.cs" />
     <Compile Include="Game\World\Actors\ClimbBotActor.cs" />
@@ -116,7 +117,6 @@
     <Compile Include="Helpers\SizeHelper.cs" />
     <Compile Include="Game\JunkbotGame.cs" />
     <Compile Include="Game\State\MainMenuState.cs" />
-    <Compile Include="Game\State\SplashGameState.cs" />
     <Compile Include="Game\World\Actors\Animation\ActorAnimation.cs" />
     <Compile Include="Game\World\Actors\Animation\ActorAnimationFrame.cs" />
     <Compile Include="Game\World\Actors\Animation\AnimationServer.cs" />
@@ -149,58 +149,58 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Atlas\background-atlas.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\Atlas\actors-atlas.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\Atlas\font-atlas.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\Atlas\help-atlas.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\Atlas\help-box-atlas.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\Atlas\help-text-atlas.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\Atlas\intro-box-atlas.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\Atlas\junkbot-animation-atlas.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\Atlas\level-card-atlas.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\Atlas\level-numbers-atlas.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\Atlas\level-select-atlas.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\Atlas\levels-b1-atlas.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\Atlas\levels-b2-atlas.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\Atlas\levels-b3-atlas.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\Atlas\levels-b4-atlas.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\Atlas\main-menu-atlas.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\Atlas\object-animation-atlas.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\Atlas\sidebar-atlas.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\Levels\level_list.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -293,67 +293,67 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Atlas\actors-atlas.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Atlas\background-atlas.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Atlas\bot-animation-atlas.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Atlas\buttons-atlas.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Atlas\decals-atlas.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Atlas\font-atlas.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Atlas\help-atlas.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Atlas\help-box-atlas.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Atlas\help-text-atlas.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Atlas\intro-box-atlas.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Atlas\junkbot-animation-atlas.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Atlas\level-card-atlas.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Atlas\level-numbers-atlas.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Atlas\level-select-atlas.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Atlas\levels-b1-atlas.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Atlas\levels-b2-atlas.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Atlas\levels-b3-atlas.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Atlas\levels-b4-atlas.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Atlas\main-menu-atlas.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Atlas\object-animation-atlas.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Atlas\sidebar-atlas.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Levels\###LEVEL LISTING.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

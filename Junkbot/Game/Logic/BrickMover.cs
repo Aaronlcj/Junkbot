@@ -3,17 +3,24 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Junkbot.Helpers;
+using Microsoft.Win32.SafeHandles;
 
 namespace Junkbot.Game
 {
-    static class BrickMover
+    internal class BrickMover : IDisposable
     {
         public static Scene Scene { get; set; }
+
         public static BrickActor SelectedBrick = null;
 
+        public BrickMover(Scene scene)
+        {
+            Scene = scene;
+        }
         static bool CanBrickMove(IList<BrickActor> bricks)
         {
             foreach (BrickActor brick in bricks)
@@ -38,7 +45,7 @@ namespace Junkbot.Game
             return true;
         }
 
-        public static bool IsBlocked (IList<BrickActor> brickRow)
+        public bool IsBlocked (IList<BrickActor> brickRow)
         {
             foreach (BrickActor brick in brickRow)
             {
@@ -50,7 +57,7 @@ namespace Junkbot.Game
             return true;
         }
 
-        static IList<BrickActor> ParseRow(IList<BrickActor> row, FacingDirection direction)
+        public IList<BrickActor> ParseRow(IList<BrickActor> row, FacingDirection direction)
         {
 
             var ignoredBricks = Scene.IgnoredBricks;
@@ -155,7 +162,7 @@ namespace Junkbot.Game
             return selected;
         }
 
-        static IList<BrickActor> ParseBrick(BrickActor brick, FacingDirection direction)
+        public IList<BrickActor> ParseBrick(BrickActor brick, FacingDirection direction)
         {
             var aboveRow = CheckSurroundingBricks(brick, FacingDirection.Up);
             var belowRow = CheckSurroundingBricks(brick, FacingDirection.Down);
@@ -336,7 +343,7 @@ namespace Junkbot.Game
             return newRow;
         }
 
-        public static IList<BrickActor> IsBrickConnected(BrickActor brick)
+        public IList<BrickActor> IsBrickConnected(BrickActor brick)
         {
             var aboveRow = CheckSurroundingBricks(brick, FacingDirection.Up);
             var belowRow = CheckSurroundingBricks(brick, FacingDirection.Down);
@@ -594,6 +601,38 @@ namespace Junkbot.Game
                 return true;
             }
             return false;
+        }
+        bool disposed = false;
+        // Instantiate a SafeHandle instance.
+        SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
+
+        // Public implementation of Dispose pattern callable by consumers.
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        // Protected implementation of Dispose pattern.
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                handle.Dispose();
+
+                // Free any other managed objects here.
+                //
+            }
+
+            disposed = true;
+        }
+        ~BrickMover()
+        {
+            Dispose(false);
+            System.Diagnostics.Trace.WriteLine("BrickMover's destructor is called.");
         }
     }
 }

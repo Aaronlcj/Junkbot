@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Junkbot.Game.State;
 using Junkbot.Game.UI.Menus;
+using Oddmatics.Rzxe.Game;
 using Oddmatics.Rzxe.Game.Interface;
 
 namespace Junkbot.Game.World.Level
@@ -16,6 +17,8 @@ namespace Junkbot.Game.World.Level
         System.Timers.Timer _timer;
         internal JunkbotGame JunkbotGame;
         private UxShell Shell;
+        private GameState State;
+
         public ISpriteBatch Gif;
         private ISpriteBatch _box;
         private string Rank;
@@ -25,10 +28,11 @@ namespace Junkbot.Game.World.Level
         public bool IntroPlayed = false;
         bool disposed = false;
 
-        public Intro(UxShell shell, JunkbotGame junkbotGame)
-        : base(shell, junkbotGame)
+        public Intro(UxShell shell, JunkbotGame junkbotGame, GameState state)
+        : base(shell, junkbotGame, state)
         {
             Shell = shell;
+            State = state;
             JunkbotGame = junkbotGame;
             currentFrame = 0;
         }

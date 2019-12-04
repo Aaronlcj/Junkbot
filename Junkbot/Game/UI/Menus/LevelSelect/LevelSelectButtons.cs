@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Junkbot.Game.UI.Controls;
 using Junkbot.Game.UI.Menus;
 using Junkbot.Game.UI.Menus.Help;
+using Oddmatics.Rzxe.Game;
 using Oddmatics.Rzxe.Game.Interface;
 
 namespace Junkbot.Game.World.Level
@@ -32,8 +33,8 @@ namespace Junkbot.Game.World.Level
         private string _tab;
         public int Tab { get; set; }
 
-        public LevelSelectButtons(UxShell shell, JunkbotGame junkbotGame)
-        : base(shell, junkbotGame)
+        public LevelSelectButtons(UxShell shell, JunkbotGame junkbotGame, GameState state)
+        : base(shell, junkbotGame, state)
         {
             JunkbotGame = junkbotGame;
             Shell = shell;

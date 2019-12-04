@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Junkbot.Game.UI.Controls;
 using Junkbot.Game.UI.Menus;
 using Junkbot.Game.UI.Menus.Help;
+using Oddmatics.Rzxe.Game;
 using Oddmatics.Rzxe.Game.Interface;
 
 namespace Junkbot.Game.World.Level
@@ -18,16 +19,19 @@ namespace Junkbot.Game.World.Level
         private ISpriteBatch _buttons;
         internal JunkbotGame JunkbotGame;
         private UxShell Shell;
+        private GameState State;
+
         private Button Play;
         private Button Credits;
         private Button ReplayIntro;
         private Button ClearScreen;
 
-        public MainMenuButtons(UxShell shell, JunkbotGame junkbotGame)
-            : base(shell, junkbotGame)
+        public MainMenuButtons(UxShell shell, JunkbotGame junkbotGame, GameState state)
+            : base(shell, junkbotGame, state)
         {
             JunkbotGame = junkbotGame;
             Shell = shell;
+            State = state;
             Play = new Button(JunkbotGame,this, "play", new SizeF(116, 45), new PointF(139, 148), 1);
             Credits = new Button(JunkbotGame, this, "credits", new SizeF(96, 26), new PointF(310, 159), 1);
             ReplayIntro = new Button(JunkbotGame, this, "replay_intro", new SizeF(96, 26), new PointF(508, 337), 1);

@@ -7,9 +7,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Junkbot.Game.State;
 using Junkbot.Game.UI;
 using Junkbot.Game.UI.Menus;
 using Junkbot.Game.UI.Menus.Help;
+using Oddmatics.Rzxe.Game;
 using Oddmatics.Rzxe.Game.Interface;
 using SharpFont;
 
@@ -19,6 +21,9 @@ namespace Junkbot.Game.World.Level
     {
         internal JunkbotGame JunkbotGame;
         private UxShell Shell;
+
+        private LevelSelectState State;
+        private int Tab;
         private ISpriteBatch _font;
         private ISpriteBatch _levelNumbers;
         private List<string> _levels;
@@ -26,19 +31,23 @@ namespace Junkbot.Game.World.Level
         private List<UxComponent> Rows;
 
 
-        public LevelSelectText(JunkbotGame junkbotGame, UxShell shell, List<string> levels, LevelSelectButtons buttons)
-        : base (shell, junkbotGame)
+        public LevelSelectText(JunkbotGame junkbotGame, UxShell shell, List<string> levels, int tab, LevelSelectButtons buttons, LevelSelectState state)
+        : base (shell, junkbotGame, state)
         {
             JunkbotGame = junkbotGame;
             Shell = shell;
+            State = state;
+            Tab = tab;
             _levelSelectButtons = buttons;
             _levels = levels;
             Rows = new List<UxComponent>();
             int i = 88;
+            int x = 0;
             foreach (string level in _levels)
             {
-                Rows.Add(new LevelSelectRow(JunkbotGame, level, new SizeF(448, 20), new PointF(10, i), 1));
+                Rows.Add(new LevelSelectRow(JunkbotGame, level, tab, x, new SizeF(448, 20), new PointF(10, i), 1, state));
                 i += 21;
+                x += 1;
             }
             Shell.AddComponents(Rows);
             

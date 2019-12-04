@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Win32.SafeHandles;
+using Oddmatics.Rzxe.Game;
 using Oddmatics.Rzxe.Game.Interface;
 using Oddmatics.Rzxe.Windowing.Graphics;
 using SharpFont.PostScript;
@@ -15,10 +16,12 @@ namespace Junkbot.Game.UI.Menus
     {
         internal JunkbotGame JunkbotGame { get; }
         public UxShell Shell { get; }
+        public GameState State { get; }
 
-        public UIPage(UxShell shell, JunkbotGame junkbotGame)
+        public UIPage(UxShell shell, JunkbotGame junkbotGame, GameState state)
         {
             Shell = shell;
+            State = state;
             JunkbotGame = junkbotGame;
         }
         public virtual void ChangeProperty()

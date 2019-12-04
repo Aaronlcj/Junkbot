@@ -50,7 +50,7 @@ namespace Junkbot.Game.World.Actors.Animation
         {
             IsPlaying = true;
         }
-
+        
         public void Restart()
         {
             CurrentFrameIndex = 0;
@@ -58,6 +58,14 @@ namespace Junkbot.Game.World.Actors.Animation
             TickCount = 0;
         }
 
+        public bool CompareFrame(ActorAnimationFrame frame)
+        {
+            if (frame == Frameset[Frameset.Count - 1])
+            {
+                return true;}
+
+            return false;
+        }
         public void Step()
         {
             if (!IsPlaying)

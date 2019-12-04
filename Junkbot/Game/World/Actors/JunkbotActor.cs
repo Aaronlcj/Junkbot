@@ -5,9 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Junkbot.Game.Logic;
+using Microsoft.Win32.SafeHandles;
 using Rectangle = System.Drawing.Rectangle;
 
 namespace Junkbot.Game.World.Actors
@@ -63,7 +65,10 @@ namespace Junkbot.Game.World.Actors
 
         public void Update()
         {
-            Animation.Progress();
+            if (Animation != null)
+            {
+                Animation.Progress();
+            }
         }
 
         public void SetWalkingDirection(FacingDirection direction)
@@ -75,13 +80,13 @@ namespace Junkbot.Game.World.Actors
                 // Detach event if necessary
                 //
                 try
-            {
-                Animation.SpecialFrameEntered -= Animation_SpecialFrameEntered;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("SFE exception: " + ex.ToString());
-            }
+                {
+                    Animation.SpecialFrameEntered -= Animation_SpecialFrameEntered;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("SFE exception: " + ex.ToString());
+                }
 
 
                 switch (direction)
@@ -119,7 +124,27 @@ namespace Junkbot.Game.World.Actors
                 var animName = FacingDirection == FacingDirection.Left ? "junkbot-walk-left" : "junkbot-walk-right";
                 Animation.GoToAndStop(animName);
                 IsWalking = false;
-                Animation.GoToAndPlay("junkbot-eat");
+                var binCell = Scene.GetPlayfield[Location.X + 2, Location.Y + 3];
+                try
+                {
+                    foreach (IActor bin in Scene.MobileActors)
+                    {
+                        if (bin == binCell)
+                        {
+                            Scene.GetPlayfield[bin.Location.X, bin.Location.Y] = null;
+                            Scene.GetPlayfield[bin.Location.X, bin.Location.Y + 1] = null;
+                            Scene.GetPlayfield[bin.Location.X + 1, bin.Location.Y] = null;
+                            Scene.GetPlayfield[bin.Location.X + 1, bin.Location.Y + 1] = null;
+
+                        }
+                    }
+                }
+                catch
+                {
+                    Console.WriteLine("NO BIN MATE");
+                }
+                Animation.GoToAndPlay("junkbot-eat");                
+                Scene.LevelStats.CollectedTrashCount += 1;
                 Animation.SpecialFrameEntered += Animation_SpecialFrameEntered;
             }
         }
@@ -133,50 +158,107 @@ namespace Junkbot.Game.World.Actors
 
         private void Animation_SpecialFrameEntered(object sender, EventArgs e)
         {
-
+            Console.WriteLine(Location);
             if (Scene != null)
             {
                 //quick maffs:
 
                 int dx = FacingDirection == FacingDirection.Left ? -1 : 1;
+
                 int tar = FacingDirection == FacingDirection.Left ? -1 : 2;
 
                 // Collision detection
                 int yPos = 0;
-                JunkbotCollision collisionType = CollisionDetection.CheckCollisionType(this, GetCheckBounds(new Point(tar, -1), new Size(1, 7)));
-                if (sender != null)
-                {
-                    Console.WriteLine((sender as ActorAnimation).Name);
-                    if ((sender as ActorAnimation).Name.Contains("junkbot_eat"))
-                    {
-                        IsWalking = true;
-                    }
-                }
+                
 
                 if (IsWalking)
                 {
+                    JunkbotCollision collisionType = Scene.CollisionDetection.CheckCollisionType(this);
+                    if (sender != null)
+                    {
+                        Console.WriteLine((sender as ActorAnimation).Name);
+                        if ((sender as ActorAnimation).Name.Contains("junkbot_eat"))
+                        {
+                        }
+                    }
                     switch (collisionType)
                     {
                         case JunkbotCollision.TurnAround:
                             SetWalkingDirection(FacingDirection == FacingDirection.Left
                                 ? FacingDirection.Right
                                 : FacingDirection.Left);
-                            return;
+                            break;
                         case JunkbotCollision.StepUp:
-                            yPos = -1;
+                            Location = Location.Add(new Point(dx, -1));
+                            ;
                             break;
                         case JunkbotCollision.StepDown:
-                            yPos = +1;
+                            Location = Location.Add(new Point(dx, 1));
+                            break;
+                        case JunkbotCollision.EatTrash:
+                            CollectTrash();
+                            break;
+                        case JunkbotCollision.CanWalk:
+                            Location = Location.Add(new Point(dx, 0));
                             break;
                     }
 
-                    Location = Location.Add(new Point(dx, yPos));
+                }
+                else
+                {
+                    var currentFrame = Animation.GetCurrentFrame();
+                    if (currentFrame.SpriteName.Contains("junkbot_eat"))
+                    {
+                        if (Animation.CompareFrame(currentFrame))
+                        {
+                            var status = Scene.LevelStats.CheckTrashStatus();
+                            if (!status)
+                            {
+                                IsWalking = true;
+                                SetWalkingDirection(FacingDirection);
+                            }
+                        }
+                    }
                 }
             }
         }
                 public void Think(TimeSpan deltaTime)
         {
 
+        }
+        bool disposed = false;
+        // Instantiate a SafeHandle instance.
+        SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
+
+        // Public implementation of Dispose pattern callable by consumers.
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        // Protected implementation of Dispose pattern.
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                handle.Dispose();
+                Animation.StopPlaying();
+                Animation = null;
+                // Free any other managed objects here.
+                //
+            }
+
+            disposed = true;
+        }
+        ~JunkbotActor()
+        {
+
+            Dispose(false);
+            System.Diagnostics.Trace.WriteLine("LevelSelect's destructor is called.");
         }
     }
 }

@@ -6,14 +6,17 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Junkbot.Game.Logic;
+using Junkbot.Game.State;
+using Microsoft.Win32.SafeHandles;
 using Oddmatics.Rzxe.Logic;
 
 namespace Junkbot.Game
 {
-    internal class Scene
+    internal class Scene : IDisposable
     {
         public Size CellSize { get; private set; }
         public IList<JunkbotDecalData> Decals
@@ -53,9 +56,9 @@ namespace Junkbot.Game
         }
 
         public IActor[,] SelectedGrid { get; set; }
-
-
-
+        public LevelStats LevelStats;
+        public BrickMover BrickMover;
+        public CollisionDetection CollisionDetection;
 
         public Scene(JunkbotLevelData levelData, AnimationStore store)
         {
@@ -70,7 +73,9 @@ namespace Junkbot.Game
             LevelData = levelData;
             ConnectedBricks = new List<BrickActor>();
             IgnoredBricks = new List<BrickActor>();
-            CollisionDetection.Scene = this;
+            LevelStats = new LevelStats();
+            BrickMover = new BrickMover(this);
+            CollisionDetection = new CollisionDetection(this);
 
 
             foreach (JunkbotPartData part in levelData.Parts)
@@ -114,6 +119,7 @@ namespace Junkbot.Game
 
                     case "flag":
                         actor = new BinActor(store, location);
+                        LevelStats.TotalTrashCount += 1;
                         break;
 
                     default:
@@ -131,8 +137,16 @@ namespace Junkbot.Game
                     _ImmobileBricks.InsertSorted((BrickActor)actor);
                     (actor as BrickActor).MovingLocation = location.Subtract(new Point(1, actor.GridSize.Height));
                 }
+
+
                 else
+                {
+                    if (actor is JunkbotActor)
+                    {
+
+                    }
                     _MobileActors.Add(actor);
+                }
             }
         }
 
@@ -464,6 +478,41 @@ namespace Junkbot.Game
             levelData.Parts = parts.AsReadOnly();
             levelData.Decals = decals.AsReadOnly();
             return new Scene(levelData, store);
+        }
+        bool disposed = false;
+        // Instantiate a SafeHandle instance.
+        SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
+
+        // Public implementation of Dispose pattern callable by consumers.
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        // Protected implementation of Dispose pattern.
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                handle.Dispose();
+                foreach (IActor actor in MobileActors)
+                {
+                    actor.Dispose();
+                }
+                // Free any other managed objects here.
+                //
+            }
+
+            disposed = true;
+        }
+        ~Scene()
+        {
+            Dispose(false);
+            System.Diagnostics.Trace.WriteLine("Scene's destructor is called.");
         }
     }
 }

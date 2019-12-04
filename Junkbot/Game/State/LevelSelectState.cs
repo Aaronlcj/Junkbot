@@ -9,7 +9,10 @@ using System.Drawing;
 using System.IO;
 using Pencil.Gaming;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using Junkbot.Game.Logic;
 using Junkbot.Game.World.Level;
+using Microsoft.Win32.SafeHandles;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Oddmatics.Rzxe.Game.Interface;
@@ -29,7 +32,6 @@ namespace Junkbot.Game.State
         }
         public static string[] lvl;
         private List<string> _levelList;
-        public Scene Scene;
         public LevelSelectButtons Buttons;
         public LevelSelectBackground LevelSelectBackground;
         public LevelSelectText LevelSelectText;
@@ -39,7 +41,7 @@ namespace Junkbot.Game.State
         private UxShell Shell { get; set; }
 
 
-        public static AnimationStore Store = new AnimationStore();
+        public static AnimationStore Store;
         public override string Name
         {
             get { return "LevelSelect"; }
@@ -49,33 +51,19 @@ namespace Junkbot.Game.State
         {
             JunkbotGame = junkbotGame;
             Shell = new UxShell();
-            Buttons = new LevelSelectButtons(Shell, JunkbotGame);
+            Buttons = new LevelSelectButtons(Shell, JunkbotGame, this);
             LevelSelectBackground = new LevelSelectBackground();
             LevelSelectGif = new LevelSelectGif();
             var key = $"Building_{Buttons.Tab}";
+            Store = new AnimationStore();
 
 
 
             JToken jsonLevels = JObject.Parse(File.ReadAllText(Environment.CurrentDirectory + @"\Content\Levels\level_list.json"))[key];
             _levelList = jsonLevels.ToObject<List<string>>();
-            LevelSelectText = new LevelSelectText(JunkbotGame, Shell, _levelList, Buttons);
+            LevelSelectText = new LevelSelectText(JunkbotGame, Shell, _levelList, Buttons.Tab, Buttons, this);
+        }
 
-            lvl = File.ReadAllLines(Environment.CurrentDirectory + $@"\Content\Levels\{level}.txt");
-            Scene = Scene.FromLevel(lvl, Store);
-            SetTimer();
-
-        }
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            Scene.UpdateActors();
-        }
-        public void SetTimer()
-        {
-            _timer = new System.Timers.Timer(25);
-            _timer.Elapsed += Timer_Tick;
-            _timer.AutoReset = true;
-            _timer.Enabled = true;
-        }
 
         public override void RenderFrame(IGraphicsController graphics)
         {
@@ -91,6 +79,32 @@ namespace Junkbot.Game.State
                 HelpMenu.Render(graphics);
             }
         }
+        bool disposed = false;
+        // Instantiate a SafeHandle instance.
+        SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
+
+        // Public implementation of Dispose pattern callable by consumers.
+        public override void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        // Protected implementation of Dispose pattern.
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                handle.Dispose();
+                // Free any other managed objects here.
+                //
+            }
+
+            disposed = true;
+        }
 
         public override void Update(TimeSpan deltaTime, InputEvents inputs)
         {
@@ -98,6 +112,12 @@ namespace Junkbot.Game.State
             {
                 Shell.HandleMouseInputs(inputs);
             }
+        }
+        ~LevelSelectState()
+        {
+            Dispose(false);
+
+            System.Diagnostics.Trace.WriteLine("LevelSelect's destructor is called.");
         }
     }
 }

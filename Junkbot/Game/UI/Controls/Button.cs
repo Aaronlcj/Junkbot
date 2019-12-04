@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using Junkbot.Game.Logic;
 using Junkbot.Game.State;
 using Junkbot.Game.UI.Menus;
 using Junkbot.Game.World.Level;
@@ -35,10 +36,21 @@ namespace Junkbot.Game.UI.Controls
 
         public override void OnClick()
         {
-            if (Name == "play" || Name == "play_x")
+            if (Name == "play" || Name == "play_x" || Name == "select_level" || Name == "select_level_x")
             {
                 string level = "loading_level";
+                JunkbotGame.CurrentGameState.Dispose();
+                JunkbotGame.CurrentGameState = null;
                 JunkbotGame.CurrentGameState = new LevelSelectState(JunkbotGame, level);
+            }
+
+            if (Name == "fail_tryAgain" || Name == "fail_tryAgain_x")
+            {
+                (JunkbotGame.CurrentGameState as LevelState).RestartLevel();
+            }
+            if (Name == "next_level" || Name == "next_level_x")
+            {
+                (JunkbotGame.CurrentGameState as LevelState).NextLevel();
             }
             if (Name == "ok_button" || Name == "ok_button_x")
             {
@@ -48,7 +60,7 @@ namespace Junkbot.Game.UI.Controls
             }
             if (Name == "help" || Name == "help_x")
             {
-                (JunkbotGame.CurrentGameState as LevelSelectState).HelpMenu = new HelpMenu(UIPage.Shell, UIPage.JunkbotGame);
+                (JunkbotGame.CurrentGameState as LevelSelectState).HelpMenu = new HelpMenu(UIPage.Shell, UIPage.JunkbotGame, UIPage.State);
             }
             if (Name == "replay_intro" || Name == "replay_intro_x")
             {
@@ -56,6 +68,8 @@ namespace Junkbot.Game.UI.Controls
             }
             if (Name == "clear_screen" || Name == "clear_screen_x")
             {
+                JunkbotGame.CurrentGameState.Dispose();
+
                 JunkbotGame.CurrentGameState = new MainMenuState("loading_level", JunkbotGame, true);
             }
             if (Name == "next_button" || Name == "next_button_x")
@@ -69,8 +83,8 @@ namespace Junkbot.Game.UI.Controls
             if (Name == "quit_button" || Name == "quit_button_x")
             {
                 UIPage.Dispose();
+                JunkbotGame.CurrentGameState.Dispose();
                 JunkbotGame.CurrentGameState = new MainMenuState("loading_level", JunkbotGame);
-
             }
         }
 

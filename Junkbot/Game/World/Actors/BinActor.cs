@@ -3,8 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Win32.SafeHandles;
 
 namespace Junkbot.Game.World.Actors
 {
@@ -15,11 +17,11 @@ namespace Junkbot.Game.World.Actors
         public IReadOnlyList<System.Drawing.Rectangle> BoundingBoxes { get { return this._BoundingBoxes; } }
         private IReadOnlyList<System.Drawing.Rectangle> _BoundingBoxes = new List<System.Drawing.Rectangle>(new System.Drawing.Rectangle[]
         {
-            new System.Drawing.Rectangle(0, 0, 1, 2)
+            new System.Drawing.Rectangle(0, 0, 2, 2)
         }).AsReadOnly();
 
         public Size GridSize { get { return _GridSize; } }
-        private static readonly Size _GridSize = new Size(1, 2);
+        private static readonly Size _GridSize = new Size(2, 2);
         public bool Rendered { get; set; }
         public Point Location
         {
@@ -49,6 +51,31 @@ namespace Junkbot.Game.World.Actors
         {
             Animation.Progress();
         }
+        bool disposed = false;
+        // Instantiate a SafeHandle instance.
+        SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
 
+        // Public implementation of Dispose pattern callable by consumers.
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        // Protected implementation of Dispose pattern.
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                handle.Dispose();
+                // Free any other managed objects here.
+                //
+            }
+
+            disposed = true;
+        }
     }
 }

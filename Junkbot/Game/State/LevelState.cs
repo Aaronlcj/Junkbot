@@ -9,6 +9,12 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using Junkbot.Game.Logic;
+using Junkbot.Game.UI.Menus;
+using Microsoft.Win32.SafeHandles;
+using Newtonsoft.Json.Linq;
 using Oddmatics.Rzxe.Game.Interface;
 
 namespace Junkbot.Game.State
@@ -19,24 +25,38 @@ namespace Junkbot.Game.State
     internal class LevelState : GameState
     {
         System.Timers.Timer _timer;
-
+        internal JunkbotGame JunkbotGame;
         public override InputFocalMode FocalMode
         {
             get { return InputFocalMode.Always; }
         }
         public static string[] lvl; 
         public Scene Scene;
+        private EndLevelCard EndLevelCard;
+        private string Level;
+
+        private int BuildingTab;
+        private int LevelId;
+
         //public JunkbotSidebar Sidebar;
         public ISpriteBatch _actors;
         public ISpriteBatch Junkbot;
+
         public static AnimationStore Store = new AnimationStore();
         private UxShell Shell { get; set; }
 
-        public LevelState(string level)
+
+        public LevelState(string level, int tab, int id, JunkbotGame junkbotGame)
         {
             Shell = new UxShell();
+            JunkbotGame = junkbotGame;
+            Level = level;
+            LevelId = id;
+            BuildingTab = tab;
+
             lvl = File.ReadAllLines(Environment.CurrentDirectory + $@"\Content\Levels\{level}.txt");
             Scene = Scene.FromLevel(lvl, Store);
+            Scene.LevelStats.SetLevelState(this);
             SetTimer();
             //Sidebar = new JunkbotSidebar(Scene.LevelData);
         }
@@ -81,43 +101,41 @@ namespace Junkbot.Game.State
                 int x = 0;
                 do
                 {
+
                     IActor actor = Scene.GetPlayfield[x, y];
-                    if (Scene.SelectedGrid[x, y] is BrickActor selectedBrick)
+
+                    BrickActor selectedBrick = Scene.SelectedGrid[x, y] as BrickActor;
+                    // check playfield
+                    if (actor != null)
                     {
-                        // check playfield
-                        if (actor != null)
+                        if (!actor.Rendered)
                         {
-                            if (!actor.Rendered)
+                            if (actor is BrickActor)
                             {
-                                if (actor is BrickActor)
-                                {
-                                    DrawBrick(actor as BrickActor, testList);
-                                }
-
-                                if (actor is JunkbotActor)
-                                {
-                                    DrawJunkbot(actor as JunkbotActor);
-                                }
-
-                                if (actor is BinActor)
-                                {
-                                    DrawBin(actor as BinActor);
-                                }
+                                DrawBrick(actor as BrickActor, testList);
                             }
 
+                            // draw junkbot
+                            if (actor is JunkbotActor)
+                            {
+                                DrawJunkbot(actor as JunkbotActor);
+                            }
+                            if (actor is BinActor)
+                            {
+                                DrawBin(actor as BinActor);
+                            }
                             actor.Rendered = true;
                         }
-
-                        // check moving bricks
-                        if (selectedBrick != null)
+                    }
+                    // check moving bricks
+                    if (selectedBrick != null)
+                    {
+                        if (!selectedBrick.Rendered)
                         {
-                            if (!selectedBrick.Rendered)
-                            {
-                                DrawBrick(selectedBrick, testList);
-                            }
-
-                            selectedBrick.Rendered = true;
+                            DrawBrick(selectedBrick, testList);
                         }
+
+                        selectedBrick.Rendered = true;
                     }
                     x += 1;
                 }
@@ -126,8 +144,6 @@ namespace Junkbot.Game.State
             }
             while (y != 0);
         }
-            
-
         private void DrawBrick(BrickActor brick, List<BrickActor> testList)
         {
             int locX, locY, sizY, sizX;
@@ -182,7 +198,6 @@ namespace Junkbot.Game.State
             }
             testList.Add(brick);
         }
-
         private void DrawJunkbot(JunkbotActor junkbot)
         {
             int locX, locY, sizY, sizX;
@@ -199,17 +214,16 @@ namespace Junkbot.Game.State
             sizX = ((junkbot.GridSize.Width - 1) * 15) + 26;
             sizY = ((junkbot.GridSize.Height - 1) * 18) + 32;
             Point frameOffset = new Point((junkbot.Location.X * 15), locY).Add(junkbot.Animation.GetCurrentFrame().Offset);
-            Junkbot.Draw(
+            _actors.Draw(
                 junkbot.Animation.GetCurrentFrame().SpriteName,
                 new Rectangle(
                     frameOffset, junkbot.Animation.GetCurrentFrame().SpriteSize
                 )
             );
         }
-
         private void DrawBin(BinActor binActor)
         {
-            IActor bin = Scene.MobileActors[1];
+            BinActor bin = binActor;
             ActorAnimationFrame frame = bin.Animation.GetCurrentFrame();
             int locX;
             int locY;
@@ -247,14 +261,34 @@ namespace Junkbot.Game.State
                 )
             );
         }
+
+        public void RestartLevel()
+        {
+            JunkbotGame.CurrentGameState.Dispose();
+            JunkbotGame.CurrentGameState = null;
+            JunkbotGame.CurrentGameState = new LevelState(Level, BuildingTab, LevelId, JunkbotGame);
+        }
+        public void NextLevel()
+        {
+            JToken jsonLevels = JObject.Parse(File.ReadAllText(Environment.CurrentDirectory + @"\Content\Levels\level_list.json"))[$"Building_{BuildingTab}"];
+            IList<string> levelList = jsonLevels.ToObject<IList<string>>();
+            var level = levelList.ElementAt(LevelId + 1);
+            JunkbotGame.CurrentGameState.Dispose();
+            JunkbotGame.CurrentGameState = null;
+            JunkbotGame.CurrentGameState = new LevelState(level, BuildingTab, LevelId + 1,  JunkbotGame);
+        }
+        internal void CreateEndLevelCard(bool failStatus)
+        {
+            EndLevelCard = new EndLevelCard(Shell, JunkbotGame, this, failStatus);
+        }
         public override void RenderFrame(IGraphicsController graphics)
         {
             ResetActorRenderStatus();
 
-            _actors = graphics.CreateSpriteBatch("actors-atlas");
-            Junkbot = graphics.CreateSpriteBatch("junkbot-animation-atlas");
+            _actors = graphics.CreateSpriteBatch("level-atlas");
+            //Junkbot = graphics.CreateSpriteBatch("junkbot-animation-atlas");
             var background = graphics.CreateSpriteBatch("background-atlas");
-            var decals = graphics.CreateSpriteBatch("decals-atlas");
+            //var decals = graphics.CreateSpriteBatch("decals-atlas");
             //var sidebar = graphics.CreateSpriteBatch("sidebar-atlas");
             //var buttons = graphics.CreateSpriteBatch("sidebar-buttons-atlas");
 
@@ -267,12 +301,12 @@ namespace Junkbot.Game.State
                         new Point(-6, 0), new Size(536, 420)
                     )
                 );
-                background.Finish();
             }
+            background.Finish();
 
             if (Scene.LevelData.Decals != null)
             {
-                foreach (JunkbotDecalData decal in Scene.LevelData.Decals)
+                /*foreach (JunkbotDecalData decal in Scene.LevelData.Decals)
                 {
                     Pencil.Gaming.MathUtils.Rectanglei decalMap = decals.GetSpriteUV(decal.Decal);
                     int locY = 0;
@@ -309,239 +343,28 @@ namespace Junkbot.Game.State
                     }
                 }
 
-                decals.Finish();
+                decals.Finish();*/
             }
             ParseGridRenderOrder();
             _actors.Finish();
-            Junkbot.Finish();
-            /*foreach (IActor item in Scene.ImmobileBricks)
+
+            try
             {
-                if (item != null)
-                {
-                    ActorAnimationFrame currentFrame = item.Animation.GetCurrentFrame();
-                    int locX;
-                    int locY;
-                    int sizY;
-
-                    if (item.BoundingBoxes.Count <= 1)
-                    {
-                        Rectangle testtt = item.BoundingBoxes[0];
-                        Size testttt = item.GridSize;
-                        if (item.Location.X != 0)
-                        {
-                            locX = (item.Location.X * 15);
-                        }
-                        else
-                        {
-                            locX = item.Location.X;
-                        }
-
-                        if (item.Location.Y != 0)
-                        {
-                            locY = (item.Location.Y * 18) + 10;
-                        }
-                        else
-                        {
-                            locY = item.Location.Y + 10;
-                        }
-
-                        if (item.GridSize.Height != 1)
-                        {
-                            sizY = (item.GridSize.Height - 1) * 18 + 14;
-                        }
-                        else
-                        {
-                            sizY = item.GridSize.Height * 32;
-                        }
-
-                        int sizX = (item.GridSize.Width - 1) * 15 + 26;
-                        if (item == Scene.GetPlayfield[8, 9])
-                        {
-                        }
-
-                        actors.Draw(
-                            currentFrame.SpriteName,
-                            new Rectangle(
-                                new Point(locX, locY), new Size(sizX, sizY)
-                            )
-                        );
-                    }
-                }
+                EndLevelCard.Render(graphics);
             }
-
-
-
-            if (Scene.MobileActors != null)
+            catch
             {
-                foreach (IActor actor in Scene.MobileActors)
-                {
-                    Type type = actor.GetType();
-                    if (type.Name == "BotActor")
-                    {
-                        IActor climb_bot = Scene.MobileActors[2];
-                        ActorAnimationFrame frame = climb_bot.Animation.GetCurrentFrame();
-                        int locX;
-                        int locY;
-                        if (climb_bot.Location.X != 0)
-                        {
-                            if (climb_bot.Location.X == 1)
-                            {
-                                locX = 32;
-                            }
-                            else
-                            {
-                                locX = (climb_bot.Location.X * 15);
-                            }
-                        }
-                        else
-                        {
-                            locX = climb_bot.Location.X;
-                        }
-
-                        if (climb_bot.Location.Y != 0)
-                        {
-                            locY = (climb_bot.Location.Y + 1) * 18;
-                        }
-                        else
-                        {
-                            locY = climb_bot.Location.Y;
-                        }
-
-                        int sizX = ((climb_bot.GridSize.Width) * 15) + 5;
-                        int sizY = (climb_bot.GridSize.Height * 18) + 2;
-                        if (climb_bot.Animation.IsPlaying())
-                        {
-                            actors.Draw(
-                                climb_bot.Animation.GetCurrentFrame().SpriteName,
-                                new Rectangle(
-                                    new Point(locX + 6, locY), new Size(sizX, sizY)
-                                )
-                            );
-                        }
-                        else
-                        {
-                            actors.Draw(
-                                "climbbot_walk_l_1",
-                                new Rectangle(
-                                    new Point(locX + 6, locY), new Size(sizX, sizY)
-                                )
-                            );
-                        }
-
-                        actors.Finish();
-                    }
-
-                    if (type.Name == "BinActor")
-                    {
-                        IActor bin = Scene.MobileActors[1];
-                        ActorAnimationFrame frame = bin.Animation.GetCurrentFrame();
-                        int locX;
-                        int locY;
-                        if (bin.Location.X != 0)
-                        {
-                            if (bin.Location.X == 1)
-                            {
-                                locX = 32;
-                            }
-                            else
-                            {
-                                locX = (bin.Location.X * 15) + 14;
-                            }
-                        }
-                        else
-                        {
-                            locX = bin.Location.X + 4;
-                        }
-
-                        if (bin.Location.Y != 0)
-                        {
-                            locY = (bin.Location.Y) * 18 + 9;
-                        }
-                        else
-                        {
-                            locY = bin.Location.Y;
-                        }
-
-                        int sizX = 31;
-                        int sizY = 47;
-                        actors.Draw(
-                            "bin",
-                            new Rectangle(
-                                new Point(locX, locY), new Size(sizX, sizY)
-                            )
-                        );
-                        actors.Finish();
-                    }
-
-                    if (type.Name == "JunkbotActor")
-                    {
-                        IActor junkbot = Scene.MobileActors[0];
-                        ActorAnimationFrame frame = junkbot.Animation.GetCurrentFrame();
-                        int locX;
-                        int locY;
-                        if (junkbot.Location.X != 0)
-                        {
-                            if (junkbot.Location.X == 1)
-                            {
-                                locX = 32;
-                            }
-                            else
-                            {
-                                locX = ((junkbot.Location.X - 2) * 15);
-
-                            }
-                        }
-                        else
-                        {
-                            locX = junkbot.Location.X;
-                        }
-
-                        if (junkbot.Location.Y != 0)
-                        {
-                            locY = (junkbot.Location.Y * 18) + 10;
-                        }
-                        else
-                        {
-                            locY = junkbot.Location.Y + 10;
-                        }
-
-                        int sizX = ((junkbot.GridSize.Width - 1) * 15) + 26;
-                        int sizY = ((junkbot.GridSize.Height - 1) * 18) + 32;
-                        if (junkbot.Animation.IsPlaying())
-                        {
-                            if (junkbot.Location.X == 35)
-                            {
-                                Console.WriteLine("33 lul");
-                            }
-
-                            actors.Draw(
-                                junkbot.Animation.GetCurrentFrame().SpriteName,
-                                new Rectangle(
-                                    new Point((junkbot.Location.X * 15), locY), new Size(sizX, sizY)
-                                )
-                            );
-                        }
-                        else
-                        {
-                            actors.Draw(
-                                "minifig_walk_l_1",
-                                new Rectangle(
-                                    new Point(locX, locY), new Size(sizX, sizY)
-                                )
-                            );
-                        }
-                    }
-
-                    actors.Finish();
-                }
-            }*/
-
+                Console.WriteLine("Not end of level yet");
+            }
         }
-
         public override void Update(TimeSpan deltaTime, InputEvents inputs)
         {
             if (inputs != null)
             {
+                if (inputs.DownedInputs.Count > 0)
+                {
+
+                }
                 Shell.HandleMouseInputs(inputs);
 
                 var MousePosition = inputs.MousePosition;
@@ -554,10 +377,6 @@ namespace Junkbot.Game.State
                 {
 
                     IActor cell = Scene.GetPlayfield[MousePosAsCell.X, MousePosAsCell.Y];
-                    /*Console.WriteLine(Scene.GetPlayfield.GetLength(0).ToString() +
-                                      Scene.GetPlayfield.GetLength(1).ToString() + MousePosAsCell);
-*/
-
                     if (selectedBrick != null)
                     {
                         BrickMover.UpdateSelectedBrickLocation(MousePosAsCell);
@@ -612,9 +431,12 @@ namespace Junkbot.Game.State
                             }
                         }
                     }
-
                 }
+
+                /*Console.WriteLine(Scene.GetPlayfield.GetLength(0).ToString() +
+                                  Scene.GetPlayfield.GetLength(1).ToString() + MousePosAsCell);*/
             }
+
         }
         private void BindBrick(BrickActor brick, Point mousePos)
         {
@@ -622,7 +444,7 @@ namespace Junkbot.Game.State
             {
                 BrickMover.SelectedBrick = brick;
                 Scene.IgnoredBricks.Add(brick);
-                var tempConnected = BrickMover.IsBrickConnected(brick);
+                var tempConnected = Scene.BrickMover.IsBrickConnected(brick);
                 bool isConnected = tempConnected.Count > 1 ? true : false;
 
                 if (isConnected)
@@ -657,7 +479,6 @@ namespace Junkbot.Game.State
                 Scene.IgnoredBricks.Clear();
             }
         }
-
         private void UnbindBrick()
         {
             foreach (BrickActor connectedBrick in Scene.ConnectedBricks)
@@ -671,26 +492,31 @@ namespace Junkbot.Game.State
             Scene.IgnoredBricks.Clear();
 
         }
+        bool disposed = false;
+        // Instantiate a SafeHandle instance.
+        SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
+        // Public implementation of Dispose pattern callable by consumers.
+        public override void Dispose()
+        {
+            Scene.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        // Protected implementation of Dispose pattern.
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                handle.Dispose();
+                // Free any other managed objects here.
+                //
+            }
+
+            disposed = true;
+        }
     }
 }
-//Sidebar.Render(graphics);
-
-
-
-/*public override void RenderFrame(IGraphicsController graphics)
- {
-     var sb = graphics.CreateSpriteBatch("menu-atlas");
-
-     graphics.ClearViewport(Color.CornflowerBlue);
-
-     sb.Draw(
-         "neo_title",
-         new Rectangle(
-             Point.Empty,
-             graphics.TargetResolution
-             )
-         );
-
-     sb.Finish();
- }*/
 

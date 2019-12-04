@@ -9,8 +9,12 @@ using System.Drawing;
 using System.IO;
 using Pencil.Gaming;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using Junkbot.Game.Logic;
 using Junkbot.Game.World.Level;
+using Microsoft.Win32.SafeHandles;
 using Oddmatics.Rzxe.Game.Interface;
 
 namespace Junkbot.Game.State
@@ -35,8 +39,9 @@ namespace Junkbot.Game.State
         private UxShell Shell { get; set; }
         public MainMenuButtons Buttons;
         public MainMenuBackground MainMenuBackground;
-        public static AnimationStore Store = new AnimationStore();
+        public static AnimationStore Store;
         public bool IntroPlayed;
+
         public override string Name
         {
             get { return "MainMenu"; }
@@ -46,19 +51,24 @@ namespace Junkbot.Game.State
         {
             JunkbotGame = junkbotGame;
             lvl = File.ReadAllLines(Environment.CurrentDirectory + $@"\Content\Levels\{level}.txt");
+            Store = new AnimationStore();
             Scene = Scene.FromLevel(lvl, Store);
             SetTimer();
             Shell = new UxShell();
-            BrickMover.Scene = Scene;
             //Intro = new Intro(Shell, JunkbotGame);
             IntroPlayed = introPlayed;
-            Buttons = new MainMenuButtons(Shell, JunkbotGame);
+            Buttons = new MainMenuButtons(Shell, JunkbotGame, this);
             MainMenuBackground = new MainMenuBackground();
         }
+
         private void Timer_Tick(object sender, EventArgs e)
         {
-            Scene.UpdateActors();
+            if (Scene != null)
+            {
+                Scene.UpdateActors();
+            }
         }
+
         public void SetTimer()
         {
             _timer = new System.Timers.Timer(25);
@@ -73,7 +83,7 @@ namespace Junkbot.Game.State
             {
                 BrickMover.SelectedBrick = brick;
                 Scene.IgnoredBricks.Add(brick);
-                var tempConnected = BrickMover.IsBrickConnected(brick);
+                var tempConnected = Scene.BrickMover.IsBrickConnected(brick);
                 bool isConnected = tempConnected.Count > 1 ? true : false;
 
                 if (isConnected)
@@ -170,6 +180,7 @@ namespace Junkbot.Game.State
                                 IActor junkbot = Scene.MobileActors[0];
                                 DrawJunkbot(junkbot as JunkbotActor);
                             }
+
                             actor.Rendered = true;
                         }
                     }
@@ -183,7 +194,6 @@ namespace Junkbot.Game.State
 
                         selectedBrick.Rendered = true;
                     }
-
                     x += 1;
                 }
                 while (x != 34);
@@ -263,7 +273,7 @@ namespace Junkbot.Game.State
             sizX = ((junkbot.GridSize.Width - 1) * 15) + 26;
             sizY = ((junkbot.GridSize.Height - 1) * 18) + 32;
             Point frameOffset = new Point((junkbot.Location.X * 15), locY).Add(junkbot.Animation.GetCurrentFrame().Offset);
-            Junkbot.Draw(
+            _actors.Draw(
                 junkbot.Animation.GetCurrentFrame().SpriteName,
                 new Rectangle(
                     frameOffset, junkbot.Animation.GetCurrentFrame().SpriteSize
@@ -271,13 +281,47 @@ namespace Junkbot.Game.State
             );
         }
 
+        bool disposed = false;
+        // Instantiate a SafeHandle instance.
+        SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
+
+        // Public implementation of Dispose pattern callable by consumers.
+        public override void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        // Protected implementation of Dispose pattern.
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                handle.Dispose();
+                Scene.Dispose();
+                //Scene = null;
+                
+                // Free any other managed objects here.
+                //
+            }
+
+            disposed = true;
+        }
+        ~MainMenuState()
+        {
+            Dispose(false);
+            System.Diagnostics.Trace.WriteLine("MainMenu's destructor is called.");
+        }
         public override void RenderFrame(IGraphicsController graphics)
         {
             ResetRenderStatus();
 
             //var mainMenu = graphics.CreateSpriteBatch("main-menu-atlas");
-            _actors = graphics.CreateSpriteBatch("actors-atlas");
-            Junkbot = graphics.CreateSpriteBatch("junkbot-animation-atlas");
+            _actors = graphics.CreateSpriteBatch("level-atlas");
+            //Junkbot = graphics.CreateSpriteBatch("junkbot-animation-atlas");
             MainMenuBackground.RenderFrame(graphics);
 
             graphics.ClearViewport(Color.CornflowerBlue);
@@ -285,7 +329,7 @@ namespace Junkbot.Game.State
             // Render order
             ParseGridRenderOrder();
             _actors.Finish();
-            Junkbot.Finish();
+
             MainMenuBackground.Render(graphics);
             Buttons.Render(graphics);
             
@@ -301,13 +345,14 @@ namespace Junkbot.Game.State
 
         public override void Update(TimeSpan deltaTime, InputEvents inputs)
         {
+
             if (inputs != null)
             {
-                   Shell.HandleMouseInputs(inputs);
+                Shell.HandleMouseInputs(inputs);
 
                 var MousePosition = inputs.MousePosition;
-                Point MousePoint = new Point((int) Math.Floor(MousePosition.X - 5),
-                    (int) Math.Floor(MousePosition.Y - 10));
+                Point MousePoint = new Point((int)Math.Floor(MousePosition.X - 5),
+                    (int)Math.Floor(MousePosition.Y - 10));
                 Point MousePosAsCell = MousePoint.Reduce(Scene.LevelData.Spacing);
                 BrickActor selectedBrick = BrickMover.SelectedBrick;
                 if ((MousePosAsCell.X >= 0 && MousePosAsCell.X < 35) &&
@@ -315,9 +360,6 @@ namespace Junkbot.Game.State
                 {
 
                     IActor cell = Scene.GetPlayfield[MousePosAsCell.X, MousePosAsCell.Y];
-                    /*Console.WriteLine(Scene.GetPlayfield.GetLength(0).ToString() +
-                                      Scene.GetPlayfield.GetLength(1).ToString() + MousePosAsCell);*/
-
                     if (selectedBrick != null)
                     {
                         BrickMover.UpdateSelectedBrickLocation(MousePosAsCell);
@@ -372,10 +414,13 @@ namespace Junkbot.Game.State
                             }
                         }
                     }
-
                 }
+
+                /*Console.WriteLine(Scene.GetPlayfield.GetLength(0).ToString() +
+                                  Scene.GetPlayfield.GetLength(1).ToString() + MousePosAsCell);*/
             }
         }
+        
     }
 }
 
