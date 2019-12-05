@@ -43,9 +43,11 @@ namespace Junkbot.Game.World.Level
             Rows = new List<UxComponent>();
             int i = 88;
             int x = 0;
+            var test = JunkbotGame.PlayerData.LevelStats[tab];
             foreach (string level in _levels)
             {
-                Rows.Add(new LevelSelectRow(JunkbotGame, level, tab, x, new SizeF(448, 20), new PointF(10, i), 1, state));
+                PlayerLevelData playerLevelStats = JunkbotGame.PlayerData.LevelStats[tab - 1].Levels.Find(levelData => levelData.Name == level);
+                Rows.Add(new LevelSelectRow(JunkbotGame, level, tab, x, new SizeF(448, 20), new PointF(10, i), 1, state, playerLevelStats));
                 i += 21;
                 x += 1;
             }
@@ -76,11 +78,15 @@ namespace Junkbot.Game.World.Level
                     new Rectangle(
                         46, yPos, 8, 8)
                 );
-                levelAtlas.Draw(
-                    "checkbox_on",
-                    new Rectangle(
-                        59, yPos, 8, 8)
-                );
+                if (row.PlayerLevelData.Par)
+                {
+                    levelAtlas.Draw(
+                        "checkbox_on",
+                        new Rectangle(
+                            59, yPos, 8, 8)
+                    );
+                }
+
                 yPos += 21;
 
                 _levelNumbers.Draw(

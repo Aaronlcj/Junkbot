@@ -1,0 +1,270 @@
+{
+  "BuildingState": "1",
+  "TotalMoves": "0",
+  "LevelStats":
+    {
+      "Building_1":
+      
+        {
+          "New Employee Training": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+
+          "Art in the Lobby": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Bridge Builder": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Move the Stairs": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Caution: Fire": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Gearbots in Cubicles": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Terrarium": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Caution: Leaky Roof": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Fill the Gaps": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Don't Touch the Gearbots": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Fire and Ice": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Movin' On Up": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Bridge over Angry Gearbots": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "The Long Umbrella": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Clear the Corners": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          }
+        }
+      ,
+
+      "Building_2":
+      
+        {
+          "Jump Around": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "A New Kind of Gearbot": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Number One Fan": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Air Conditioning": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "The Engine Room": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Ride the Wind": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Internal Combustion": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Pardon Me": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Trapped in the Freezer": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "The Think Tank": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "The Drafty Floor": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "The Garage": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Up, Up, and Away": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Disgruntled Climbbot": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Ups and Downs": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          }
+        }
+      ,
+
+      "Building_3":
+      
+        {
+          "Portable Boost": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Hot Air": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "It's Raining Clibbots!": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Gearbots that Float": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Thermostat": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Windy Bridge": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Perpetual Motion Machine": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Working in the Rain": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Aerodynamics": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false",
+          },
+          "Happy Holidays!": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Junkbot's Lucky Number": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Look Before You Leap": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Gotcha": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Traffic": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "The Secret Laboratory": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          }
+        }
+      ,
+
+      "Building_4": 
+        {
+          "Scary, Scary Eyebot": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Eyebot on Patrol": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Junkbot's Secret Weapon": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Raincoat": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Running the Gauntlet": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Off and On": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Don't Let the Dogs Out": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "What is Project X?": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Which Switch?": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Junkbot is Brave": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Elevator Action": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "The Quest": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Wind Tunnel": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "All Kinds of Trouble": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          },
+          "Art Factory": {
+            "BestMoves": "0",
+            "Key": "false", "Par": "false"
+          }
+        }
+      
+    }
+}

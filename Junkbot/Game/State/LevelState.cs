@@ -44,7 +44,7 @@ namespace Junkbot.Game.State
 
         public static AnimationStore Store = new AnimationStore();
         private UxShell Shell { get; set; }
-
+        private LevelSidebar LevelSidebar { get; set; }
 
         public LevelState(string level, int tab, int id, JunkbotGame junkbotGame)
         {
@@ -58,11 +58,21 @@ namespace Junkbot.Game.State
             Scene = Scene.FromLevel(lvl, Store);
             Scene.LevelStats.SetLevelState(this);
             SetTimer();
-            //Sidebar = new JunkbotSidebar(Scene.LevelData);
+            LevelSidebar = new LevelSidebar(Shell, JunkbotGame,this, Scene.LevelStats);
         }
         public override string Name
         {
-            get { return "DemoGame"; }
+            get { return "LevelState"; }
+        }
+
+        internal void UpdatePlayerData(int moves, bool par)
+        {
+            var level = JunkbotGame.PlayerData.LevelStats[BuildingTab - 1].Levels.Find(levelData => levelData.Name == Level);
+            level.BestMoves = moves;
+            level.Key = true;
+            level.Par = par;
+
+
         }
         private void Timer_Tick(object sender, EventArgs e)
         {
@@ -347,7 +357,7 @@ namespace Junkbot.Game.State
             }
             ParseGridRenderOrder();
             _actors.Finish();
-
+            LevelSidebar.Render(graphics);
             try
             {
                 EndLevelCard.Render(graphics);
@@ -490,7 +500,7 @@ namespace Junkbot.Game.State
             }
             Scene.ConnectedBricks.Clear();
             Scene.IgnoredBricks.Clear();
-
+            Scene.LevelStats.Moves += 1;
         }
         bool disposed = false;
         // Instantiate a SafeHandle instance.

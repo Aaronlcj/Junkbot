@@ -3,15 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Junkbot.Game.World;
 using Oddmatics.Rzxe.Game;
 
 namespace Junkbot.Game.State
 {
     public class LevelStats
     {
+        public string Title { get; set; }
         internal LevelState LevelState { get; set; }
         public int TotalTrashCount { get; set; }
         public int CollectedTrashCount { get; set; }
+        public int Moves { get; set; }
+        public ushort Par { get; set; }
         public LevelStats()
         {
             TotalTrashCount = 0;
@@ -28,6 +32,7 @@ namespace Junkbot.Game.State
             if (CollectedTrashCount == TotalTrashCount)
             {
                 LevelComplete(false);
+                LevelState.UpdatePlayerData(Moves, Moves <= Par ? true : false);
                 return true;
             }
 
@@ -42,6 +47,12 @@ namespace Junkbot.Game.State
         private void LevelComplete(bool failStatus)
         {
             LevelState.CreateEndLevelCard(failStatus);
+        }
+
+        private void UpdatePlayerData()
+        {
+            
+
         }
     }
 }

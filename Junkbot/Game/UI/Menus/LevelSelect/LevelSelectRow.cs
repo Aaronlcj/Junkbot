@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Junkbot.Game.State;
+using Junkbot.Game.World;
 using Junkbot.Game.World.Level;
 using Oddmatics.Rzxe.Game.Interface;
 
@@ -23,8 +24,10 @@ namespace Junkbot.Game.UI.Menus.Help
         public bool Selectable { get; }
         public SizeF Size { get; set; }
         public bool Hover { get; private set; }
+        public PlayerLevelData PlayerLevelData { get; private set; }
 
-        public LevelSelectRow(JunkbotGame junkbotGame, string name, int tab, int id, SizeF size, PointF location, int zIndex, LevelSelectState state)
+
+        public LevelSelectRow(JunkbotGame junkbotGame, string name, int tab, int id, SizeF size, PointF location, int zIndex, LevelSelectState state, PlayerLevelData playerLevelData)
             : base(name, size, location, zIndex)
         {
             JunkbotGame = junkbotGame;
@@ -38,6 +41,7 @@ namespace Junkbot.Game.UI.Menus.Help
             Bounds = new RectangleF(Location, Size);
             ZIndex = zIndex;
             State = state;
+            PlayerLevelData = playerLevelData;
         }
 
         public override void OnClick()

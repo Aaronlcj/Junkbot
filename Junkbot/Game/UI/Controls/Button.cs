@@ -44,7 +44,7 @@ namespace Junkbot.Game.UI.Controls
                 JunkbotGame.CurrentGameState = new LevelSelectState(JunkbotGame, level);
             }
 
-            if (Name == "fail_tryAgain" || Name == "fail_tryAgain_x")
+            if (Name == "fail_tryAgain" || Name == "fail_tryAgain_x" || Name == "restart_level_x" || Name == "restart_level_x" )
             {
                 (JunkbotGame.CurrentGameState as LevelState).RestartLevel();
             }
@@ -58,9 +58,23 @@ namespace Junkbot.Game.UI.Controls
                 (JunkbotGame.CurrentGameState as LevelSelectState).HelpMenu = null;
 
             }
-            if (Name == "help" || Name == "help_x")
+            if (Name == "help" || Name == "help_x" || Name == "go_to_help" || Name == "go_to_help_x")
             {
-                (JunkbotGame.CurrentGameState as LevelSelectState).HelpMenu = new HelpMenu(UIPage.Shell, UIPage.JunkbotGame, UIPage.State);
+                if (Name == "go_to_help" || Name == "go_to_help_x")
+                {
+                    JunkbotGame.CurrentGameState.Dispose();
+                    JunkbotGame.CurrentGameState = null;
+                    string level = "loading_level";
+                    JunkbotGame.CurrentGameState = new LevelSelectState(JunkbotGame, level)
+                    {
+                        HelpMenu = new HelpMenu(UIPage.Shell, UIPage.JunkbotGame, UIPage.State)
+                    };
+                }
+                else
+                {
+                    (JunkbotGame.CurrentGameState as LevelSelectState).HelpMenu =
+                        new HelpMenu(UIPage.Shell, UIPage.JunkbotGame, UIPage.State);
+                }
             }
             if (Name == "replay_intro" || Name == "replay_intro_x")
             {

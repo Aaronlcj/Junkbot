@@ -511,7 +511,14 @@ namespace Junkbot.Game
             {
                 foreach (Point cell in movingLocationCells)
                 {
-                    Scene.SelectedGrid[cell.X, cell.Y] = brick;
+                    try
+                    {
+                        Scene.SelectedGrid[cell.X, cell.Y] = brick;
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Selected brick off-screen");
+                    }
                 }
             }
         }

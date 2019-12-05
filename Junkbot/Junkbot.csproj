@@ -111,6 +111,7 @@
     <Compile Include="Game\World\Actors\BotActor.cs" />
     <Compile Include="Game\World\Actors\BinActor.cs" />
     <Compile Include="Game\Logic\CollisionTypes\JunkbotCollision.cs" />
+    <Compile Include="Game\World\PlayerData.cs" />
     <Compile Include="Helpers\ListHelper.cs" />
     <Compile Include="Helpers\PointHelper.cs" />
     <Compile Include="Helpers\RectangleHelper.cs" />
@@ -231,6 +232,7 @@
     <None Include="Content\Music\lego1.2.ogg" />
     <None Include="Content\Music\lego1.3.ogg" />
     <None Include="Content\Music\lego1.end.ogg" />
+    <None Include="Content\PlayerData\player.json" />
     <None Include="Content\SFX\blockclick.ogg" />
     <None Include="Content\SFX\blockdrop.ogg" />
     <None Include="Content\SFX\blockpickup.ogg" />

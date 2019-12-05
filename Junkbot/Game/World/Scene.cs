@@ -127,6 +127,9 @@ namespace Junkbot.Game
                         continue;
                 }
 
+                LevelStats.Par = levelData.Par;
+                LevelStats.Title = levelData.Title;
+
                 actor.Location = location.Subtract(new Point(1, actor.GridSize.Height));
                 UpdateActorGridPosition(actor, actor.Location);
 
