@@ -26,12 +26,12 @@ namespace Junkbot.Game.World.Level
         private int Tab;
         private ISpriteBatch _font;
         private ISpriteBatch _levelNumbers;
-        private List<string> _levels;
+        private List<LevelListData> _levels;
         private LevelSelectButtons _levelSelectButtons;
         private List<UxComponent> Rows;
 
 
-        public LevelSelectText(JunkbotGame junkbotGame, UxShell shell, List<string> levels, int tab, LevelSelectButtons buttons, LevelSelectState state)
+        public LevelSelectText(JunkbotGame junkbotGame, UxShell shell, List<LevelListData> levels, int tab, LevelSelectButtons buttons, LevelSelectState state)
         : base (shell, junkbotGame, state)
         {
             JunkbotGame = junkbotGame;
@@ -43,11 +43,13 @@ namespace Junkbot.Game.World.Level
             Rows = new List<UxComponent>();
             int i = 88;
             int x = 0;
-            var test = JunkbotGame.PlayerData.LevelStats[tab];
-            foreach (string level in _levels)
+            var test = JunkbotGame.PlayerData.LevelStats;
+            var building = JunkbotGame.PlayerData.LevelStats.GetBuilding(Tab);
+         
+            foreach (LevelListData level in _levels)
             {
-                PlayerLevelData playerLevelStats = JunkbotGame.PlayerData.LevelStats[tab - 1].Levels.Find(levelData => levelData.Name == level);
-                Rows.Add(new LevelSelectRow(JunkbotGame, level, tab, x, new SizeF(448, 20), new PointF(10, i), 1, state, playerLevelStats));
+                PlayerLevelData playerLevelStats = building.Find(levelData => levelData.Name == level.Name);
+                Rows.Add(new LevelSelectRow(JunkbotGame, level.Name, tab, x, new SizeF(448, 20), new PointF(10, i), 1, state, playerLevelStats));
                 i += 21;
                 x += 1;
             }

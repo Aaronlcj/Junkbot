@@ -11,6 +11,7 @@ using Pencil.Gaming;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Junkbot.Game.Logic;
+using Junkbot.Game.World;
 using Junkbot.Game.World.Level;
 using Microsoft.Win32.SafeHandles;
 using Newtonsoft.Json;
@@ -31,7 +32,7 @@ namespace Junkbot.Game.State
             get { return InputFocalMode.Always; }
         }
         public static string[] lvl;
-        private List<string> _levelList;
+        private List<LevelListData> _levelList;
         public LevelSelectButtons Buttons;
         public LevelSelectBackground LevelSelectBackground;
         public LevelSelectText LevelSelectText;
@@ -57,10 +58,10 @@ namespace Junkbot.Game.State
             var key = $"Building_{Buttons.Tab}";
             Store = new AnimationStore();
 
-
-
-            JToken jsonLevels = JObject.Parse(File.ReadAllText(Environment.CurrentDirectory + @"\Content\Levels\level_list.json"))[key];
-            _levelList = jsonLevels.ToObject<List<string>>();
+            var jsonLevels = JsonConvert.DeserializeObject<LevelList>(File.ReadAllText(Environment.CurrentDirectory + @"\Content\Levels\level_list.json"));
+            _levelList = jsonLevels.GetBuilding(Buttons.Tab);
+            /*JToken jsonLevels = JObject.Parse(File.ReadAllText(Environment.CurrentDirectory + @"\Content\Levels\level_list.json"))[key];
+            _levelList = jsonLevels.ToObject<List<string>>();*/
             LevelSelectText = new LevelSelectText(JunkbotGame, Shell, _levelList, Buttons.Tab, Buttons, this);
         }
 

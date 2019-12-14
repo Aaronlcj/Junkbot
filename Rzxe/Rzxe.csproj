@@ -66,6 +66,7 @@
     <Compile Include="Logic\Collision.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\Collections\SortedList2.cs" />
+    <Compile Include="Windowing\Graphics\FontService.cs" />
     <Compile Include="Windowing\Graphics\IGraphicsController.cs" />
     <Compile Include="Windowing\Graphics\ISpriteBatch.cs" />
     <Compile Include="Windowing\Implementations\GlfwFx\GLGraphicsController.cs" />

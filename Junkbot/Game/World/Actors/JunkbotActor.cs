@@ -217,6 +217,10 @@ namespace Junkbot.Game.World.Actors
                                 IsWalking = true;
                                 SetWalkingDirection(FacingDirection);
                             }
+                            else
+                            {
+                                Animation.StopPlaying();
+                            }
                         }
                     }
                 }

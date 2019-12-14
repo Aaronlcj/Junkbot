@@ -6,31 +6,77 @@ using System.Threading.Tasks;
 
 namespace Junkbot.Game.World
 {
-    class PlayerData
+    public class PlayerData
     {
-        internal int BuildingState { get; set; }
-        internal int TotalMoves { get; set; }
-        internal List<PlayerBuildingData> LevelStats { get; set; }
+        public int BuildingState { get; set; }
+        public int TotalMoves { get; set; }
+        public PlayerLevelStats LevelStats { get; set; }
     }
-    class PlayerLevelStats
+    public class PlayerLevelStats
     {
-        internal PlayerBuildingData Building_1 { get; set; }
-        internal PlayerBuildingData Building_2 { get; set; }
-        internal PlayerBuildingData Building_3 { get; set; }
-        internal PlayerBuildingData Building_4 { get; set; }
+        public List<PlayerLevelData> Building1 { get; set; }
+        public List<PlayerLevelData> Building2 { get; set; }
+        public List<PlayerLevelData> Building3 { get; set; }
+        public List<PlayerLevelData> Building4 { get; set; }
+        public List<PlayerLevelData> GetBuilding(int tab)
+        {
+            List<PlayerLevelData> list = new List<PlayerLevelData>();
+            switch (tab)
+            {
+                case 1:
+                    list = Building1;
+                    break;
+                case 2:
+                    list = Building2;
+                    break;
+                case 3:
+                    list = Building3;
+                    break;
+                case 4:
+                    list = Building4;
+                    break;
+            }
+            return list;
+        }
+    }
+
+    public class PlayerLevelData : LevelListData
+    {
+        public int BestMoves { get; set; }
+        public bool Par { get; set; }
+        public bool Key { get; set; }
+    }
+    public class LevelList
+    {
+        public List<LevelListData> Building1 { get; set; }
+        public List<LevelListData> Building2 { get; set; }
+        public List<LevelListData> Building3 { get; set; }
+        public List<LevelListData> Building4 { get; set; }
+        public List<LevelListData> GetBuilding(int tab)
+        {
+            List<LevelListData> list = new List<LevelListData>();
+            switch (tab)
+            {
+                case 1:
+                    list = Building1;
+                    break;
+                case 2:
+                    list = Building2;
+                    break;
+                case 3:
+                    list = Building3;
+                    break;
+                case 4:
+                    list = Building4;
+                    break;
+            }
+            return list;
+        }
 
     }
-
-    class PlayerBuildingData
+    public class LevelListData
     {
-        internal List<PlayerLevelData> Levels { get; set; }
-    }
-
-    class PlayerLevelData
-    {
-        internal string Name { get; set; }
-        internal int BestMoves { get; set; }
-        internal bool Par { get; set; }
-        internal bool Key { get; set; }
+        public int Level { get; set; }
+        public string Name { get; set; }
     }
 }

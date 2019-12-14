@@ -3,268 +3,411 @@
   "TotalMoves": "0",
   "LevelStats":
     {
-      "Building_1":
-      
+      "Building1": [
         {
-          "New Employee Training": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-
-          "Art in the Lobby": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "Bridge Builder": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "Move the Stairs": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "Caution: Fire": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "Gearbots in Cubicles": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "Terrarium": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "Caution: Leaky Roof": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "Fill the Gaps": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "Don't Touch the Gearbots": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "Fire and Ice": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "Movin' On Up": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "Bridge over Angry Gearbots": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "The Long Umbrella": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "Clear the Corners": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          }
+          "Level": "1",
+          "Name": "New Employee Training",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "2",
+          "Name": "Art in the Lobby",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "3",
+          "Name": "Bridge Builder",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "4",
+          "Name": "Move the Stairs",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "5",
+          "Name": "Caution: Fire",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "6",
+          "Name": "Gearbots in Cubicles",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "7",
+          "Name": "Terrarium",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "8",
+          "Name": "Caution: Leaky Roof",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "9",
+          "Name": "Fill the Gaps",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "10",
+          "Name": "Don't Touch the Gearbots",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "11",
+          "Name": "Fire and Ice",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "12",
+          "Name": "Movin' On Up",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "13",
+          "Name": "Bridge over Angry Gearbots",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "14",
+          "Name": "The Long Umbrella",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "15",
+          "Name": "Clear the Corners",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
         }
-      ,
+      ],
 
-      "Building_2":
-      
+      "Building2": [
         {
-          "Jump Around": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "A New Kind of Gearbot": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "Number One Fan": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "Air Conditioning": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "The Engine Room": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "Ride the Wind": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "Internal Combustion": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "Pardon Me": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "Trapped in the Freezer": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "The Think Tank": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "The Drafty Floor": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "The Garage": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "Up, Up, and Away": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "Disgruntled Climbbot": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "Ups and Downs": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          }
+          "Level": "1",
+          "Name": "Jump Around",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "2",
+          "Name": "A New Kind of Gearbot",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "3",
+          "Name": "Number One Fan",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "4",
+          "Name": "Air Conditioning",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "5",
+          "Name": "The Engine Room",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "6",
+          "Name": "Ride the Wind",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "7",
+          "Name": "Internal Combustion",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "8",
+          "Name": "Pardon Me",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "9",
+          "Name": "Trapped in the Freezer",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "10",
+          "Name": "The Think Tank",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "11",
+          "Name": "The Drafty Floor",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "12",
+          "Name": "The Garage",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "13",
+          "Name": "Up, Up, and Away",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "14",
+          "Name": "Disgruntled Climbbot",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
+        },
+        {
+          "Level": "15",
+          "Name": "Ups and Downs",
+          "BestMoves": "0",
+          "Key": "false",
+          "Par": "false"
         }
-      ,
+      ],
 
-      "Building_3":
-      
-        {
-          "Portable Boost": {
+      "Building3":
+      [
+          {
+        "Level": "1",
+        "Name":"Portable Boost",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           },
-          "Hot Air": {
+          {
+            "Level": "2",
+            "Name": "Hot Air",
+            "BestMoves": "0",
+            "Key": "false",
+            "Par": "false"
+          },
+          {
+        "Level": "3",
+        "Name":"It's Raining Clibbots!",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           },
-          "It's Raining Clibbots!": {
+          {
+        "Level": "4",
+        "Name":"Gearbots that Float",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           },
-          "Gearbots that Float": {
+         {
+        "Level": "5",
+        "Name": "Thermostat",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           },
-          "Thermostat": {
+          {
+        "Level": "6",
+        "Name":"Windy Bridge",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           },
-          "Windy Bridge": {
+          {
+        "Level": "7",
+        "Name":"Perpetual Motion Machine",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           },
-          "Perpetual Motion Machine": {
+          {
+        "Level": "8",
+        "Name":"Working in the Rain",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           },
-          "Working in the Rain": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "Aerodynamics": {
+          {
+        "Level": "9",
+        "Name":"Aerodynamics",
             "BestMoves": "0",
             "Key": "false", "Par": "false",
           },
-          "Happy Holidays!": {
+          {
+        "Level": "10",
+        "Name":"Happy Holidays!",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           },
-          "Junkbot's Lucky Number": {
+          {
+        "Level": "11",
+        "Name":"Junkbot's Lucky Number",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           },
-          "Look Before You Leap": {
+          {
+        "Level": "12",
+        "Name":"Look Before You Leap",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           },
-          "Gotcha": {
+          {
+        "Level": "13",
+        "Name":"Gotcha",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           },
-          "Traffic": {
+          {
+        "Level": "14",
+        "Name":"Traffic",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           },
-          "The Secret Laboratory": {
+          {
+        "Level": "15",
+        "Name":"The Secret Laboratory",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           }
-        }
-      ,
+      ],
 
-      "Building_4": 
-        {
-          "Scary, Scary Eyebot": {
+      "Building4": 
+        [
+          {
+            "Level": "1",
+            "Name": "Scary, Scary Eyebot",
+            "BestMoves": "0",
+            "Key": "false",
+            "Par": "false"
+          },
+          {
+        "Level": "2",
+        "Name":"Eyebot on Patrol",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           },
-          "Eyebot on Patrol": {
+          {
+        "Level": "3",
+        "Name":"Junkbot's Secret Weapon",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           },
-          "Junkbot's Secret Weapon": {
+          {
+        "Level": "4",
+        "Name":"Raincoat",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           },
-          "Raincoat": {
+         {
+        "Level": "5",
+        "Name": "Running the Gauntlet",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           },
-          "Running the Gauntlet": {
+          {
+        "Level": "6",
+        "Name":"Off and On",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           },
-          "Off and On": {
+          {
+        "Level": "7",
+        "Name":"Don't Let the Dogs Out",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           },
-          "Don't Let the Dogs Out": {
+          {
+        "Level": "8",
+        "Name":"What is Project X?",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           },
-          "What is Project X?": {
+          {
+        "Level": "9",
+        "Name":"Which Switch?",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           },
-          "Which Switch?": {
+         {
+        "Level": "10",
+        "Name": "Junkbot is Brave",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           },
-          "Junkbot is Brave": {
+          {
+        "Level": "11",
+        "Name":"Elevator Action",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           },
-          "Elevator Action": {
+          {
+        "Level": "12",
+        "Name":"The Quest",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           },
-          "The Quest": {
+          {
+        "Level": "13",
+        "Name":"Wind Tunnel",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           },
-          "Wind Tunnel": {
+          {
+        "Level": "14",
+        "Name":"All Kinds of Trouble",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           },
-          "All Kinds of Trouble": {
-            "BestMoves": "0",
-            "Key": "false", "Par": "false"
-          },
-          "Art Factory": {
+          {
+        "Level": "15",
+        "Name":"Art Factory",
             "BestMoves": "0",
             "Key": "false", "Par": "false"
           }
-        }
+      ]
       
     }
 }

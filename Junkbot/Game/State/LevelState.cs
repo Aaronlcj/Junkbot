@@ -8,12 +8,15 @@ using Oddmatics.Rzxe.Windowing.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Junkbot.Game.Logic;
 using Junkbot.Game.UI.Menus;
+using Junkbot.Game.World;
 using Microsoft.Win32.SafeHandles;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Oddmatics.Rzxe.Game.Interface;
 
@@ -53,9 +56,12 @@ namespace Junkbot.Game.State
             Level = level;
             LevelId = id;
             BuildingTab = tab;
-
+            var building = JunkbotGame.PlayerData.LevelStats.GetBuilding(BuildingTab);
+            var jsonLevels = JsonConvert.DeserializeObject<LevelList>(File.ReadAllText(Environment.CurrentDirectory + @"\Content\Levels\level_list.json"));
+            var _levelList = jsonLevels.GetBuilding(tab);
             lvl = File.ReadAllLines(Environment.CurrentDirectory + $@"\Content\Levels\{level}.txt");
             Scene = Scene.FromLevel(lvl, Store);
+            Scene.LevelStats.SetCurrentLevel(_levelList, level);
             Scene.LevelStats.SetLevelState(this);
             SetTimer();
             LevelSidebar = new LevelSidebar(Shell, JunkbotGame,this, Scene.LevelStats);
@@ -67,10 +73,11 @@ namespace Junkbot.Game.State
 
         internal void UpdatePlayerData(int moves, bool par)
         {
-            var level = JunkbotGame.PlayerData.LevelStats[BuildingTab - 1].Levels.Find(levelData => levelData.Name == Level);
+            var level = JunkbotGame.PlayerData.LevelStats.GetBuilding(BuildingTab).Find(levelData => levelData.Name == Scene.LevelStats.CurrentLevel.Name);
             level.BestMoves = moves;
             level.Key = true;
             level.Par = par;
+            JunkbotGame.SavePlayerData();
 
 
         }

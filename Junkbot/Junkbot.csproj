@@ -203,7 +203,7 @@
     <None Include="Content\Atlas\sidebar-atlas.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Content\Levels\level_list.json">
+    <None Include="Content\Levels\junkbot_levels.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Music\demo6_3.ogg" />
@@ -232,7 +232,9 @@
     <None Include="Content\Music\lego1.2.ogg" />
     <None Include="Content\Music\lego1.3.ogg" />
     <None Include="Content\Music\lego1.end.ogg" />
-    <None Include="Content\PlayerData\player.json" />
+    <None Include="Content\PlayerData\player.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Content\SFX\blockclick.ogg" />
     <None Include="Content\SFX\blockdrop.ogg" />
     <None Include="Content\SFX\blockpickup.ogg" />
@@ -1200,4 +1202,9 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties content_4levels_4level_3list_1json__JsonSchema="http://jsonapi.org/schema" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>
