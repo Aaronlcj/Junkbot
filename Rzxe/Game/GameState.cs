@@ -13,7 +13,6 @@ namespace Oddmatics.Rzxe.Game
 
         public abstract string Name { get; }
 
-
         public abstract void Dispose();
 
         public abstract void RenderFrame(IGraphicsController graphics);

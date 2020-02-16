@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +23,7 @@ namespace Junkbot.Game.State
         {
             TotalTrashCount = 0;
             CollectedTrashCount = 0;
+            Moves = 0;
         }
 
         public void SetCurrentLevel(List<LevelListData> levels, string levelName)
@@ -53,6 +55,10 @@ namespace Junkbot.Game.State
             return false;
         }
 
+        public bool GetPlayerData()
+        {
+            return LevelState.GetPlayerData();
+        }
         public void JunkbotHit()
         {
             LevelComplete(true);

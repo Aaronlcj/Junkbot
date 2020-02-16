@@ -4,10 +4,12 @@ using Pencil.Gaming.MathUtils;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ClassLibrary;
 using Oddmatics.Rzxe.Windowing.Graphics;
 using Oddmatics.Rzxe.Game;
 
@@ -19,6 +21,7 @@ namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
 
         public string Name { get; private set; }
         public List<int> GifMap { get; private set; }
+        public List<int> TextMap { get; private set; }
 
         public Vector2 Size { get; private set; }
 
@@ -55,7 +58,19 @@ namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
             GifMap = gifMap;
             SpriteMap = map;
         }
-
+        private GLSpriteAtlas(
+            string name,
+            string texttest,
+            Vector2 size,
+            List<int> textMap,
+            Dictionary<string, Rectanglei> map
+        )
+        {
+            Name = name;
+            Size = size;
+            TextMap = textMap;
+            SpriteMap = map;
+        }
         public void Dispose()
         {
             if (Disposing)
@@ -68,6 +83,10 @@ namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
             GL.DeleteTexture(GlTextureId);
         }
 
+        public void ClearSpriteMap()
+        {
+            SpriteMap.Clear();
+        }
         public Rectanglei GetSpriteUV(string spriteName)
         {
             if (!SpriteMap.ContainsKey(spriteName))
@@ -172,6 +191,79 @@ namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
                 gifMap,
                 atlasMap
                 );
+        }
+
+        /*public static void UpdateAtlas(GLSpriteAtlas atlas, IList<TextItem> textBitmaps)
+        {
+            Vector2 atlasDimensions = Vector2.Zero;
+            var atlasMap = new Dictionary<string, Rectanglei>();
+            var textMap = new List<int>();
+            int i = 0;
+            do
+            {
+                TextItem currentTextItem = textBitmaps[i];
+                if (atlas.SpriteMap.ContainsKey(currentTextItem.Text))
+                {
+
+                }
+                Bitmap atlasBmp = currentTextItem.Bitmap;
+                //atlasBmp.Save("teste1.png", ImageFormat.Png);
+                atlasDimensions = new Vector2(atlasBmp.Width, atlasBmp.Height);
+                int glTextureId = GLUtility.LoadBitmapTexture(atlasBmp);
+
+                atlasMap.Add(
+                    $"{currentTextItem.Text}",
+                    new Rectanglei(
+                        0,
+                        0,
+                        atlasBmp.Width,
+                        atlasBmp.Height)
+                );
+                currentTextItem.GlTextureId = glTextureId;
+                //atlasBmp.Dispose();
+                i++;
+            } while (i != textBitmaps.Count);
+        }*/
+        internal static GLSpriteAtlas FromText(string atlasName, IList<TextItem> textBitmaps)
+        {
+            Vector2 atlasDimensions = Vector2.Zero;
+            var atlasMap = new Dictionary<string, Rectanglei>();
+            var textMap = new List<int>();
+            int i = 0;
+            do
+            {
+                TextItem currentTextItem = textBitmaps[i];
+                Bitmap atlasBmp = currentTextItem.Bitmap;
+                //atlasBmp.Save("teste1.png", ImageFormat.Png);
+                atlasDimensions = new Vector2(atlasBmp.Width, atlasBmp.Height);
+                int glTextureId = GLUtility.LoadBitmapTexture(atlasBmp);
+
+                atlasMap.Add(
+                    $"{currentTextItem.Text}",
+                    new Rectanglei(
+                        0,
+                        0,
+                        atlasBmp.Width,
+                        atlasBmp.Height)
+                );
+                currentTextItem.Map = new Rectanglei(
+                    0,
+                    0,
+                    atlasBmp.Width,
+                    atlasBmp.Height);
+                currentTextItem.GlTextureId = glTextureId;
+
+                    //atlasBmp.Dispose();
+                i++;
+            } while (i != textBitmaps.Count);
+
+            return new GLSpriteAtlas(
+                atlasName.ToLower(),
+                "testText",
+                atlasDimensions,
+                textMap,
+                atlasMap
+            );
         }
     }
 }

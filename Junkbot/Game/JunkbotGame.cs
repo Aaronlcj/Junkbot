@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using Junkbot.Game.UI;
 using Junkbot.Game.UI.Menus.Help;
 using Junkbot.Game.World;
 using Newtonsoft.Json;
@@ -28,7 +29,7 @@ namespace Junkbot.Game
         }
 
         private IGameEngineParameters _Parameters;
-
+        public FontService FontService;
         public GameState CurrentGameState
         {
             get;
@@ -47,7 +48,7 @@ namespace Junkbot.Game
         {
             LoadPlayerData();
             string level = "loading_level";
-
+            FontService = new FontService();
             CurrentGameState = new MainMenuState(level, this);
         }
 

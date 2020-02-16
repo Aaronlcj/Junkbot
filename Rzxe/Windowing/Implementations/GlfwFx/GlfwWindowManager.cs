@@ -163,6 +163,7 @@ namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
             Glfw.PollEvents();
         }
 
+        
 
         #region GLFW Callbacks
 

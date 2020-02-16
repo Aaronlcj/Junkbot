@@ -1,4 +1,5 @@
-﻿using Pencil.Gaming.MathUtils;
+﻿using ClassLibrary;
+using Pencil.Gaming.MathUtils;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -13,6 +14,11 @@ namespace Oddmatics.Rzxe.Windowing.Graphics
 
         void ClearViewport(Color color);
 
-        ISpriteBatch CreateSpriteBatch(string atlasName, int type = 0);
+        ISpriteBatch CreateSpriteBatch(string atlasName, int type = 0, IList<TextItem> bitmapList = null);
+        void DeleteAtlas(string atlas);
+        /*
+        FontService FontService { get; set;  }
+        */
+        void RenderText(string state, IList<TextItem> textItems, int type);
     }
 }

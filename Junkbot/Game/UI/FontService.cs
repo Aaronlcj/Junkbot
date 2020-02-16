@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
+using System.Net.Mime;
+using ClassLibrary;
 using Oddmatics.Rzxe.Windowing.Implementations.GlfwFx;
 using Pencil.Gaming.MathUtils;
 using SharpFont;
@@ -11,7 +16,7 @@ using SharpFont.Gdi;
 
 namespace Junkbot.Game.UI
 {
-    internal class FontService : IDisposable
+    public class FontService : IDisposable
     {
         private Library lib;
 
@@ -22,8 +27,8 @@ namespace Junkbot.Game.UI
 
         internal float Size { get { return _size; } set { SetSize(value); } }
         private float _size;
-
-
+        internal IList<TextItem> BitmapList { get; set; }
+        internal IList<TextItem> BitmapsToRender { get; set; }
         #endregion // Properties
 
         #region Constructor
@@ -34,7 +39,10 @@ namespace Junkbot.Game.UI
         internal FontService()
         {
             lib = new Library();
-            _size = 6;
+            _size = 12;
+            SetFont();
+            BitmapList = new List<TextItem>();
+            BitmapsToRender = new List<TextItem>();
             // Not so sure about these...
             //AddFormat("TrueType Collection", "ttc");
             //AddFormat("Type 1", "pfa"); // pfb?
@@ -81,23 +89,59 @@ namespace Junkbot.Game.UI
         /// Render the string into a bitmap with <see cref="SystemColors.ControlText"/> text color and a transparent background.
         /// </summary>
         /// <param name="text">The string to render.</param>
+        ///
+        /// 
+        public void ProcessText(string text, Vector2i position, Color color, string state, int size)
+        {
+            if (text == "1")
+            {
+                
+            }
+            /*StateText textList = null;
+            try
+            {
+                textList = StateTextList.First(e => e.State == state);
+                BitmapList = textList.TextList;
+
+            }
+            catch
+            {
+                Console.WriteLine("no state text list");
+            }
+
+            if (textList == null)
+            {
+                StateText stateText = new StateText(state, new List<TextItem>());
+                StateTextList.Add(stateText);
+                textList = stateText;
+                BitmapList = stateText.TextList;
+            }*/
+            SetSize(size);
+            if (!BitmapList.Any(p => p.Text == text) || BitmapList.Count == 0)
+            {
+                Bitmap textBitmap = RenderString(this.lib, this.FontFace, text, color, Color.Transparent);
+                Rectanglei map = new Rectanglei(
+                    0,
+                    0,
+                    textBitmap.Width,
+                    textBitmap.Height);
+                //textBitmap.Save("test", ImageFormat.Png);
+                var textItem = new TextItem(text, textBitmap, position, BitmapList.Count, map);
+
+                BitmapList.Add(textItem);
+            }
+            BitmapsToRender.Add(BitmapList.First(e => e.Text == text));
+
+        }
         internal virtual Bitmap RenderString(string text)
         {
             try
             {
-                return RenderString(this.lib, this.FontFace, text,Color.Black, Color.Transparent);
+                return RenderString(this.lib, this.FontFace, text, Color.Blue, Color.Transparent);
             }
             catch { }
+
             return null;
-        }
-        public void Draw(string spriteName, System.Drawing.Rectangle rect)
-        {
-            Rectanglei spriteRect = SpriteAtlas.GetSpriteUV(spriteName);
-
-            VboDrawContents.AddRange(GLUtility.MakeVboData(rect));
-            VboUvContents.AddRange(GLUtility.MakeVboData(spriteRect));
-
-            VertexCount += 12;
         }
         /// <summary>
         /// Render the string into a bitmap with a transparent background.
@@ -241,14 +285,14 @@ namespace Junkbot.Game.UI
             underrun = 0;
             overrun = 0;
             stringWidth = 0;
-            using (var g = Graphics.FromImage(bmp))
+            using (var g = System.Drawing.Graphics.FromImage(bmp))
             {
                 #region Set up graphics
                 // HighQuality and GammaCorrected both specify gamma correction be applied (2.2 in sRGB)
                 // https://msdn.microsoft.com/en-us/library/windows/desktop/ms534094(v=vs.85).aspx
-               // g.CompositingQuality = CompositingQuality.HighQuality;
+                // g.CompositingQuality = CompositingQuality.HighQuality;
                 // HighQuality and AntiAlias both specify antialiasing
-               // g.SmoothingMode = SmoothingMode.HighQuality;
+                // g.SmoothingMode = SmoothingMode.HighQuality;
                 // If a background color is specified, blend over it.
                 g.CompositingMode = CompositingMode.SourceOver;
 

@@ -38,7 +38,6 @@ namespace Junkbot.Game.State
         public LevelSelectText LevelSelectText;
         public HelpMenu HelpMenu { get; set; }
         public LevelSelectGif LevelSelectGif;
-
         private UxShell Shell { get; set; }
 
 
@@ -57,7 +56,6 @@ namespace Junkbot.Game.State
             LevelSelectGif = new LevelSelectGif();
             var key = $"Building_{Buttons.Tab}";
             Store = new AnimationStore();
-
             var jsonLevels = JsonConvert.DeserializeObject<LevelList>(File.ReadAllText(Environment.CurrentDirectory + @"\Content\Levels\level_list.json"));
             _levelList = jsonLevels.GetBuilding(Buttons.Tab);
             /*JToken jsonLevels = JObject.Parse(File.ReadAllText(Environment.CurrentDirectory + @"\Content\Levels\level_list.json"))[key];
@@ -87,6 +85,7 @@ namespace Junkbot.Game.State
         // Public implementation of Dispose pattern callable by consumers.
         public override void Dispose()
         {
+
             Dispose(true);
             GC.SuppressFinalize(this);
         }

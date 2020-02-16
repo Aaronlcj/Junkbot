@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Data.SqlTypes;
+using System.Drawing;
 using Junkbot.Game.Logic;
 using Junkbot.Game.State;
 using Junkbot.Game.UI.Menus;
@@ -80,7 +81,7 @@ namespace Junkbot.Game.UI.Controls
             {
                 (JunkbotGame.CurrentGameState as MainMenuState).IntroPlayed = false;
             }
-            if (Name == "clear_screen" || Name == "clear_screen_x")
+            if (Name == "clear_screen" || Name == "clear_screen_x" || Name == "quit" || Name == "quit_x")
             {
                 JunkbotGame.CurrentGameState.Dispose();
 

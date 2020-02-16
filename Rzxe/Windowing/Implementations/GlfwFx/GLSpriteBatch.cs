@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ClassLibrary;
 using Pencil.Gaming;
 using Oddmatics.Rzxe.Game;
 
@@ -45,6 +46,7 @@ namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
             GLGraphicsController owner,
             string atlasName,
             int type,
+            IList<TextItem> bitmapList,
             GLResourceCache resourceCache
             )
         {
@@ -53,8 +55,10 @@ namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
             // Set up resource bits
             //
             ResourceCache = resourceCache;
-            SpriteAtlas = ResourceCache.GetAtlas(atlasName, type);
-
+            if (type != 3)
+            {
+                SpriteAtlas = ResourceCache.GetAtlas(atlasName, type, bitmapList);
+            }
 
             // Set up GL fields
             //
@@ -78,7 +82,13 @@ namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
         public Rectanglei GetSpriteUV(string spriteName)
         {
             Dictionary<string, Rectanglei> spriteMap = SpriteAtlas.GetSpriteMap;
+            
             return spriteMap[spriteName];
+        }
+
+        public void DeleteAtlas(string atlas)
+        {
+            ResourceCache.DeleteAtalas(atlas);
         }
         public int GetAtlasLength()
         {
@@ -94,6 +104,7 @@ namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
 
             VertexCount += 12;
         }
+
         
         public void Finish()
         {
@@ -182,6 +193,7 @@ namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
         {
             // Create VBO for the batch
             //
+            
             int vboDrawId = GL.GenBuffer();
             int vboUvId = GL.GenBuffer();
             float[] spriteDrawVerts = VboDrawContents.ToArray();
@@ -220,6 +232,100 @@ namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
             GL.BindTexture(
                 TextureTarget.Texture2D,
                 SpriteAtlas.GifMap[frame]
+                );
+
+            // Assign draw attrib
+            //
+            GL.EnableVertexAttribArray(0);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vboDrawId);
+            GL.VertexAttribPointer(
+                0,
+                2,
+                VertexAttribPointerType.Float,
+                false,
+                0,
+                0
+                );
+
+            // Assign UV attrib
+            //
+            GL.EnableVertexAttribArray(1);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vboUvId);
+            GL.VertexAttribPointer(
+                1,
+                2,
+                VertexAttribPointerType.Float,
+                false,
+                0,
+                0
+                );
+
+
+            // Draw now!
+            //
+            GL.DrawArrays(BeginMode.Triangles, 0, VertexCount);
+
+            // Detach and destroy VBOs
+            //
+            GL.DisableVertexAttribArray(0);
+            GL.DisableVertexAttribArray(1);
+
+            GL.DeleteBuffer(vboDrawId);
+            GL.DeleteBuffer(vboUvId);
+        }
+        public void DrawText(string spriteName, System.Drawing.Rectangle rect, Rectanglei uv)
+        {
+            VboDrawContents.Clear();
+            VboUvContents.Clear();
+            Rectanglei spriteRect = uv;
+
+            VboDrawContents.AddRange(GLUtility.MakeVboData(rect));
+            VboUvContents.AddRange(GLUtility.MakeVboData(spriteRect));
+
+            VertexCount += 12;
+        }
+        public void FinishText(int id, Vector2 size)
+        {
+            // Create VBO for the batch
+            //
+            int vboDrawId = GL.GenBuffer();
+            int vboUvId = GL.GenBuffer();
+            float[] spriteDrawVerts = VboDrawContents.ToArray();
+            float[] spriteUvVerts = VboUvContents.ToArray();
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vboDrawId);
+            GL.BufferData(
+                BufferTarget.ArrayBuffer,
+                new IntPtr(sizeof(float) * spriteDrawVerts.Length),
+                spriteDrawVerts,
+                BufferUsageHint.StreamDraw
+                );
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vboUvId);
+            GL.BufferData(
+                BufferTarget.ArrayBuffer,
+                new IntPtr(sizeof(float) * spriteUvVerts.Length),
+                spriteUvVerts,
+                BufferUsageHint.StreamDraw
+                );
+
+            // Set up shader program
+            //
+            GL.UseProgram(GlProgramId);
+
+            GL.Uniform2(
+                GlCanvasResolutionUniformId,
+                (float)OwnerController.TargetResolution.Width,
+                (float)OwnerController.TargetResolution.Height
+                );
+
+            GL.Uniform2(GlUvMapResolutionUniformId, size);
+
+            // Bind the atlas
+            //
+            GL.BindTexture(
+                TextureTarget.Texture2D,
+                id
                 );
 
             // Assign draw attrib

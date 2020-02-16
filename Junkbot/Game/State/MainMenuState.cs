@@ -11,11 +11,14 @@ using Pencil.Gaming;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Diagnostics;
+using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using Junkbot.Game.Logic;
 using Junkbot.Game.World.Level;
 using Microsoft.Win32.SafeHandles;
 using Oddmatics.Rzxe.Game.Interface;
+using Pencil.Gaming.MathUtils;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace Junkbot.Game.State
 {
@@ -288,6 +291,7 @@ namespace Junkbot.Game.State
         // Public implementation of Dispose pattern callable by consumers.
         public override void Dispose()
         {
+
             Dispose(true);
             GC.SuppressFinalize(this);
         }
@@ -315,13 +319,13 @@ namespace Junkbot.Game.State
             Dispose(false);
             System.Diagnostics.Trace.WriteLine("MainMenu's destructor is called.");
         }
+
         public override void RenderFrame(IGraphicsController graphics)
         {
-            ResetRenderStatus();
+            JunkbotGame.FontService.BitmapsToRender.Clear();
 
-            //var mainMenu = graphics.CreateSpriteBatch("main-menu-atlas");
+            ResetRenderStatus();
             _actors = graphics.CreateSpriteBatch("level-atlas");
-            //Junkbot = graphics.CreateSpriteBatch("junkbot-animation-atlas");
             MainMenuBackground.RenderFrame(graphics);
 
             graphics.ClearViewport(Color.CornflowerBlue);
@@ -332,7 +336,6 @@ namespace Junkbot.Game.State
 
             MainMenuBackground.Render(graphics);
             Buttons.Render(graphics);
-            
             /*if (Intro.Gif == null && IntroPlayed == false)
             {
                 Intro.LoadIntro(graphics);

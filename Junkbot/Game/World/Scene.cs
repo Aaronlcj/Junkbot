@@ -76,7 +76,7 @@ namespace Junkbot.Game
             LevelStats = new LevelStats();
             BrickMover = new BrickMover(this);
             CollisionDetection = new CollisionDetection(this);
-
+            
 
             foreach (JunkbotPartData part in levelData.Parts)
             {

@@ -17,6 +17,7 @@ using Junkbot.Game.UI.Menus;
 using Junkbot.Game.World;
 using Microsoft.Win32.SafeHandles;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Bson;
 using Newtonsoft.Json.Linq;
 using Oddmatics.Rzxe.Game.Interface;
 
@@ -47,6 +48,7 @@ namespace Junkbot.Game.State
 
         public static AnimationStore Store = new AnimationStore();
         private UxShell Shell { get; set; }
+
         private LevelSidebar LevelSidebar { get; set; }
 
         public LevelState(string level, int tab, int id, JunkbotGame junkbotGame)
@@ -71,6 +73,11 @@ namespace Junkbot.Game.State
             get { return "LevelState"; }
         }
 
+        internal bool GetPlayerData()
+        {
+            var level = JunkbotGame.PlayerData.LevelStats.GetBuilding(BuildingTab).Find(levelData => levelData.Name == Scene.LevelStats.CurrentLevel.Name);
+            return level.Par;
+        }
         internal void UpdatePlayerData(int moves, bool par)
         {
             var level = JunkbotGame.PlayerData.LevelStats.GetBuilding(BuildingTab).Find(levelData => levelData.Name == Scene.LevelStats.CurrentLevel.Name);
@@ -300,6 +307,8 @@ namespace Junkbot.Game.State
         }
         public override void RenderFrame(IGraphicsController graphics)
         {
+            JunkbotGame.FontService.BitmapsToRender.Clear();
+
             ResetActorRenderStatus();
 
             _actors = graphics.CreateSpriteBatch("level-atlas");
@@ -421,6 +430,7 @@ namespace Junkbot.Game.State
 
                                         if (placeBrick)
                                         {
+
                                             BrickMover.UpdateSelectedBrickLocation(MousePosAsCell);
                                             UnbindBrick();
                                             BrickMover.SelectedBrick = null;
@@ -498,6 +508,7 @@ namespace Junkbot.Game.State
         }
         private void UnbindBrick()
         {
+
             foreach (BrickActor connectedBrick in Scene.ConnectedBricks)
             {
                 connectedBrick.Selected = false;
@@ -515,6 +526,7 @@ namespace Junkbot.Game.State
         // Public implementation of Dispose pattern callable by consumers.
         public override void Dispose()
         {
+
             Scene.Dispose();
             Dispose(true);
             GC.SuppressFinalize(this);

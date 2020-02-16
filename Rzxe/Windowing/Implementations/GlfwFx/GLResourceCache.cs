@@ -7,6 +7,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ClassLibrary;
+using Oddmatics.Rzxe.Windowing.Graphics;
+using Pencil.Gaming.MathUtils;
 
 namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
 {
@@ -28,8 +31,16 @@ namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
             ShaderPrograms = new Dictionary<string, uint>();
         }
 
+        public void DeleteAtalas(string atlasName)
+        {
+            string atlasNameLower = atlasName.ToLower();
 
-        public GLSpriteAtlas GetAtlas(string atlasName, int type = 0)
+            if (Atlases.ContainsKey(atlasNameLower))
+            {
+                Atlases.Remove(atlasNameLower);
+            }
+        }
+        public GLSpriteAtlas GetAtlas(string atlasName, int type = 0, IList<TextItem> bitmapList = null)
         {
             if (Disposing)
             {
@@ -37,27 +48,44 @@ namespace Oddmatics.Rzxe.Windowing.Implementations.GlfwFx
             }
 
             string atlasNameLower = atlasName.ToLower();
-
+            
             if (Atlases.ContainsKey(atlasNameLower))
             {
+                if (bitmapList != null)
+                {
+                    var atlascount = Atlases[atlasNameLower].GetSpriteMap;
+                    var bitmapcount = bitmapList.Count;
+                    
+                    if (atlascount.Count != bitmapcount)
+                    {
+                        Atlases.Remove(atlasNameLower);
+                        return GLSpriteAtlas.FromText(atlasName, bitmapList);
+                    }
+
+                    return Atlases[atlasNameLower];
+                }
                 return Atlases[atlasNameLower];
             }
             else
             {
-                GLSpriteAtlas newAtlas;
-                if (type == 1)
+                GLSpriteAtlas newAtlas = null;
+                switch (type)
                 {
-                    newAtlas = GLSpriteAtlas.FromGif(atlasName);
-                }
-                else
-                {
-                    newAtlas = GLSpriteAtlas.FromFileSet(
-                        string.Format(
-                            "{0}\\Atlas\\{1}",
-                            EngineParameters.GameContentRoot,
-                            atlasName
-                        )
-                    );
+                    case 0:
+                        newAtlas = GLSpriteAtlas.FromFileSet(
+                            string.Format(
+                                "{0}\\Atlas\\{1}",
+                                EngineParameters.GameContentRoot,
+                                atlasName
+                            )
+                        );
+                        break;
+                    case 1: newAtlas = GLSpriteAtlas.FromGif(atlasName);
+                        break;
+
+                    case 2: newAtlas = GLSpriteAtlas.FromText(atlasName, bitmapList);
+                        break;
+
                 }
 
                 Atlases.Add(newAtlas.Name, newAtlas);

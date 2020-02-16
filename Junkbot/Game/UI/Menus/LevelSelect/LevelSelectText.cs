@@ -13,7 +13,9 @@ using Junkbot.Game.UI.Menus;
 using Junkbot.Game.UI.Menus.Help;
 using Oddmatics.Rzxe.Game;
 using Oddmatics.Rzxe.Game.Interface;
+using Pencil.Gaming.MathUtils;
 using SharpFont;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace Junkbot.Game.World.Level
 {
@@ -50,6 +52,8 @@ namespace Junkbot.Game.World.Level
             {
                 PlayerLevelData playerLevelStats = building.Find(levelData => levelData.Name == level.Name);
                 Rows.Add(new LevelSelectRow(JunkbotGame, level.Name, tab, x, new SizeF(448, 20), new PointF(10, i), 1, state, playerLevelStats));
+                JunkbotGame.FontService.ProcessText(level.Name, new Vector2i(74, (int)i + 6), Color.Black, State.Name, 12);
+
                 i += 21;
                 x += 1;
             }
@@ -59,8 +63,8 @@ namespace Junkbot.Game.World.Level
 
        public void Render(IGraphicsController graphics)
         {
-            
-            _font = graphics.CreateSpriteBatch($"levels-b{_levelSelectButtons.Tab}-atlas");
+
+            //_font = graphics.CreateSpriteBatch($"levels-b{_levelSelectButtons.Tab}-atlas");
             _levelNumbers = graphics.CreateSpriteBatch($"level-numbers-atlas");
             var levelAtlas = graphics.CreateSpriteBatch("level-select-atlas");
             int yPos = 95;
@@ -95,15 +99,19 @@ namespace Junkbot.Game.World.Level
                 $"{c + 1}",
                 new Rectangle(13, (int)row.Location.Y + 6, _levelNumbers.GetSpriteUV($"{c + 1}").Width, _levelNumbers.GetSpriteUV($"{c + 1}").Height)
                 );
-                _font.Draw(
+                /*_font.Draw(
                     $"{c}",
                     new Rectangle(74, (int)row.Location.Y + 6, _font.GetSpriteUV($"{c}").Width, _font.GetSpriteUV($"{c}").Height)
-                );
+                );*/
                 c++;
             }
+
             levelAtlas.Finish();
             _levelNumbers.Finish();
-            _font.Finish();
+
+            graphics.RenderText(State.Name, JunkbotGame.FontService.BitmapsToRender, 2);
+
+            //_font.Finish();
         }
     }
 }
